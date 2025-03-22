@@ -1,0 +1,431 @@
+/* styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f0f0f0, #d3d3d3);
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    margin-top: 170px; /* Ajuste para el navbar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Variables de colores */
+:root {
+    --primary-color: rgb(255, 188, 105);
+    --primary-color-dark: #ff8c42;
+    --text-dark: #0c0a09;
+    --text-light: #717171;
+    --white: #ffffff;
+    --max-width: 1200px;
+    --background-light: #f0f0f0;
+    --background-dark: #333;
+    --text-light-mode: #333;
+    --text-dark-mode: #fff;
+}
+
+/* Modo oscuro */
+body.dark-mode {
+    background: linear-gradient(to right, #333, #000);
+    color: var(--text-dark-mode);
+}
+
+body.dark-mode .caja__trasera {
+    background-color: var(--primary-color-dark);
+}
+
+body.dark-mode .container__login__register form {
+    background-color: #555;
+    color: var(--text-dark-mode);
+}
+
+body.dark-mode .container__login__register form input {
+    background-color: #666;
+    color: var(--text-dark-mode);
+    border-color: #777;
+}
+
+body.dark-mode .container__login__register form input::placeholder {
+    color: #bbb;
+}
+
+body.dark-mode .container__login__register form button {
+    background-color: #ff8c42;
+    color: var(--text-dark-mode);
+}
+
+body.dark-mode .footer {
+    background-color: #444;
+    color: var(--text-dark-mode);
+}
+
+/* Barra superior */
+/* Estilos para la navbar */
+/* Estilos para la navbar */
+.navbar {
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    padding: 10px 20px;
+    background-color: transparent; /* Fondo transparente */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: background-color 0.3s ease; /* Transición suave para el modo oscuro */
+}
+
+
+/* Contenedor del contenido del navbar */
+.navbar-content {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Espacio entre el botón y el logo/nombre */
+    max-width: var(--max-width);
+    width: 100%;
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+}
+
+/* Logo y nombre del sistema */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el logo y el nombre */
+    margin: 0 auto; /* Centra el logo y el nombre */
+}
+
+.logo {
+    height: 40px;
+}
+
+.app-name {
+    margin: 0;
+    font-size: 24px;
+    color: var(--text-dark); /* Color del texto en modo claro */
+    transition: color 0.3s ease; /* Transición suave para el modo oscuro */
+}
+
+/* Estilos para el modo oscuro */
+body.dark-mode .app-name {
+    color: var(--text-dark-mode); /* Color del texto en modo oscuro */
+}
+
+/* Botón de cambio de tema */
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-color-dark); /* Color del ícono en modo claro */
+    transition: transform 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1); /* Efecto de escala al pasar el mouse */
+}
+
+/* Estilos para el modo oscuro */
+body.dark-mode .theme-toggle {
+    color: var(--primary-color); /* Color del ícono en modo oscuro */
+}
+
+/* Contenedor principal */
+.container__all {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    position: relative;
+    flex: 1;
+    margin-bottom: 20px;
+}
+
+/* Cajas traseras */
+.caja__trasera {
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    backdrop-filter: blur(7px);
+    background-color: var(--primary-color-dark);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.caja__trasera div {
+    margin: 100px 50px;
+    color: var(--text-dark);
+    transition: all 500ms;
+}
+
+.caja__trasera div h3 {
+    font-weight: 400;
+    font-size: 26px;
+}
+
+.caja__trasera div button {
+    padding: 10px 40px;
+    border-radius: 5px;
+    background: rgb(248, 226, 196);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-dark);
+    outline: none;
+    transition: all 500ms;
+}
+
+.caja__trasera div button:hover {
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+}
+
+/* Formularios */
+.container__login__register {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    top: -225px;
+    left: 8px;
+    transition: left 800ms cubic-bezier(0.175, 0.885, 0.320, 1.275);
+}
+
+.container__login__register form {
+    width: 100%;
+    padding: 25px 10px;
+    background: rgb(248, 226, 196);
+    position: absolute;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.container__login__register form h2 {
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary-color-dark);
+}
+
+.container__login__register form input {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.container__login__register form input:focus {
+    border-color: var(--primary-color-dark);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(255, 188, 105, 0.3);
+}
+
+.container__login__register form input::placeholder {
+    color: #807e7e;
+    font-style: italic;
+}
+
+.container__login__register form button {
+    padding: 12px 30px;
+    margin-top: 10px;
+    border: none;
+    font-size: 16px;
+    background: var(--primary-color-dark);
+    color: var(--text-dark);
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.container__login__register form button:hover {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(247, 194, 130, 0.3);
+}
+
+.help-text {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: var(--text-light);
+    font-style: italic;
+    padding-left: 5px;
+}
+
+/* Estilos para el footer */
+.footer {
+    position: relative;
+    background: linear-gradient(to right, #ff8c42, #ffe3b2); /* Fondo en gradiente */
+    color: rgb(0, 0, 0); /* Color del texto */
+    padding: 30px 0 20px; /* Más padding arriba para la onda */
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    z-index: 1000;
+    margin-top: 60px;
+    overflow: hidden; /* Para ocultar el exceso de la onda */
+}
+
+/* Efecto ondulado */
+.footer::before {
+    content: '';
+    position: absolute;
+    top: -30px; /* Ajusta la posición de la onda */
+    left: 0;
+    width: 100%;
+    height: 60px; /* Altura de la onda */
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ff8c42' fill-opacity='1' d='M0,160L48,149.3C96,139,192,117,288,128C384,139,480,181,576,176C672,171,768,117,864,101.3C960,85,1056,107,1152,133.3C1248,160,1344,192,1392,208L1440,224L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat center top;
+    background-size: cover;
+}
+
+/* Contenedor del contenido del footer */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilos para el texto del footer */
+.footer-content p {
+    margin: 0;
+    font-size: 14px;
+    color: black;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 850px) {
+    main {
+        margin-top: 50px;
+    }
+
+    .caja__trasera {
+        max-width: 350px;
+        height: 300px;
+        flex-direction: column;
+        margin: auto;
+    }
+
+    .caja__trasera div {
+        margin: 0px;
+        position: absolute;
+    }
+
+    .container__login__register {
+        top: -10px;
+        left: -5px;
+        margin: auto;
+    }
+
+    .container__login__register form {
+        position: relative;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .navbar-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .app-name {
+        font-size: 20px;
+    }
+
+    .footer-content {
+        padding: 0 10px;
+    }
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: var(--primary-color-dark);
+}
+
+.modal-content p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.modal-button {
+    padding: 10px 20px;
+    background-color: var(--primary-color-dark);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-button:hover {
+    background-color: var(--primary-color);
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: var(--primary-color-dark);
+}
