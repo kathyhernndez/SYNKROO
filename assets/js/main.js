@@ -152,7 +152,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const userErrorMsg = document.getElementById('user-error-message');
     const userTable = document.querySelector('.user-table tbody');
 
-    // Verificar el modo guardado en localStorage
+
+        // Verificar el modo guardado en localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         body.classList.add('dark-mode');
@@ -161,6 +162,9 @@ document.addEventListener('DOMContentLoaded', function () {
         body.classList.remove('dark-mode');
         themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
     }
+
+    
+
 
     // Abrir menú
     if (menuBtn) {
@@ -346,29 +350,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Función para actualizar los datos del usuario en el menú desplegable
-function actualizarDatosUsuario() {
-    console.log('actualizarDatosUsuario ejecutado');
-    const userNameElement = document.getElementById('user-name');
-    const userEmailElement = document.getElementById('user-email');
-    const userRolElement = document.getElementById('user-rol');
-
-    if (usuario && usuario.nombre && usuario.email && usuario.rol) {
-        console.log('Datos del usuario encontrados:', usuario);
-        userNameElement.textContent = `Usuario: ${usuario.nombre}`;
-        userEmailElement.textContent = `Correo: ${usuario.email}`;
-        userRolElement.textContent = `Rol: ${usuario.rol}`;
-    } else {
-        console.log('Datos del usuario no disponibles');
-        userNameElement.textContent = 'Usuario: No disponible';
-        userEmailElement.textContent = 'Correo: No disponible';
-        userRolElement.textContent = 'Rol: No disponible';
-    }
-}
-
-// Llamar a la función cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function () {
-    applySavedTheme(); // Aplicar el tema guardado
-    initEvents(); // Inicializar eventos
-    actualizarDatosUsuario(); // Actualizar datos del usuario
-});

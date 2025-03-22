@@ -33,11 +33,6 @@ if (!isset($_SESSION['id_roles']) || ($_SESSION['id_roles'] != 1 && $_SESSION['i
 }
 
 
-// Configuración de cabeceras para evitar el caché
-header("Cache-Control: no-cache, must-revalidate"); // HTTP 1.1 
-header("Pragma: no-cache"); // HTTP 1.0 
-header("Expires: Wed, 12 Nov 2024 10:48:00 GMT");
-
 
 // Verificar si hay un mensaje de sesión y mostrarlo
 if (isset($_SESSION['message'])) {

@@ -68,10 +68,6 @@ body {
     margin-right: 10px;
 }
 
-.backup_btn{
-    background-color: none;
-}
-
 /* Contenido principal */
 .main-content {
     margin-left: 0;
@@ -1173,7 +1169,7 @@ body {
 /* Estilos para los alertas */
 .alert {
     position: fixed;
-    top: 60px;
+    top: 20px;
     right: 20px;
     padding: 15px;
     border-radius: 5px;

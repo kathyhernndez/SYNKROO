@@ -29,7 +29,7 @@
                 <li><a href="menu.php"><i class="fas fa-home"></i>Principal</a></li>
                 <li><a href="usuarios.php"><i class="fas fa-users"></i>Gestionar Usuarios</a></li>
                 <li><a href="verBitacora.php"><i class="fas fa-file"></i>Ver Bitácora</a></li>
-                <li><a><i class="fas fa-cog"></i><button onclick="confirmBackup()" class="logout_btn">Hacer respaldo</button> </a></li>
+                <li><a><i class="fas fa-cog"></i><button onclick="confirmBackup()" class="backup_btn">Hacer respaldo</button> </a></li>
             ';
         } else if ($_SESSION['id_roles'] == 3) {
             echo '

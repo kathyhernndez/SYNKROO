@@ -80,35 +80,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
     // Mostrar el formulario de confirmación
-    echo '
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <div class="container mt-5">
-        <form method="post" action="">
-            <div class="form-group">
-                <p>¿Deseas vaciar la carpeta de archivos subidos antes de hacer el backup?</p>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" id="si" name="vaciar_uploads" value="1" required>
-                    <label class="form-check-label" for="si">Sí</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" id="no" name="vaciar_uploads" value="0" required>
-                    <label class="form-check-label" for="no">No</label>
-                </div>
+echo '
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<div class="container mt-5">
+    <form method="post" action="">
+        <div class="form-group">
+            <p>¿Deseas vaciar la carpeta de archivos subidos antes de hacer el backup?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="si" name="vaciar_uploads" value="1" required>
+                <label class="form-check-label" for="si">Sí</label>
             </div>
-            <button type="submit" class="btn btn-primary">Hacer Backup</button>
-        </form>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        $("form").on("submit", function() {
-            setTimeout(function() {
-                window.location.href = "menu.php";
-            }, 1000);
-        });
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="no" name="vaciar_uploads" value="0" required>
+                <label class="form-check-label" for="no">No</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-dark">Hacer Backup</button>
+            <a href="menu.php" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function() {
+    $("form").on("submit", function() {
+        setTimeout(function() {
+            window.location.href = "menu.php";
+        }, 1000);
     });
-    </script>';
+});
+</script>';
 }
 ?>

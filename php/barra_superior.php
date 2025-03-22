@@ -1,19 +1,18 @@
 <?php
-session_start();
+
 
 // Verificar si el usuario ha iniciado sesión
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    /// Obtener los datos del usuario desde la sesión
+    // Obtener los datos del usuario desde la sesión
     $nombreCompleto = $_SESSION['nombre_completo'] ?? 'Usuario';
     $emailUsuario = $_SESSION['correo'] ?? 'correo@example.com';
     $idRol = $_SESSION['id_roles'] ?? '';
 
-    // Mapear el ID del rol a un nombre de rol (puedes hacerlo con un array o una consulta a la base de datos)
+    // Mapear el ID del rol a un nombre de rol
     $roles = [
         1 => 'Admin',
         2 => 'Editor',
         3 => 'Usuario',
-        // Agrega más roles según sea necesario
     ];
 
     $rolUsuario = $roles[$idRol] ?? 'Rol no disponible';
@@ -23,7 +22,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -32,7 +30,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     <link rel="stylesheet" href="../assets/css/main.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
-
+<body>
 <!-- Barra superior -->
 <div class="top-bar">
     <!-- Botones a la izquierda -->
@@ -45,7 +43,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 <p id="user-name">Usuario: Cargando...</p>
                 <p id="user-email">Correo: Cargando...</p>
                 <p id="user-rol">Rol: Cargando...</p>
-                <a><button onclick="confirmLogout()" class="logout_btn">Cerrar Sesión</button></a>
+                <button id="logout-btn" class="logout_btn">Cerrar Sesión</button>
             </div>
         </div>
     </div>
@@ -64,4 +62,47 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         email: "<?php echo $emailUsuario; ?>",
         rol: "<?php echo $rolUsuario; ?>"
     };
+
+    // Función para actualizar los datos del usuario
+    function actualizarDatosUsuario() {
+        console.log('actualizarDatosUsuario ejecutado');
+        const userNameElement = document.getElementById('user-name');
+        const userEmailElement = document.getElementById('user-email');
+        const userRolElement = document.getElementById('user-rol');
+
+        if (usuario && usuario.nombre && usuario.email && usuario.rol) {
+            console.log('Datos del usuario encontrados:', usuario);
+            userNameElement.textContent = `Usuario: ${usuario.nombre}`;
+            userEmailElement.textContent = `Correo: ${usuario.email}`;
+            userRolElement.textContent = `Rol: ${usuario.rol}`;
+        } else {
+            console.log('Datos del usuario no disponibles');
+            userNameElement.textContent = 'Usuario: No disponible';
+            userEmailElement.textContent = 'Correo: No disponible';
+            userRolElement.textContent = 'Rol: No disponible';
+        }
+    }
+
+    // Función para confirmar el cierre de sesión
+    function confirmLogout() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+            window.location.href = 'logout.php'; // Redirigir al script de cierre de sesión
+        }
+    }
+
+    // Llamar a la función cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function () {
+        actualizarDatosUsuario(); // Actualizar datos del usuario
+
+        // Configurar el botón de cierre de sesión
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault(); // Evitar que el enlace redirija
+                confirmLogout(); // Llamar a la función de confirmación
+            });
+        }
+    });
 </script>
+</body>
+</html>
