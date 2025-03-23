@@ -92,6 +92,7 @@ function editarArchivo(id) {
     }
 }
 
+// Función para descargar un archivo
 function descargarArchivo(nombreArchivo) {
     if (confirm("¿Estás seguro de que deseas descargar este archivo?")) {
         fetch('verificar_archivo.php', {
@@ -124,7 +125,85 @@ function descargarArchivo(nombreArchivo) {
     }
 }
 
-// Resto del código JavaScript
+// Función para eliminar una carpeta
+function eliminarCarpeta(id) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta carpeta?')) {
+        fetch('eliminar_carpeta.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + encodeURIComponent(id),
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data); // Mostrar la respuesta del servidor
+            location.reload(); // Recargar la página para actualizar la lista de carpetas
+        })
+        .catch(error => {
+            console.error('Error al eliminar la carpeta:', error);
+            alert('Error al eliminar la carpeta.');
+        });
+    }
+}
+
+// Función para editar una carpeta
+function editarCarpeta(id) {
+    const nuevoNombre = prompt('Introduce el nuevo nombre de la carpeta:');
+    if (nuevoNombre) {
+        fetch('editar_carpeta.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + encodeURIComponent(id) + '&nombre_carpeta=' + encodeURIComponent(nuevoNombre),
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data); // Mostrar la respuesta del servidor
+            location.reload(); // Recargar la página para actualizar la lista de carpetas
+        })
+        .catch(error => {
+            console.error('Error al editar la carpeta:', error);
+            alert('Error al editar la carpeta.');
+        });
+    }
+}
+
+// Función para descargar una carpeta
+function descargarCarpeta(nombreCarpeta) {
+    if (confirm("¿Estás seguro de que deseas descargar esta carpeta?")) {
+        fetch('verificar_carpeta.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'nombre_carpeta=' + encodeURIComponent(nombreCarpeta),
+        })
+        .then(response => response.json()) // Esperar una respuesta JSON
+        .then(data => {
+            if (data.existe) {
+                // Crear un enlace temporal para forzar la descarga
+                const link = document.createElement("a");
+                link.href = data.ruta; // Ruta de la carpeta
+                link.download = nombreCarpeta; // Nombre de la carpeta
+                document.body.appendChild(link); // Agregar el enlace al DOM
+                link.click(); // Simular clic en el enlace
+                document.body.removeChild(link); // Eliminar el enlace del DOM
+            } else {
+                alert("La carpeta no existe.");
+            }
+        })
+        .catch(error => {
+            console.error("Error al verificar la carpeta:", error);
+            alert("Error al intentar descargar la carpeta.");
+        });
+    } else {
+        console.log("Descarga cancelada.");
+    }
+}
+
+// Resto del código JavaScript (sidebar, modales, etc.)
 document.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menu-btn');
@@ -152,8 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userErrorMsg = document.getElementById('user-error-message');
     const userTable = document.querySelector('.user-table tbody');
 
-
-        // Verificar el modo guardado en localStorage
+    // Verificar el modo guardado en localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         body.classList.add('dark-mode');
@@ -162,9 +240,6 @@ document.addEventListener('DOMContentLoaded', function () {
         body.classList.remove('dark-mode');
         themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
     }
-
-    
-
 
     // Abrir menú
     if (menuBtn) {
@@ -290,22 +365,16 @@ document.addEventListener('DOMContentLoaded', function () {
             viewToggleBtn.innerHTML = isFolderView ? '<i class="fas fa-file"></i> Ver por Archivos' : '<i class="fas fa-folder"></i> Ver por Carpetas';
 
             if (isFolderView) {
-                // Mostrar carpetas
-                filesGrid.innerHTML = `
-                    <div class="file-item">
-                        <div class="file-header">
-                            <i class="fas fa-folder file-icon"></i>
-                            <h4 class="file-name">Carpeta 1</h4>
-                        </div>
-                        <p class="file-date">01/10/2023</p>
-                        <div class="file-actions">
-                            <button class="download-btn"><i class="fas fa-download"></i></button>
-                            <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                            <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <!-- Más carpetas aquí -->
-                `;
+                // Cargar carpetas dinámicamente desde PHP
+                fetch('consultar_carpetas.php') // Ruta al archivo PHP que genera el HTML
+                    .then(response => response.text()) // Obtener el contenido como texto
+                    .then(data => {
+                        filesGrid.innerHTML = data; // Insertar el HTML en el contenedor
+                        setupFileButtons(); // Configurar los botones de carpetas
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar las carpetas:', error);
+                    });
             } else {
                 // Cargar archivos dinámicamente desde PHP
                 fetch('consultar_archivos.php') // Ruta al archivo PHP que genera el HTML
@@ -349,4 +418,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
