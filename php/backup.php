@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $backupFile = 'respaldo_db_' . date('Y-m-d_H-i') . '.sql';
 
     // Comando para crear el respaldo de la base de datos
-    $command = "mysqldump --host=localhost --user=root --password='' gestor_archivos > {$backupFile}";
+    $command = "mysqldump --host=localhost --user=root --password='' synkroo > {$backupFile}";
     system($command);
 
     // Directorio donde se encuentran los archivos subidos

@@ -171,33 +171,6 @@ function editarCarpeta(id) {
 }
 
 
-// Función para descargar una carpeta
-function descargarCarpeta(rutaCarpeta) {
-    fetch(`descargar_carpeta.php?ruta_carpeta=${encodeURIComponent(rutaCarpeta)}`)
-        .then(response => {
-            if (response.ok) {
-                return response.blob(); // Convertir la respuesta en un Blob
-            } else {
-                throw new Error('Error al descargar la carpeta');
-            }
-        })
-        .then(blob => {
-            // Crear un enlace temporal para forzar la descarga
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${rutaCarpeta.split('/').pop()}.zip`; // Nombre del archivo ZIP
-            document.body.appendChild(a);
-            a.click(); // Simular clic en el enlace
-            a.remove(); // Eliminar el enlace del DOM
-            window.URL.revokeObjectURL(url); // Liberar el objeto URL
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al descargar la carpeta.');
-        });
-}
-
 
 // Función para cargar las carpetas desde la base de datos
 function cargarCarpetas() {

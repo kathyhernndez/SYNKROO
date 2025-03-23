@@ -8,7 +8,7 @@ try {
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         echo '
-        <div class="file-item">
+        <div class="file-item" onclick="abrirCarpeta(' . htmlspecialchars($row['id']) . ')">
             <div class="file-header">
                 <i class="fas fa-folder file-icon"></i>
                 <h4 class="file-name">'. htmlspecialchars($row['nombre_carpeta']) . '</h4>
