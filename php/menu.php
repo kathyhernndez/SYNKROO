@@ -59,12 +59,27 @@ if ($message) { echo '
                 <!-- Contenedor de archivos -->
                 <div class="files-container">
                     <!-- Filtros y barra de búsqueda dentro del div de archivos -->
-                    <div class="filters">
-                        <button class="filter-btn"><i class="fas fa-filter"></i> Filtrar</button>
-                        <input type="text" class="search-bar" placeholder="Buscar...">
-                        <button class="upload-btn" id="upload-btn"><i class="fas fa-upload"></i> Cargar Archivos</button>
-                        <button class="view-toggle-btn" id="view-toggle-btn"><i class="fas fa-folder"></i> Ver por Carpetas</button>
-                    </div>
+<div class="filters">
+    <div class="filter-container">
+        <button class="filter-btn"><i class="fas fa-filter"></i> Filtrar</button>
+        <div class="filter-dropdown">
+            <div class="filter-group">
+                <label for="filter-type">Tipo de archivo:</label>
+                <select id="filter-type" class="filter-select">
+                    <option value="all">Todos</option>
+                    <option value="image">Imágenes</option>
+                    <option value="document">Documentos</option>
+                    <option value="audio">Audio</option>
+                    <option value="video">Videos</option>
+                </select>
+            </div>
+            <button class="apply-filter-btn">Aplicar Filtro</button>
+        </div>
+    </div>
+    <input type="text" class="search-bar" id="search-bar" placeholder="Buscar por nombre, tipo o fecha...">
+    <button class="upload-btn" id="upload-btn"><i class="fas fa-upload"></i> Cargar Archivos</button>
+    <button class="view-toggle-btn" id="view-toggle-btn"><i class="fas fa-folder"></i> Ver por Carpetas</button>
+</div>
                     <div class="files-grid" id="files-grid">
                         <!-- Aquí se mostrarían los archivos -->
                          <?php 
@@ -101,8 +116,106 @@ if ($message) { echo '
     </div>
 </div>
     <script>
+// Función para mostrar/ocultar el menú desplegable de filtrado
+document.addEventListener('DOMContentLoaded', function () {
+    const filterBtn = document.querySelector('.filter-btn');
+    const filterDropdown = document.querySelector('.filter-dropdown');
 
-    </script>
+    if (filterBtn && filterDropdown) {
+        // Mostrar/ocultar el menú desplegable al hacer clic en el botón de filtro
+        filterBtn.addEventListener('click', function (event) {
+            event.stopPropagation(); // Evitar que el clic se propague
+            filterDropdown.style.display = filterDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Evitar que el menú se cierre al hacer clic dentro de él
+        filterDropdown.addEventListener('click', function (event) {
+            event.stopPropagation();
+        });
+
+        // Ocultar el menú desplegable al hacer clic fuera
+        document.addEventListener('click', function () {
+            filterDropdown.style.display = 'none';
+        });
+    }
+});
+
+// Función para aplicar el filtro
+function aplicarFiltro() {
+    const filterType = document.getElementById('filter-type').value;
+    const filesGrid = document.getElementById('files-grid');
+    const fileItems = filesGrid.querySelectorAll('.file-item');
+
+    fileItems.forEach(fileItem => {
+        const tipoArchivo = fileItem.dataset.tipo; // Obtener el tipo de archivo del dataset
+        if (filterType === 'all' || tipoArchivo === filterType) {
+            fileItem.style.display = 'block'; // Mostrar el archivo
+        } else {
+            fileItem.style.display = 'none'; // Ocultar el archivo
+        }
+    });
+}
+
+// Evento para aplicar el filtro
+const applyFilterBtn = document.querySelector('.apply-filter-btn');
+if (applyFilterBtn) {
+    applyFilterBtn.addEventListener('click', function () {
+        aplicarFiltro();
+    });
+}
+
+// Función para limpiar el filtro
+function limpiarFiltro() {
+    const filesGrid = document.getElementById('files-grid');
+    const fileItems = filesGrid.querySelectorAll('.file-item');
+
+    fileItems.forEach(fileItem => {
+        fileItem.style.display = 'block'; // Mostrar todos los archivos
+    });
+
+    // Restablecer el valor del filtro
+    document.getElementById('filter-type').value = 'all';
+}
+
+// Evento para limpiar el filtro
+const clearFilterBtn = document.querySelector('.clear-filter-btn');
+if (clearFilterBtn) {
+    clearFilterBtn.addEventListener('click', function () {
+        limpiarFiltro();
+    });
+}
+
+// Función para buscar archivos
+function buscarArchivos() {
+    const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+    const filesGrid = document.getElementById('files-grid');
+    const fileItems = filesGrid.querySelectorAll('.file-item');
+
+    fileItems.forEach(fileItem => {
+        const nombreArchivo = fileItem.querySelector('.file-name').textContent.toLowerCase();
+        const tipoArchivo = fileItem.dataset.tipo.toLowerCase();
+        const fechaArchivo = fileItem.querySelector('.file-date').textContent.toLowerCase();
+
+        if (
+            nombreArchivo.includes(searchTerm) ||
+            tipoArchivo.includes(searchTerm) ||
+            fechaArchivo.includes(searchTerm)
+        ) {
+            fileItem.style.display = 'block'; // Mostrar el archivo
+        } else {
+            fileItem.style.display = 'none'; // Ocultar el archivo
+        }
+    });
+}
+
+// Evento para la barra de búsqueda
+const searchBar = document.getElementById('search-bar');
+if (searchBar) {
+    searchBar.addEventListener('input', function () {
+        buscarArchivos();
+    });
+}  
+</script>
     <script src="../assets/js/main.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>

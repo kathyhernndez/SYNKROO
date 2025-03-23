@@ -54,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     if ($stmt->execute()) {
                         // Registrar la acción en el sistema
-                        registrarAccion($_SESSION['nombre_completo'], 'editar archivo', 'Un archivo se ha editado en el sistema.');
                         echo "Nombre del archivo y ruta actualizados con éxito.";
                     } else {
                         echo "Error al actualizar el nombre y la ruta del archivo en la base de datos.";
