@@ -320,17 +320,17 @@ document.addEventListener('DOMContentLoaded', function () {
     if (uploadForm) {
         uploadForm.addEventListener('submit', function (event) {
             event.preventDefault();
-
+    
             const folderSelect = document.getElementById('folder-select');
             const folderNameInput = document.getElementById('folder-name');
             const fileInput = document.getElementById('file-input');
             const files = fileInput.files;
-
+    
             // Limpiar mensajes de error anteriores
             errorMessage.style.display = 'none';
             errorMessage.textContent = '';
             errorMessage.classList.remove('error', 'success');
-
+    
             // Validar si se seleccionó "Crear nueva carpeta" y no se ingresó un nombre
             if (folderSelect.value === 'new' && !folderNameInput.value.trim()) {
                 errorMessage.textContent = 'Por favor, ingrese un nombre para la nueva carpeta.';
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorMessage.style.display = 'block';
                 return;
             }
-
+    
             // Validar si no se seleccionó ningún archivo
             if (files.length === 0) {
                 errorMessage.textContent = 'Por favor, seleccione al menos un archivo.';
@@ -346,15 +346,51 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorMessage.style.display = 'block';
                 return;
             }
-
-            // Si todo está bien, mostrar un mensaje de éxito
-            errorMessage.textContent = 'Archivo(s) cargado(s) correctamente.';
-            errorMessage.classList.add('success');
-            errorMessage.style.display = 'block';
-
-            // Aquí puedes agregar la lógica para subir los archivos y crear la carpeta
-            const folderName = folderSelect.value === 'new' ? folderNameInput.value : folderSelect.value;
-            alert(`Cargando ${files.length} archivo(s) en la carpeta: ${folderName}`);
+    
+            // Validar el tamaño de los archivos (ejemplo: máximo 10 MB por archivo)
+            const maxFileSize = 10 * 1024 * 1024; // 10 MB
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].size > maxFileSize) {
+                    errorMessage.textContent = `El archivo ${files[i].name} excede el tamaño máximo permitido (10 MB).`;
+                    errorMessage.classList.add('error');
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+            }
+    
+            // Crear un FormData para enviar los archivos y datos del formulario
+            const formData = new FormData();
+            formData.append('folder-select', folderSelect.value);
+            formData.append('folder-name', folderNameInput.value.trim());
+    
+            // Agregar cada archivo al FormData
+            for (let i = 0; i < files.length; i++) {
+                formData.append('archivo[]', files[i]);
+            }
+    
+            // Enviar los datos al servidor usando fetch
+            fetch('subir_archivo.php', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar el mensaje de éxito o error
+                errorMessage.textContent = data;
+                errorMessage.classList.add('success');
+                errorMessage.style.display = 'block';
+    
+                // Recargar la página para actualizar la lista de archivos
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error al subir el archivo:', error);
+                errorMessage.textContent = 'Error al subir el archivo.';
+                errorMessage.classList.add('error');
+                errorMessage.style.display = 'block';
+            });
         });
     }
 
