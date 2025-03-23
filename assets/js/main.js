@@ -170,38 +170,34 @@ function editarCarpeta(id) {
     }
 }
 
+
 // Función para descargar una carpeta
-function descargarCarpeta(nombreCarpeta) {
-    if (confirm("¿Estás seguro de que deseas descargar esta carpeta?")) {
-        fetch('verificar_carpeta.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'nombre_carpeta=' + encodeURIComponent(nombreCarpeta),
-        })
-        .then(response => response.json()) // Esperar una respuesta JSON
-        .then(data => {
-            if (data.existe) {
-                // Crear un enlace temporal para forzar la descarga
-                const link = document.createElement("a");
-                link.href = data.ruta; // Ruta de la carpeta
-                link.download = nombreCarpeta; // Nombre de la carpeta
-                document.body.appendChild(link); // Agregar el enlace al DOM
-                link.click(); // Simular clic en el enlace
-                document.body.removeChild(link); // Eliminar el enlace del DOM
+function descargarCarpeta(rutaCarpeta) {
+    fetch(`descargar_carpeta.php?ruta_carpeta=${encodeURIComponent(rutaCarpeta)}`)
+        .then(response => {
+            if (response.ok) {
+                return response.blob(); // Convertir la respuesta en un Blob
             } else {
-                alert("La carpeta no existe.");
+                throw new Error('Error al descargar la carpeta');
             }
         })
+        .then(blob => {
+            // Crear un enlace temporal para forzar la descarga
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${rutaCarpeta.split('/').pop()}.zip`; // Nombre del archivo ZIP
+            document.body.appendChild(a);
+            a.click(); // Simular clic en el enlace
+            a.remove(); // Eliminar el enlace del DOM
+            window.URL.revokeObjectURL(url); // Liberar el objeto URL
+        })
         .catch(error => {
-            console.error("Error al verificar la carpeta:", error);
-            alert("Error al intentar descargar la carpeta.");
+            console.error('Error:', error);
+            alert('Error al descargar la carpeta.');
         });
-    } else {
-        console.log("Descarga cancelada.");
-    }
 }
+
 
 // Función para cargar las carpetas desde la base de datos
 function cargarCarpetas() {
