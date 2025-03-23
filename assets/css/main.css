@@ -210,10 +210,10 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    max-height: 900px; /* Altura máxima para el scroll */
+    max-height: 700px; /* Altura máxima para el scroll */
     overflow-y: auto; /* Habilitar scroll vertical */
     width: 100%; /* Ocupar todo el ancho disponible */
-    max-width: 100%; /* Valor por defecto para pantallas pequeñas */
+    max-width: 90%; /* Valor por defecto para pantallas pequeñas */
     margin-left: auto;
     margin-right: auto;
 }
