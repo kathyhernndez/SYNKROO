@@ -203,6 +203,31 @@ function descargarCarpeta(nombreCarpeta) {
     }
 }
 
+// Función para cargar las carpetas desde la base de datos
+function cargarCarpetas() {
+    fetch('obtener_carpetas.php') // Endpoint para obtener las carpetas
+        .then(response => response.json())
+        .then(data => {
+            const folderSelect = document.getElementById('folder-select');
+
+            // Limpiar opciones existentes (excepto las primeras dos)
+            while (folderSelect.options.length > 2) {
+                folderSelect.remove(2);
+            }
+
+            // Agregar las carpetas obtenidas al <select>
+            data.forEach(carpeta => {
+                const option = document.createElement('option');
+                option.value = carpeta.id; // Usar el ID de la carpeta como valor
+                option.textContent = carpeta.nombre_carpeta; // Mostrar el nombre de la carpeta
+                folderSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error al cargar las carpetas:', error);
+        });
+}
+
 // Resto del código JavaScript (sidebar, modales, etc.)
 document.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.getElementById('sidebar');
@@ -216,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadBtn = document.getElementById('upload-btn');
     const uploadModal = document.getElementById('upload-modal');
     const closeModal = document.getElementById('close-modal');
-    const uploadForm = document.getElementById('upload-form');
+    const uploadForm = document.getElementById('upload-form'); // Definir uploadForm aquí
     const viewToggleBtn = document.getElementById('view-toggle-btn');
     const filesGrid = document.getElementById('files-grid');
     const folderSelect = document.getElementById('folder-select');
@@ -285,8 +310,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Abrir modal de carga de archivos
-    if (uploadBtn) {
+    if (uploadBtn && uploadModal) {
         uploadBtn.addEventListener('click', function () {
+            // Cargar las carpetas solo cuando se abra el modal
+            cargarCarpetas();
             uploadModal.style.display = 'flex';
         });
     }
@@ -320,17 +347,17 @@ document.addEventListener('DOMContentLoaded', function () {
     if (uploadForm) {
         uploadForm.addEventListener('submit', function (event) {
             event.preventDefault();
-    
+
             const folderSelect = document.getElementById('folder-select');
             const folderNameInput = document.getElementById('folder-name');
             const fileInput = document.getElementById('file-input');
             const files = fileInput.files;
-    
+
             // Limpiar mensajes de error anteriores
             errorMessage.style.display = 'none';
             errorMessage.textContent = '';
             errorMessage.classList.remove('error', 'success');
-    
+
             // Validar si se seleccionó "Crear nueva carpeta" y no se ingresó un nombre
             if (folderSelect.value === 'new' && !folderNameInput.value.trim()) {
                 errorMessage.textContent = 'Por favor, ingrese un nombre para la nueva carpeta.';
@@ -338,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorMessage.style.display = 'block';
                 return;
             }
-    
+
             // Validar si no se seleccionó ningún archivo
             if (files.length === 0) {
                 errorMessage.textContent = 'Por favor, seleccione al menos un archivo.';
@@ -346,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorMessage.style.display = 'block';
                 return;
             }
-    
+
             // Validar el tamaño de los archivos (ejemplo: máximo 10 MB por archivo)
             const maxFileSize = 10 * 1024 * 1024; // 10 MB
             for (let i = 0; i < files.length; i++) {
@@ -357,17 +384,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
             }
-    
+
             // Crear un FormData para enviar los archivos y datos del formulario
             const formData = new FormData();
             formData.append('folder-select', folderSelect.value);
             formData.append('folder-name', folderNameInput.value.trim());
-    
+
             // Agregar cada archivo al FormData
             for (let i = 0; i < files.length; i++) {
                 formData.append('archivo[]', files[i]);
             }
-    
+
             // Enviar los datos al servidor usando fetch
             fetch('subir_archivo.php', {
                 method: 'POST',
@@ -379,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorMessage.textContent = data;
                 errorMessage.classList.add('success');
                 errorMessage.style.display = 'block';
-    
+
                 // Recargar la página para actualizar la lista de archivos
                 setTimeout(() => {
                     location.reload();

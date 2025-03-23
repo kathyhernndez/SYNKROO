@@ -77,7 +77,7 @@ if ($message) { echo '
         </div>
     </div>
 
-  <div class="modal" id="upload-modal">
+    <div class="modal" id="upload-modal">
     <div class="modal-content">
         <span class="close-modal" id="close-modal">&times;</span>
         <h2>Cargar Archivos</h2>
@@ -86,8 +86,7 @@ if ($message) { echo '
             <select id="folder-select">
                 <option value="#">Seleccionar carpeta</option>
                 <option value="new">Crear nueva carpeta</option>
-                <option value="folder1">Carpeta 1</option>
-                <option value="folder2">Carpeta 2</option>
+                <!-- Las opciones de las carpetas se generarán dinámicamente aquí -->
             </select>
             <!-- Input para el nombre de la carpeta (oculto por defecto) -->
             <div id="new-folder-input" style="display: none;">
@@ -102,7 +101,7 @@ if ($message) { echo '
     </div>
 </div>
     <script>
-      
+
     </script>
     <script src="../assets/js/main.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
