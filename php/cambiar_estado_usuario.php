@@ -25,7 +25,7 @@ try {
     $stmt->execute();
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($usuario['id_roles'] == 1) {
+    if ($usuario['id_roles'] == 2) {
         echo json_encode(['success' => false, 'message' => 'No puedes cambiar el estado de un SuperAdmin.']);
         exit();
     }
