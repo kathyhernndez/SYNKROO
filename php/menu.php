@@ -7,7 +7,7 @@ include 'verificar_almacenamiento.php';
 /// plantillas front
 include 'barra_izquierda.php';
 include 'barra_superior.php';
-include 'cabecera.php';
+
 
 
 // Verificar si el usuario ha iniciado sesión

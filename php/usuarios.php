@@ -2,7 +2,7 @@
 session_start();
 include 'conexion_be.php';
 include 'registrar_accion.php';
-
+include 'verificar_almacenamiento.php';
 
 /// plantillas front
 include 'barra_izquierda.php';
