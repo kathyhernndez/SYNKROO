@@ -1,55 +1,111 @@
 <?php
+// Solo para depuración - eliminar en producción
+error_log('Datos recibidos: ' . print_r($_POST, true));
+file_put_contents('debug_editar_usuario.log', print_r($_POST, true) . "\n", FILE_APPEND);
+
 include 'conexion_be.php';
 include 'registrar_accion.php';
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validar y sanitizar las entradas
-    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-    $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_STRING);
-    $apellido = filter_input(INPUT_POST, 'apellido', FILTER_SANITIZE_STRING);
-    $correo = filter_input(INPUT_POST, 'correo', FILTER_SANITIZE_EMAIL);
-    $cedula = filter_input(INPUT_POST, 'cedula', FILTER_SANITIZE_STRING);
-    $clave = $_POST['clave']; // No sanitizar la contraseña para no alterarla
+// Verificar que el usuario tenga permisos para editar
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || ($_SESSION['id_roles'] != 1 && $_SESSION['id_roles'] != 2)) {
+    die(json_encode(['success' => false, 'message' => 'No tienes permisos para realizar esta acción']));
+}
 
-    if (!$id || !$nombre || !$apellido || !$correo || !$cedula) {
-        die(json_encode(['success' => false, 'message' => 'Datos de entrada no válidos.']));
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Obtener datos del formulario
+    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : '';
+    $apellido = isset($_POST['apellido']) ? trim($_POST['apellido']) : '';
+    $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
+    $cedula = isset($_POST['cedula']) ? trim($_POST['cedula']) : '';
+    $clave = isset($_POST['clave']) ? $_POST['clave'] : null;
+
+    // Validaciones básicas
+    if ($id <= 0 || empty($nombre) || empty($apellido) || empty($correo) || empty($cedula)) {
+        die(json_encode([
+            'success' => false, 
+            'message' => 'Todos los campos son requeridos excepto la contraseña.',
+            'received_data' => $_POST // Solo para depuración
+        ]));
+    }
+
+    // Validar formato de cédula (solo números, entre 6 y 12 dígitos)
+    if (!preg_match('/^\d{6,12}$/', $cedula)) {
+        die(json_encode(['success' => false, 'message' => 'La cédula debe contener entre 6 y 12 dígitos numéricos.']));
+    }
+
+    // Validar formato de correo
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        die(json_encode(['success' => false, 'message' => 'El correo electrónico no tiene un formato válido.']));
+    }
+
+    // Validar contraseña si se proporcionó
+    if ($clave && strlen($clave) < 16) {
+        die(json_encode(['success' => false, 'message' => 'La contraseña debe tener al menos 16 caracteres.']));
     }
 
     try {
+        // Verificar que el correo no esté en uso por otro usuario
+        $queryCheck = "SELECT id FROM usuarios WHERE (correo = :correo OR cedula = :cedula) AND id != :id";
+        $stmtCheck = $conexion->prepare($queryCheck);
+        $stmtCheck->bindParam(':correo', $correo, PDO::PARAM_STR);
+        $stmtCheck->bindParam(':cedula', $cedula, PDO::PARAM_STR);
+        $stmtCheck->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmtCheck->execute();
+
+        if ($stmtCheck->rowCount() > 0) {
+            $conflict = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+            die(json_encode(['success' => false, 'message' => 'El correo o cédula ya están en uso por otro usuario.']));
+        }
+
         // Si se proporciona una nueva contraseña, encriptarla
         $clave_encriptada = !empty($clave) ? password_hash($clave, PASSWORD_DEFAULT) : null;
 
-        // Actualizar el registro en la base de datos (sin modificar el rol)
-        $query = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido, correo = :correo, cedula = :cedula" . 
-                 ($clave_encriptada ? ", clave = :clave" : "") . " WHERE id = :id";
+        // Actualizar el registro en la base de datos
+        $query = "UPDATE usuarios SET 
+                    nombre = :nombre, 
+                    apellido = :apellido, 
+                    correo = :correo, 
+                    cedula = :cedula" . 
+                 ($clave_encriptada ? ", clave = :clave" : "") . " 
+                  WHERE id = :id";
+        
         $stmt = $conexion->prepare($query);
         $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $stmt->bindParam(':apellido', $apellido, PDO::PARAM_STR);
         $stmt->bindParam(':correo', $correo, PDO::PARAM_STR);
         $stmt->bindParam(':cedula', $cedula, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
         if ($clave_encriptada) {
             $stmt->bindParam(':clave', $clave_encriptada, PDO::PARAM_STR);
         }
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            if (isset($_SESSION['usuario_id'])) {
-                $usuario_id = $_SESSION['usuario_id'];
-                registrarAccion($conexion, $usuario_id, 'editar usuario', 'Un usuario ha sido actualizado en el sistema.');
-                echo json_encode(['success' => true, 'message' => 'Usuario actualizado con éxito.']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Error al actualizar el usuario: Sesión no válida.']);
-            }
+            // Registrar la acción
+            registrarAccion($conexion, $_SESSION['usuario_id'], 'editar usuario', 'Se actualizó el usuario ID: ' . $id);
+            
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Usuario actualizado con éxito.',
+                'updated_fields' => $clave_encriptada ? 'Datos básicos y contraseña' : 'Datos básicos'
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No se realizaron cambios en el usuario.']);
         }
     } catch (PDOException $e) {
-        // Manejar errores de PDO
-        echo json_encode(['success' => false, 'message' => 'Error en la consulta: ' . $e->getMessage()]);
+        error_log('Error al editar usuario: ' . $e->getMessage());
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Error en la base de datos al actualizar el usuario.',
+            'error_details' => $e->getMessage() // Solo para desarrollo
+        ]);
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Solicitud no válida.']);
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Método no permitido.']);
 }
 
-// Cerrar la conexión
 $conexion = null;
 ?>

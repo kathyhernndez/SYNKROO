@@ -481,6 +481,81 @@ body.dark-mode .field-error {
     color: #ff6666;
 }
 
+/* Estilos para el botón de guardar en el formulario de edición */
+#edit-user-form button[type="submit"] {
+    background-color: #ff8c42;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#edit-user-form button[type="submit"]:hover {
+    background-color: #e67e22;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode #edit-user-form button[type="submit"] {
+    background-color: #e67e22;
+}
+
+body.dark-mode #edit-user-form button[type="submit"]:hover {
+    background-color: #d35400;
+}
+
+/* Estilos para mensajes de éxito/error */
+.error-message {
+    padding: 12px;
+    border-radius: 5px;
+    margin-top: 15px;
+    display: none;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Mensajes de error */
+/* Para hacer los mensajes más modernos */
+.error-message {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+/* Efecto pulsante para acciones exitosas */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.error-message.success {
+    animation: pulse 1.5s infinite;
+}
+
+/* Mensajes de éxito */
+.error-message.success {
+    background-color: #eeffee;
+    color: #33cc33;
+    border: 1px solid #ccffcc;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode .error-message {
+    background-color: #442222;
+    color: #ff6666;
+    border-color: #663333;
+}
+
+body.dark-mode .error-message.success {
+    background-color: #224422;
+    color: #77dd77;
+    border-color: #336633;
+}
+
     </style>
     <div class="dashboard">
          <!-- Barra lateral izquierda (menú) -->
@@ -720,35 +795,58 @@ body.dark-mode .field-error {
 <!-- Modal para editar usuarios -->
 <div class="modal" id="edit-modal">
     <div class="modal-content">
-        <span class="close-modal" id="close-user-modal">&times;</span>
-        <h2 id="modal-title">Editar Usuario</h2>
-        <form id="user-form">
-            <input type="hidden" id="user-id" name="id"> <!-- Campo oculto para el ID del usuario -->
-            <label for="user-name">Nombre:</label>
-            <input type="text" id="user-name" name="nombre" placeholder="Ingrese el nombre" required>
-
-            <label for="user-lastname">Apellido:</label>
-            <input type="text" id="user-lastname" name="apellido" placeholder="Ingrese el apellido" required>
-
-            <label for="user-email">Correo:</label>
-            <input type="email" id="user-email" name="correo" placeholder="Ingrese el correo" required>
-
-            <!-- Campo de la cédula -->
-            <label for="user-cedula">Cédula:</label>
-            <input type="text" id="user-cedula" name="cedula" placeholder="Ingrese la cédula" required>
-
-            <label for="user-password">Contraseña:</label>
-            <input type="password" id="user-password" name="clave" placeholder="Ingrese la contraseña">
-
-            <label for="user-confirm-password">Confirmar Contraseña:</label>
-            <input type="password" id="user-confirm-password" name="confirmar_clave" placeholder="Confirme la contraseña">
-
-            <div id="user-error-message" class="error-message" style="display: none;"></div>
-            <button type="submit">Guardar</button>
+        <span class="close-modal" id="close-edit-modal">&times;</span>
+        <h2>Editar Usuario</h2>
+        <form id="edit-user-form">
+            <input type="hidden" id="edit-user-id" name="id">
+            
+            <!-- Fila 1: Nombre y Apellido -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit-user-name">Nombre:</label>
+                    <input type="text" id="edit-user-name" name="nombre" placeholder="Ingrese el nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-lastname">Apellido:</label>
+                    <input type="text" id="edit-user-lastname" name="apellido" placeholder="Ingrese el apellido" required>
+                </div>
+            </div>
+            
+            <!-- Fila 2: Correo y Cédula -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit-user-email">Correo:</label>
+                    <input type="email" id="edit-user-email" name="correo" placeholder="Ingrese el correo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-cedula">Cédula:</label>
+                    <input type="text" id="edit-user-cedula" name="cedula" placeholder="Ingrese la cédula" required>
+                </div>
+            </div>
+            
+            <!-- Fila 3: Contraseña y Confirmación -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit-user-password">Nueva Contraseña:</label>
+                    <input type="password" id="edit-user-password" name="clave" placeholder="Dejar vacío para no cambiar">
+                    <div class="password-strength-container">
+                        <div class="password-strength-bar">
+                            <div class="password-strength-progress" id="edit-password-strength-progress"></div>
+                        </div>
+                        <small id="edit-password-strength-text">Seguridad: -</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-confirm-password">Confirmar Contraseña:</label>
+                    <input type="password" id="edit-user-confirm-password" name="confirmar_clave" placeholder="Confirme la nueva contraseña">
+                </div>
+            </div>
+            
+            <div id="edit-user-error-message" class="error-message" style="display: none;"></div>
+            <button type="submit">Guardar Cambios</button>
         </form>
     </div>
 </div>
-
 
 
 <script>
@@ -1237,6 +1335,199 @@ function validateSecurityQuestions() {
 document.getElementById('pregunta_1').addEventListener('change', validateSecurityQuestions);
 document.getElementById('pregunta_2').addEventListener('change', validateSecurityQuestions);
 document.getElementById('pregunta_3').addEventListener('change', validateSecurityQuestions);
+
+// Función para abrir el modal de edición con los datos del usuario
+function abrirModalEdicion(idUsuario) {
+    // Mostrar spinner de carga
+    const editModal = document.getElementById('edit-modal');
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Cargando datos del usuario...</div>
+    `;
+    editModal.querySelector('.modal-content').appendChild(loadingOverlay);
+    
+    // Mostrar el modal
+    editModal.style.display = 'flex';
+    
+    // Obtener datos del usuario
+    fetch(`obtener_usuario.php?id=${idUsuario}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Llenar el formulario con los datos del usuario
+                document.getElementById('edit-user-id').value = data.usuario.id;
+                document.getElementById('edit-user-name').value = data.usuario.nombre;
+                document.getElementById('edit-user-lastname').value = data.usuario.apellido;
+                document.getElementById('edit-user-email').value = data.usuario.correo;
+                document.getElementById('edit-user-cedula').value = data.usuario.cedula;
+                
+                // Limpiar campos de contraseña
+                document.getElementById('edit-user-password').value = '';
+                document.getElementById('edit-user-confirm-password').value = '';
+                
+                // Limpiar mensajes de error
+                document.getElementById('edit-user-error-message').style.display = 'none';
+            } else {
+                alert('Error al cargar los datos del usuario: ' + data.message);
+                editModal.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al cargar los datos del usuario');
+            editModal.style.display = 'none';
+        })
+        .finally(() => {
+            loadingOverlay.remove();
+        });
+}
+
+// Manejar envío del formulario de edición
+document.getElementById('edit-user-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Mostrar spinner de carga
+    const editModal = document.getElementById('edit-modal');
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Actualizando usuario...</div>
+    `;
+    editModal.querySelector('.modal-content').appendChild(loadingOverlay);
+    
+    // Obtener valores del formulario como FormData
+    const formData = new FormData(this);
+    
+    // Convertir FormData a objeto para validación
+    const data = Object.fromEntries(formData.entries());
+    const errorMessage = document.getElementById('edit-user-error-message');
+    
+    // Validaciones 
+    // Validar campos requeridos
+    const requiredFields = ['nombre', 'apellido', 'correo', 'cedula'];
+    const missingFields = requiredFields.filter(field => !data[field]);
+    
+    if (missingFields.length > 0) {
+        loadingOverlay.remove();
+        showEditErrorMessage(`Los siguientes campos son requeridos: ${missingFields.join(', ')}`);
+        return;
+    }
+    
+    // Validar cédula
+    if (!/^\d{6,12}$/.test(data.cedula)) {
+        loadingOverlay.remove();
+        showEditErrorMessage('La cédula debe tener entre 6 y 12 dígitos y solo puede contener números.');
+        return;
+    }
+    
+    // Validar email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.correo)) {
+        loadingOverlay.remove();
+        showEditErrorMessage('Ingrese un correo electrónico válido.');
+        return;
+    }
+    
+    // Validar contraseña solo si se proporcionó
+    if (data.clave) {
+        // Validar longitud de contraseña
+        if (data.clave.length < 16) {
+            loadingOverlay.remove();
+            showEditErrorMessage('La contraseña debe tener al menos 16 caracteres.');
+            return;
+        }
+        
+        // Validar coincidencia de contraseñas
+        if (data.clave !== data.confirmar_clave) {
+            loadingOverlay.remove();
+            showEditErrorMessage('Las contraseñas no coinciden.');
+            return;
+        }
+    }
+    
+    
+    // Enviar datos al servidor como FormData
+    fetch('editar_usuario.php', {
+        method: 'POST',
+        body: formData  // Envía como multipart/form-data
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showEditSuccessMessage(data.message);
+            setTimeout(() => {
+                editModal.style.display = 'none';
+                window.location.reload();
+            }, 1500);
+        } else {
+            showEditErrorMessage(data.message || 'Error desconocido al actualizar usuario');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showEditErrorMessage('Ocurrió un error al procesar la solicitud.');
+    })
+    .finally(() => {
+        loadingOverlay.remove();
+    });
+});
+
+
+// Función para mostrar mensajes de error en el modal de edición
+function showEditErrorMessage(message) {
+    const errorMessage = document.getElementById('edit-user-error-message');
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    errorMessage.className = 'error-message'; // Remueve la clase success si existe
+}
+
+// Función para mostrar mensajes de éxito en el modal de edición
+function showEditSuccessMessage(message) {
+    const errorMessage = document.getElementById('edit-user-error-message');
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    errorMessage.className = 'error-message success'; // Agrega clase success
+}
+
+// Cerrar modal de edición
+document.getElementById('close-edit-modal').addEventListener('click', () => {
+    document.getElementById('edit-modal').style.display = 'none';
+});
+
+// Validación de contraseña en tiempo real para el modal de edición
+document.getElementById('edit-user-password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const strength = checkPasswordStrength(password);
+    const progressBar = document.getElementById('edit-password-strength-progress');
+    const strengthText = document.getElementById('edit-password-strength-text');
+    
+    // Resetear clases
+    progressBar.className = 'password-strength-progress';
+    
+    if (password.length === 0) {
+        progressBar.style.width = '0%';
+        strengthText.textContent = 'Seguridad: -';
+        return;
+    }
+    
+    // Actualizar barra y texto según fortaleza
+    if (strength === 0) {
+        progressBar.classList.add('password-very-weak');
+        strengthText.textContent = 'Seguridad: Muy débil';
+    } else if (strength === 1) {
+        progressBar.classList.add('password-weak');
+        strengthText.textContent = 'Seguridad: Débil';
+    } else if (strength === 2 || strength === 3) {
+        progressBar.classList.add('password-medium');
+        strengthText.textContent = 'Seguridad: Media';
+    } else {
+        progressBar.classList.add('password-strong');
+        strengthText.textContent = 'Seguridad: Fuerte';
+    }
+});
+
 </script>
     <script src="../assets/js/main.js"></script>
 </body>

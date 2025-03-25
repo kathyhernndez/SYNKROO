@@ -75,16 +75,23 @@ try {
             $color = ($estado == 1) ? 'green' : 'red';
             $texto = ($estado == 1) ? 'Activo' : 'Inactivo';
             echo "<td>";
-echo "<button style='background-color: $color; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;' 
-      onclick='mostrarModalConfirmacion(" . $row['id'] . ", " . $estado . ")'>$texto</button>";
-echo "</td>";
+            echo "<button style='background-color: $color; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;' 
+                  onclick='mostrarModalConfirmacion(" . $row['id'] . ", " . $estado . ")'>$texto</button>";
+            echo "</td>";
 
             // Mostrar el nombre del rol en lugar del id_roles
             echo "<td>" . htmlspecialchars($row['rol']) . "</td>";
 
-            echo "<td>";
-            echo "<button class='btn-eliminar' onclick='eliminarUsuario(" . $row['id'] . ")'>Eliminar</button>";
-            echo "<button class='btn-editar' onclick='mostrarFormularioEdicion(" . $row['id'] . ", \"" . htmlspecialchars($row['nombre']) . "\", \"" . htmlspecialchars($row['apellido']) . "\", \"" . htmlspecialchars($row['correo']) . "\", " . htmlspecialchars($row['id_roles']) . ")'>Editar</button>";
+            echo "<td class='acciones'>";
+            // Botón Eliminar
+            echo "<button class='btn-eliminar' onclick='eliminarUsuario(" . $row['id'] . ")'>
+                    <i class='fas fa-trash-alt'></i> Eliminar
+                  </button>";
+            
+            // Botón Editar (nuevo estilo)
+            echo "<button onclick='abrirModalEdicion(" . $row['id'] . ")' class='btn-editar'>
+                    <i class='fas fa-edit'></i> Editar
+                  </button>";
             echo "</td>";
             echo "</tr>";
         }
