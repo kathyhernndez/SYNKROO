@@ -933,11 +933,13 @@ body {
 
 /* Estilos para el modal de usuarios */
 #user-modal .modal-content {
-    width: 400px;
+    width: 500px;
     max-width: 90%;
+    height: 450px;
     background-color: white;
     border-radius: 10px;
     padding: 20px;
+    
 }
 
 #user-modal form {

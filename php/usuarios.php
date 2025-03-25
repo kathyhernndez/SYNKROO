@@ -390,6 +390,97 @@ body.dark-mode .field-error {
     color: #ff6666;
 }
 
+/* Nuevos estilos para el formulario reorganizado */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    flex: 0 0 100%;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* Ajustes para modo oscuro */
+body.dark-mode .form-group label {
+    color: #fff;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select {
+    background-color: #444;
+    color: white;
+    border-color: #555;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+}
+
+/* Estilo para el botón de guardar */
+#user-form button[type="submit"] {
+    background-color: #ff8c42;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#user-form button[type="submit"]:hover {
+    background-color: #e67e22;
+}
+
+/* Mensajes de error */
+.field-error {
+    color: #ff3333;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+input.error, select.error {
+    border-color: #ff3333 !important;
+}
+
+body.dark-mode .field-error {
+    color: #ff6666;
+}
+
     </style>
     <div class="dashboard">
          <!-- Barra lateral izquierda (menú) -->
@@ -491,44 +582,74 @@ body.dark-mode .field-error {
     </div>
 </div>
 
-
 <!-- Modal para crear usuarios -->
 <div class="modal" id="user-modal">
     <div class="modal-content">
         <span class="close-modal" id="close-user-modal">&times;</span>
         <h2 id="modal-title">Crear Usuario</h2>
         <form id="user-form">
-            <input type="hidden" id="user-id" name="id"> <!-- Campo oculto para el ID del usuario -->
-            <label for="user-name">Nombre:</label>
-            <input type="text" id="user-name" name="nombre" placeholder="Ingrese el nombre" required>
-
-            <label for="user-lastname">Apellido:</label>
-            <input type="text" id="user-lastname" name="apellido" placeholder="Ingrese el apellido" required>
-
-            <label for="user-email">Correo:</label>
-            <input type="email" id="user-email" name="correo" placeholder="Ingrese el correo" required>
-
-            <!-- Campo de la cédula -->
-            <label for="user-cedula">Cédula:</label>
-            <input type="text" id="user-cedula" name="cedula" placeholder="Ingrese la cédula" required>
-
-            <label for="user-password">Contraseña:</label>
-            <input type="password" id="user-password" name="clave" placeholder="Ingrese la contraseña">
-
-        <div class="password-strength-container">
-            <div class="password-strength-bar">
-                <div class="password-strength-progress" id="password-strength-progress"></div>
-            </div>
-            <small id="password-strength-text">Seguridad: Muy débil</small>
-        </div>
-
-            <label for="user-confirm-password">Confirmar Contraseña:</label>
-            <input type="password" id="user-confirm-password" name="confirmar_clave" placeholder="Confirme la contraseña">
+            <input type="hidden" id="user-id" name="id">
             
-            <!--Pregunta de seguridad 1--->
-            <label for="user-answer-1">Selecciona una pregunta de seguridad</label>
-            <select name="pregunta_1" id="pregunta_1" required>
-                <option value="">Selecciona una pregunta de seguridad</option>
+            <!-- Fila 1: Nombre y Apellido -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="user-name">Nombre:</label>
+                    <input type="text" id="user-name" name="nombre" placeholder="Ingrese el nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-lastname">Apellido:</label>
+                    <input type="text" id="user-lastname" name="apellido" placeholder="Ingrese el apellido" required>
+                </div>
+            </div>
+            
+            <!-- Fila 2: Correo y Cédula -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="user-email">Correo:</label>
+                    <input type="email" id="user-email" name="correo" placeholder="Ingrese el correo" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-cedula">Cédula:</label>
+                    <input type="text" id="user-cedula" name="cedula" placeholder="Ingrese la cédula" required>
+                </div>
+            </div>
+            
+            <!-- Fila 3: Contraseña y Confirmación -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="user-password">Contraseña:</label>
+                    <input type="password" id="user-password" name="clave" placeholder="Ingrese la contraseña">
+                    <div class="password-strength-container">
+                        <div class="password-strength-bar">
+                            <div class="password-strength-progress" id="password-strength-progress"></div>
+                        </div>
+                        <small id="password-strength-text">Seguridad: Muy débil</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="user-confirm-password">Confirmar Contraseña:</label>
+                    <input type="password" id="user-confirm-password" name="confirmar_clave" placeholder="Confirme la contraseña">
+                </div>
+            </div>
+            
+            <!-- Fila 4: Rol -->
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="user-rol">Rol:</label>
+                    <select id="user-rol" name="rol" required>
+                        <option value="1">Admin</option>
+                        <option value="2">SuperAdmin</option>
+                        <option value="3">Personal</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Preguntas de seguridad - Fila 5: Pregunta 1 y Respuesta 1 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pregunta_1">Pregunta de seguridad 1:</label>
+                    <select name="pregunta_1" id="pregunta_1" required>
+                    <option value="">Selecciona una pregunta de seguridad</option>
                 <option value="¿Cual es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
                 <option value="¿En qué ciudad conociste a tu mejor amigo/a?">¿En qué ciudad conociste a tu mejor amigo/a?</option>
                 <option value="¿Cual es el nombre de tu profesor/a favorito/a de la escuela?">¿Cuál es el nombre de tu profesor/a favorito/a de la escuela?</option>
@@ -537,14 +658,20 @@ body.dark-mode .field-error {
                 <option value="¿Cual es el nombre de la calle donde creciste?">¿Cuál es el nombre de la calle donde creciste?</option>
                 <option value="¿Cual es tu comida o restaurante favorito?">¿Cuál es tu comida o restaurante favorito?</option>
                 <option value="¿Cual es el nombre de tu personaje historico o ficticio favorito?">¿Cuál es el nombre de tu personaje histórico o ficticio favorito?</option>
-            </select>
-            <label for="user-resp-1">Escribe la respuesta de seguridad</label>
-            <input type="text" id="respuesta_1" name="respuesta_1" placeholder="Ingresa una respuesta de seguridad" required>
-
-            <!--Pregunta de seguridad 2--->
-            <label for="user-answer-2">Selecciona una segunda pregunta de seguridad</label>
-            <select name="pregunta_2" id="pregunta_2" required>
-                <option value="">Selecciona una pregunta de seguridad</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="respuesta_1">Respuesta 1:</label>
+                    <input type="text" id="respuesta_1" name="respuesta_1" placeholder="Ingresa una respuesta" required>
+                </div>
+            </div>
+            
+            <!-- Fila 6: Pregunta 2 y Respuesta 2 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pregunta_2">Pregunta de seguridad 2:</label>
+                    <select name="pregunta_2" id="pregunta_2" required>
+                    <option value="">Selecciona una pregunta de seguridad</option>
                 <option value="¿Cual es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
                 <option value="¿En qué ciudad conociste a tu mejor amigo/a?">¿En qué ciudad conociste a tu mejor amigo/a?</option>
                 <option value="¿Cual es el nombre de tu profesor/a favorito/a de la escuela?">¿Cuál es el nombre de tu profesor/a favorito/a de la escuela?</option>
@@ -553,15 +680,20 @@ body.dark-mode .field-error {
                 <option value="¿Cual es el nombre de la calle donde creciste?">¿Cuál es el nombre de la calle donde creciste?</option>
                 <option value="¿Cual es tu comida o restaurante favorito?">¿Cuál es tu comida o restaurante favorito?</option>
                 <option value="¿Cual es el nombre de tu personaje historico o ficticio favorito?">¿Cuál es el nombre de tu personaje histórico o ficticio favorito?</option>
-            </select>
-            <label for="user-resp-2">Escribe la segunda respuesta de seguridad</label>
-            <input type="text" id="respuesta_2" name="respuesta_2" placeholder="Ingresa una respuesta de seguridad" required>
-
-
-                        <!--Pregunta de seguridad 3--->
-            <label for="user-answer-3">Selecciona una tercera pregunta de seguridad</label>
-            <select name="pregunta_3" id="pregunta_3" required>
-                <option value="">Selecciona una pregunta de seguridad</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="respuesta_2">Respuesta 2:</label>
+                    <input type="text" id="respuesta_2" name="respuesta_2" placeholder="Ingresa una respuesta" required>
+                </div>
+            </div>
+            
+            <!-- Fila 7: Pregunta 3 y Respuesta 3 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pregunta_3">Pregunta de seguridad 3:</label>
+                    <select name="pregunta_3" id="pregunta_3" required>
+                    <option value="">Selecciona una pregunta de seguridad</option>
                 <option value="¿Cual es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
                 <option value="¿En qué ciudad conociste a tu mejor amigo/a?">¿En qué ciudad conociste a tu mejor amigo/a?</option>
                 <option value="¿Cual es el nombre de tu profesor/a favorito/a de la escuela?">¿Cuál es el nombre de tu profesor/a favorito/a de la escuela?</option>
@@ -570,18 +702,14 @@ body.dark-mode .field-error {
                 <option value="¿Cual es el nombre de la calle donde creciste?">¿Cuál es el nombre de la calle donde creciste?</option>
                 <option value="¿Cual es tu comida o restaurante favorito?">¿Cuál es tu comida o restaurante favorito?</option>
                 <option value="¿Cual es el nombre de tu personaje historico o ficticio favorito?">¿Cuál es el nombre de tu personaje histórico o ficticio favorito?</option>
-            </select>
-            <label for="user-resp-3">Escribe la tercera respuesta de seguridad</label>
-            <input type="text" id="respuesta_3" name="respuesta_3" placeholder="Ingresa una respuesta de seguridad" required>
-
-            <!--CAMPO DE ROL-->
-            <label for="user-rol">Rol:</label>
-            <select id="user-rol" name="rol" required>
-                <option value="1">Admin</option>
-                <option value="2">SuperAdmin</option>
-                <option value="3">Personal</option>
-            </select>
-
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="respuesta_3">Respuesta 3:</label>
+                    <input type="text" id="respuesta_3" name="respuesta_3" placeholder="Ingresa una respuesta" required>
+                </div>
+            </div>
+            
             <div id="user-error-message" class="error-message" style="display: none;"></div>
             <button type="submit">Guardar</button>
         </form>
