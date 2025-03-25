@@ -87,3 +87,8 @@ window.location = "../public/index.php";
 ';
 exit();
 ?>
+
+
+<button class="download-btn" onclick="descargarCarpeta(\'' . htmlspecialchars($row['ruta_carpeta']) . '\')">
+                    <i class="fas fa-download"></i>
+                </button>

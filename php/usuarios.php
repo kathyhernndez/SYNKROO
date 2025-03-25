@@ -229,6 +229,167 @@ body.dark-mode #confirm-modal .password-container input {
 body.dark-mode #confirm-modal .toggle-password-btn {
     color: #e67e22;
 }
+
+
+/** estilos registro usuarios **/
+/* Estilos para el modal de usuario */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Estilos para el formulario */
+#user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#user-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#user-form input,
+#user-form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+}
+
+#user-form button[type="submit"] {
+    background-color: #ff8c42;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+#user-form button[type="submit"]:hover {
+    background-color: #e67e22;
+}
+
+.error-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    display: none;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode .modal-content {
+    background-color: #333;
+    color: white;
+}
+
+body.dark-mode #user-form input,
+body.dark-mode #user-form select {
+    background-color: #444;
+    color: white;
+    border-color: #555;
+}
+
+body.dark-mode #user-form button[type="submit"] {
+    background-color: #e67e22;
+}
+
+body.dark-mode #user-form button[type="submit"]:hover {
+    background-color: #d35400;
+}
+
+/* Estilos para el indicador de fortaleza de contraseña */
+.password-strength-container {
+    margin-top: 5px;
+}
+
+.password-strength-bar {
+    width: 100%;
+    height: 5px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 3px;
+}
+
+.password-strength-progress {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Colores para diferentes niveles de fortaleza */
+.password-very-weak {
+    background-color: #ff3333;
+    width: 25%;
+}
+
+.password-weak {
+    background-color: #ff9933;
+    width: 50%;
+}
+
+.password-medium {
+    background-color: #ffcc33;
+    width: 75%;
+}
+
+.password-strong {
+    background-color: #33cc33;
+    width: 100%;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode .password-strength-bar {
+    background-color: #444;
+}
+
+/* Estilos para mensajes de error en campos */
+.field-error {
+    color: #ff3333;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+/* Resaltar campos con error */
+input.error, select.error {
+    border-color: #ff3333 !important;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode .field-error {
+    color: #ff6666;
+}
+
     </style>
     <div class="dashboard">
          <!-- Barra lateral izquierda (menú) -->
@@ -331,7 +492,7 @@ body.dark-mode #confirm-modal .toggle-password-btn {
 </div>
 
 
-<!-- Modal para crear/editar usuarios -->
+<!-- Modal para crear usuarios -->
 <div class="modal" id="user-modal">
     <div class="modal-content">
         <span class="close-modal" id="close-user-modal">&times;</span>
@@ -354,11 +515,68 @@ body.dark-mode #confirm-modal .toggle-password-btn {
             <label for="user-password">Contraseña:</label>
             <input type="password" id="user-password" name="clave" placeholder="Ingrese la contraseña">
 
+        <div class="password-strength-container">
+            <div class="password-strength-bar">
+                <div class="password-strength-progress" id="password-strength-progress"></div>
+            </div>
+            <small id="password-strength-text">Seguridad: Muy débil</small>
+        </div>
+
             <label for="user-confirm-password">Confirmar Contraseña:</label>
             <input type="password" id="user-confirm-password" name="confirmar_clave" placeholder="Confirme la contraseña">
+            
+            <!--Pregunta de seguridad 1--->
+            <label for="user-answer-1">Selecciona una pregunta de seguridad</label>
+            <select name="pregunta_1" id="pregunta_1" required>
+                <option value="">Selecciona una pregunta de seguridad</option>
+                <option value="¿Cual es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
+                <option value="¿En qué ciudad conociste a tu mejor amigo/a?">¿En qué ciudad conociste a tu mejor amigo/a?</option>
+                <option value="¿Cual es el nombre de tu profesor/a favorito/a de la escuela?">¿Cuál es el nombre de tu profesor/a favorito/a de la escuela?</option>
+                <option value="¿Cual es el segundo nombre de tu madre o padre?">¿Cuál es el segundo nombre de tu madre o padre?</option>
+                <option value="¿Cual fue el primer automovil que condujiste o tuviste?">¿Cuál fue el primer automóvil que condujiste o tuviste?</option>
+                <option value="¿Cual es el nombre de la calle donde creciste?">¿Cuál es el nombre de la calle donde creciste?</option>
+                <option value="¿Cual es tu comida o restaurante favorito?">¿Cuál es tu comida o restaurante favorito?</option>
+                <option value="¿Cual es el nombre de tu personaje historico o ficticio favorito?">¿Cuál es el nombre de tu personaje histórico o ficticio favorito?</option>
+            </select>
+            <label for="user-resp-1">Escribe la respuesta de seguridad</label>
+            <input type="text" id="respuesta_1" name="respuesta_1" placeholder="Ingresa una respuesta de seguridad" required>
 
+            <!--Pregunta de seguridad 2--->
+            <label for="user-answer-2">Selecciona una segunda pregunta de seguridad</label>
+            <select name="pregunta_2" id="pregunta_2" required>
+                <option value="">Selecciona una pregunta de seguridad</option>
+                <option value="¿Cual es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
+                <option value="¿En qué ciudad conociste a tu mejor amigo/a?">¿En qué ciudad conociste a tu mejor amigo/a?</option>
+                <option value="¿Cual es el nombre de tu profesor/a favorito/a de la escuela?">¿Cuál es el nombre de tu profesor/a favorito/a de la escuela?</option>
+                <option value="¿Cual es el segundo nombre de tu madre o padre?">¿Cuál es el segundo nombre de tu madre o padre?</option>
+                <option value="¿Cual fue el primer automovil que condujiste o tuviste?">¿Cuál fue el primer automóvil que condujiste o tuviste?</option>
+                <option value="¿Cual es el nombre de la calle donde creciste?">¿Cuál es el nombre de la calle donde creciste?</option>
+                <option value="¿Cual es tu comida o restaurante favorito?">¿Cuál es tu comida o restaurante favorito?</option>
+                <option value="¿Cual es el nombre de tu personaje historico o ficticio favorito?">¿Cuál es el nombre de tu personaje histórico o ficticio favorito?</option>
+            </select>
+            <label for="user-resp-2">Escribe la segunda respuesta de seguridad</label>
+            <input type="text" id="respuesta_2" name="respuesta_2" placeholder="Ingresa una respuesta de seguridad" required>
+
+
+                        <!--Pregunta de seguridad 3--->
+            <label for="user-answer-3">Selecciona una tercera pregunta de seguridad</label>
+            <select name="pregunta_3" id="pregunta_3" required>
+                <option value="">Selecciona una pregunta de seguridad</option>
+                <option value="¿Cual es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
+                <option value="¿En qué ciudad conociste a tu mejor amigo/a?">¿En qué ciudad conociste a tu mejor amigo/a?</option>
+                <option value="¿Cual es el nombre de tu profesor/a favorito/a de la escuela?">¿Cuál es el nombre de tu profesor/a favorito/a de la escuela?</option>
+                <option value="¿Cual es el segundo nombre de tu madre o padre?">¿Cuál es el segundo nombre de tu madre o padre?</option>
+                <option value="¿Cual fue el primer automovil que condujiste o tuviste?">¿Cuál fue el primer automóvil que condujiste o tuviste?</option>
+                <option value="¿Cual es el nombre de la calle donde creciste?">¿Cuál es el nombre de la calle donde creciste?</option>
+                <option value="¿Cual es tu comida o restaurante favorito?">¿Cuál es tu comida o restaurante favorito?</option>
+                <option value="¿Cual es el nombre de tu personaje historico o ficticio favorito?">¿Cuál es el nombre de tu personaje histórico o ficticio favorito?</option>
+            </select>
+            <label for="user-resp-3">Escribe la tercera respuesta de seguridad</label>
+            <input type="text" id="respuesta_3" name="respuesta_3" placeholder="Ingresa una respuesta de seguridad" required>
+
+            <!--CAMPO DE ROL-->
             <label for="user-rol">Rol:</label>
-            <select id="user-rol" name="rol" required disabled>
+            <select id="user-rol" name="rol" required>
                 <option value="1">Admin</option>
                 <option value="2">SuperAdmin</option>
                 <option value="3">Personal</option>
@@ -371,60 +589,41 @@ body.dark-mode #confirm-modal .toggle-password-btn {
 </div>
 
 
+<!-- Modal para editar usuarios -->
+<div class="modal" id="edit-modal">
+    <div class="modal-content">
+        <span class="close-modal" id="close-user-modal">&times;</span>
+        <h2 id="modal-title">Editar Usuario</h2>
+        <form id="user-form">
+            <input type="hidden" id="user-id" name="id"> <!-- Campo oculto para el ID del usuario -->
+            <label for="user-name">Nombre:</label>
+            <input type="text" id="user-name" name="nombre" placeholder="Ingrese el nombre" required>
+
+            <label for="user-lastname">Apellido:</label>
+            <input type="text" id="user-lastname" name="apellido" placeholder="Ingrese el apellido" required>
+
+            <label for="user-email">Correo:</label>
+            <input type="email" id="user-email" name="correo" placeholder="Ingrese el correo" required>
+
+            <!-- Campo de la cédula -->
+            <label for="user-cedula">Cédula:</label>
+            <input type="text" id="user-cedula" name="cedula" placeholder="Ingrese la cédula" required>
+
+            <label for="user-password">Contraseña:</label>
+            <input type="password" id="user-password" name="clave" placeholder="Ingrese la contraseña">
+
+            <label for="user-confirm-password">Confirmar Contraseña:</label>
+            <input type="password" id="user-confirm-password" name="confirmar_clave" placeholder="Confirme la contraseña">
+
+            <div id="user-error-message" class="error-message" style="display: none;"></div>
+            <button type="submit">Guardar</button>
+        </form>
+    </div>
+</div>
+
+
 
 <script>
-document.getElementById('user-form').addEventListener('submit', function (e) {
-    e.preventDefault(); // Evitar el envío tradicional del formulario
-
-    const id = document.getElementById('user-id').value;
-    const cedula = document.getElementById('user-cedula').value; // Cambiado a 'user-cedula'
-    const clave = document.getElementById('user-password').value;
-    const errorMessage = document.getElementById('user-error-message');
-
-    // Limpiar mensajes de error anteriores
-    errorMessage.textContent = '';
-    errorMessage.style.display = 'none';
-
-    // Validar la cédula (mínimo 6 dígitos, máximo 12 dígitos, solo números)
-    if (!/^\d{6,12}$/.test(cedula)) {
-        errorMessage.textContent = 'La cédula debe tener entre 6 y 12 dígitos y solo puede contener números.';
-        errorMessage.style.display = 'block';
-        return; // Detener el envío del formulario
-    }
-
-    // Validar la contraseña (mínimo 16 caracteres)
-    if (clave && clave.length < 16) {
-        errorMessage.textContent = 'La contraseña debe tener al menos 16 caracteres.';
-        errorMessage.style.display = 'block';
-        return; // Detener el envío del formulario
-    }
-
-    const formData = new FormData(this); // Obtener los datos del formulario
-
-    // Determinar la URL del endpoint según si es creación o edición
-    const url = id ? 'editar_usuario.php' : 'registro_usuario_be.php';
-
-    fetch(url, {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => response.json()) // Esperar una respuesta JSON
-    .then(data => {
-        if (data.success) {
-            // Si la operación fue exitosa, recargar la página para mostrar los cambios
-            window.location.reload();
-        } else {
-            // Mostrar el mensaje de error en el modal
-            errorMessage.textContent = data.message;
-            errorMessage.style.display = 'block';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        errorMessage.textContent = 'Ocurrió un error al enviar el formulario.';
-        errorMessage.style.display = 'block';
-    });
-});
 
 function cambiarEstadoUsuario(idUsuario, estadoActual) {
     // Solicitar la contraseña del administrador para confirmar la acción
@@ -462,42 +661,7 @@ function cambiarEstadoUsuario(idUsuario, estadoActual) {
     });
 }
 
-document.getElementById('create-user-btn').addEventListener('click', function () {
-    // Cambiar el título del modal
-    document.getElementById('modal-title').textContent = 'Crear Usuario';
 
-    // Habilitar el campo de rol
-    document.getElementById('user-rol').disabled = false;
-
-    // Reiniciar el formulario
-    reiniciarFormulario();
-
-    // Mostrar el modal
-    document.getElementById('user-modal').style.display = 'block';
-});
-
-function mostrarFormularioEdicion(id, nombre, apellido, correo, cedula, rol) {
-    // Cambiar el título del modal
-    document.getElementById('modal-title').textContent = 'Editar Usuario';
-
-    // Llenar el formulario con los datos del usuario
-    document.getElementById('user-id').value = id;
-    document.getElementById('user-name').value = nombre;
-    document.getElementById('user-lastname').value = apellido;
-    document.getElementById('user-email').value = correo;
-    document.getElementById('user-cedula').value = cedula;
-
-    // Deshabilitar el campo de rol
-    document.getElementById('user-rol').value = rol;
-    document.getElementById('user-rol').disabled = true;
-
-    // Limpiar los campos de contraseña
-    document.getElementById('user-password').value = '';
-    document.getElementById('user-confirm-password').value = '';
-
-    // Mostrar el modal
-    document.getElementById('user-modal').style.display = 'block';
-}
 
 function eliminarUsuario(idUsuario) {
     // Solicitar confirmación antes de eliminar
@@ -569,28 +733,6 @@ document.addEventListener('DOMContentLoaded', function () {
     cargarUsuarios();
     searchBar.addEventListener('input', cargarUsuarios);
 });
-// Función para reiniciar el formulario
-function reiniciarFormulario() {
-    document.getElementById('user-form').reset();
-    document.getElementById('user-id').value = '';
-    document.getElementById('user-rol').disabled = false; // Habilitar el campo de rol
-    document.getElementById('user-error-message').style.display = 'none';
-}
-
-// Cerrar el modal de usuario y reiniciar el formulario
-document.getElementById('close-user-modal').onclick = function () {
-    document.getElementById('user-modal').style.display = 'none';
-    reiniciarFormulario();
-};
-
-// Cerrar el modal al hacer clic fuera del modal
-window.onclick = function (event) {
-    const userModal = document.getElementById('user-modal');
-    if (event.target === userModal) {
-        userModal.style.display = 'none';
-        reiniciarFormulario();
-    }
-};
 
 // Función para mostrar el modal de confirmación
 function mostrarModalConfirmacion(idUsuario, estadoActual) {
@@ -667,28 +809,306 @@ function mostrarModalConfirmacion(idUsuario, estadoActual) {
     };
 }
 
-// Función para reiniciar el formulario
-function reiniciarFormulario() {
-    document.getElementById('user-form').reset();
-    document.getElementById('user-id').value = '';
-    document.getElementById('user-rol').disabled = false;
-    document.getElementById('user-error-message').style.display = 'none';
+// Modal de creación de usuarios
+const createUserBtn = document.getElementById('create-user-btn');
+const userModal = document.getElementById('user-modal');
+const closeUserModal = document.getElementById('close-user-modal');
+const userForm = document.getElementById('user-form');
+const errorMessage = document.getElementById('user-error-message');
+
+// Mostrar modal de creación de usuarios
+createUserBtn.addEventListener('click', () => {
+    userModal.style.display = 'flex';
+    userForm.reset();
+    errorMessage.style.display = 'none';
+});
+
+// Cerrar modal de creación de usuarios
+closeUserModal.addEventListener('click', () => {
+    userModal.style.display = 'none';
+});
+
+// Reemplaza todo el código JavaScript del formulario con este:
+
+// Manejar envío del formulario de usuario
+userForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Mostrar spinner de carga
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Procesando...</div>
+    `;
+    userModal.querySelector('.modal-content').appendChild(loadingOverlay);
+    
+    // Obtener valores del formulario
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Verificar que las preguntas están presentes
+    if (!data.pregunta_1 || !data.pregunta_2 || !data.pregunta_3) {
+        showErrorMessage('Debe seleccionar las tres preguntas de seguridad');
+        return;
+    }
+
+    // Validar campos requeridos
+    const requiredFields = ['nombre', 'apellido', 'correo', 'cedula', 'rol', 
+                          'pregunta_1', 'pregunta_2', 'pregunta_3',
+                          'respuesta_1', 'respuesta_2', 'respuesta_3'];
+    
+    const missingFields = requiredFields.filter(field => !data[field]);
+    if (missingFields.length > 0) {
+        loadingOverlay.remove();
+        showErrorMessage(`Los siguientes campos son requeridos: ${missingFields.join(', ')}`);
+        return;
+    }
+    
+    // Validar preguntas de seguridad
+    const preguntas = [data.pregunta_1, data.pregunta_2, data.pregunta_3];
+    if (new Set(preguntas).size !== 3) {
+        loadingOverlay.remove();
+        showErrorMessage('Las preguntas de seguridad deben ser diferentes entre sí.');
+        return;
+    }
+    
+    // Validar respuestas de seguridad
+    const respuestas = [data.respuesta_1, data.respuesta_2, data.respuesta_3];
+    if (new Set(respuestas).size !== 3) {
+        loadingOverlay.remove();
+        showErrorMessage('Las respuestas de seguridad deben ser diferentes entre sí.');
+        return;
+    }
+    
+    // Validar contraseña si es nuevo usuario
+    if (!data.id && (!data.clave || !data.confirmar_clave)) {
+        loadingOverlay.remove();
+        showErrorMessage('La contraseña es requerida para nuevos usuarios.');
+        return;
+    }
+    
+    // Validar coincidencia de contraseñas
+    if (data.clave && data.clave !== data.confirmar_clave) {
+        loadingOverlay.remove();
+        showErrorMessage('Las contraseñas no coinciden.');
+        return;
+    }
+    
+    // Validar longitud de contraseña
+    if (data.clave && data.clave.length < 16) {
+        loadingOverlay.remove();
+        showErrorMessage('La contraseña debe tener al menos 16 caracteres.');
+        return;
+    }
+    
+    // Validar cédula
+    if (!/^\d{6,12}$/.test(data.cedula)) {
+        loadingOverlay.remove();
+        showErrorMessage('La cédula debe tener entre 6 y 12 dígitos y solo puede contener números.');
+        return;
+    }
+    
+    // Enviar datos al servidor
+    fetch('registro_usuario_be.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        // Verificar si la respuesta es JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return response.text().then(text => {
+                throw new Error(`Respuesta no JSON: ${text.substring(0, 100)}...`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        loadingOverlay.remove();
+        if (data.success) {
+            showSuccessMessage(data.message);
+            setTimeout(() => {
+                userModal.style.display = 'none';
+                window.location.reload();
+            }, 2000);
+        } else {
+            showErrorMessage(data.message || 'Error desconocido al registrar usuario');
+        }
+    })
+    .catch(error => {
+        loadingOverlay.remove();
+        console.error('Error detallado:', error);
+        let errorMsg = 'Ocurrió un error al procesar la solicitud.';
+        
+        if (error instanceof TypeError) {
+            errorMsg = 'Error de conexión. Verifica tu conexión a internet.';
+        } else if (error.message) {
+            errorMsg = error.message;
+        }
+        
+        showErrorMessage(errorMsg);
+        
+        console.group('Detalles del error');
+        console.error('URL:', 'registro_usuario_be.php');
+        console.error('Método:', 'POST');
+        console.error('Datos enviados:', data);
+        console.error('Error completo:', error);
+        console.groupEnd();
+    });
+});
+
+// Función para mostrar mensajes de error
+function showErrorMessage(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    errorMessage.style.color = '#ff3333'; // Rojo para errores
 }
 
-// Cerrar el modal de usuario y reiniciar el formulario
-document.getElementById('close-user-modal').onclick = function () {
-    document.getElementById('user-modal').style.display = 'none';
-    reiniciarFormulario();
-};
+// Función para mostrar mensajes de éxito
+function showSuccessMessage(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    errorMessage.style.color = '#33cc33'; // Verde para éxito
+}
 
-// Cerrar el modal al hacer clic fuera del modal
-window.onclick = function (event) {
-    const userModal = document.getElementById('user-modal');
-    if (event.target === userModal) {
-        userModal.style.display = 'none';
-        reiniciarFormulario();
+// Función para evaluar la fortaleza de la contraseña
+function checkPasswordStrength(password) {
+    let strength = 0;
+    
+    // Longitud mínima
+    if (password.length >= 16) strength += 1;
+    
+    // Contiene letras mayúsculas y minúsculas
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 1;
+    
+    // Contiene números
+    if (/\d/.test(password)) strength += 1;
+    
+    // Contiene caracteres especiales
+    if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
+    
+    return strength;
+}
+
+// Event listener para el campo de contraseña
+document.getElementById('user-password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const strength = checkPasswordStrength(password);
+    const progressBar = document.getElementById('password-strength-progress');
+    const strengthText = document.getElementById('password-strength-text');
+    
+    // Resetear clases
+    progressBar.className = 'password-strength-progress';
+    
+    if (password.length === 0) {
+        progressBar.style.width = '0%';
+        strengthText.textContent = 'Seguridad: -';
+        return;
     }
-};
+    
+    // Actualizar barra y texto según fortaleza
+    if (strength === 0) {
+        progressBar.classList.add('password-very-weak');
+        strengthText.textContent = 'Seguridad: Muy débil';
+    } else if (strength === 1) {
+        progressBar.classList.add('password-weak');
+        strengthText.textContent = 'Seguridad: Débil';
+    } else if (strength === 2 || strength === 3) {
+        progressBar.classList.add('password-medium');
+        strengthText.textContent = 'Seguridad: Media';
+    } else {
+        progressBar.classList.add('password-strong');
+        strengthText.textContent = 'Seguridad: Fuerte';
+    }
+});
+
+// Función para validar cédula en tiempo real
+document.getElementById('user-cedula').addEventListener('input', function(e) {
+    const cedula = e.target.value;
+    const errorElement = document.getElementById('cedula-error') || createErrorElement(e.target, 'cedula-error');
+    
+    if (!/^\d{0,12}$/.test(cedula)) {
+        showFieldError(errorElement, 'La cédula solo puede contener números (máx. 12)');
+    } else if (cedula.length > 0 && cedula.length < 6) {
+        showFieldError(errorElement, 'La cédula debe tener al menos 6 dígitos');
+    } else {
+        clearFieldError(errorElement);
+    }
+});
+
+// Función para validar email en tiempo real
+document.getElementById('user-email').addEventListener('input', function(e) {
+    const email = e.target.value;
+    const errorElement = document.getElementById('email-error') || createErrorElement(e.target, 'email-error');
+    
+    if (email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showFieldError(errorElement, 'Ingrese un correo electrónico válido');
+    } else {
+        clearFieldError(errorElement);
+    }
+});
+
+// Función para validar coincidencia de contraseñas en tiempo real
+document.getElementById('user-confirm-password').addEventListener('input', function(e) {
+    const password = document.getElementById('user-password').value;
+    const confirmPassword = e.target.value;
+    const errorElement = document.getElementById('confirm-password-error') || createErrorElement(e.target, 'confirm-password-error');
+    
+    if (confirmPassword.length > 0 && password !== confirmPassword) {
+        showFieldError(errorElement, 'Las contraseñas no coinciden');
+    } else {
+        clearFieldError(errorElement);
+    }
+});
+
+// Funciones auxiliares para manejo de errores
+function createErrorElement(inputElement, id) {
+    const errorElement = document.createElement('div');
+    errorElement.id = id;
+    errorElement.className = 'field-error';
+    inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+    return errorElement;
+}
+
+function showFieldError(element, message) {
+    element.textContent = message;
+    element.style.display = 'block';
+}
+
+function clearFieldError(element) {
+    element.textContent = '';
+    element.style.display = 'none';
+}
+
+// Función para validar preguntas de seguridad
+function validateSecurityQuestions() {
+    const pregunta1 = document.getElementById('pregunta_1').value;
+    const pregunta2 = document.getElementById('pregunta_2').value;
+    const pregunta3 = document.getElementById('pregunta_3').value;
+    
+    const errorElement = document.getElementById('questions-error') || 
+        createErrorElement(document.getElementById('pregunta_3'), 'questions-error');
+    
+    if (pregunta1 && pregunta2 && pregunta3) {
+        if (pregunta1 === pregunta2 || pregunta1 === pregunta3 || pregunta2 === pregunta3) {
+            showFieldError(errorElement, 'Las preguntas de seguridad deben ser diferentes');
+            return false;
+        } else {
+            clearFieldError(errorElement);
+            return true;
+        }
+    }
+    return true;
+}
+
+// Añadir event listeners a las preguntas
+document.getElementById('pregunta_1').addEventListener('change', validateSecurityQuestions);
+document.getElementById('pregunta_2').addEventListener('change', validateSecurityQuestions);
+document.getElementById('pregunta_3').addEventListener('change', validateSecurityQuestions);
 </script>
     <script src="../assets/js/main.js"></script>
 </body>

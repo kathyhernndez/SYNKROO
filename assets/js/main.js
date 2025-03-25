@@ -218,11 +218,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorMessage = document.getElementById('error-message');
 
     // Variables para la gestión de usuarios
-    const createUserBtn = document.getElementById('create-user-btn');
-    const userModal = document.getElementById('user-modal');
-    const closeUserModal = document.getElementById('close-user-modal');
-    const userForm = document.getElementById('user-form');
-    const userErrorMsg = document.getElementById('user-error-message');
     const userTable = document.querySelector('.user-table tbody');
 
     // Verificar el modo guardado en localStorage
@@ -424,29 +419,4 @@ document.addEventListener('DOMContentLoaded', function () {
             setupFileButtons();
         });
     }
-
-    // Gestión de usuarios
-    // Abrir modal para crear usuario
-    if (createUserBtn) {
-        createUserBtn.addEventListener('click', function () {
-            userModal.style.display = 'flex';
-            document.getElementById('modal-title').textContent = 'Crear Usuario';
-            userForm.reset();
-            userErrorMsg.style.display = 'none';
-        });
-    }
-
-    // Cerrar modal de usuario
-    if (closeUserModal) {
-        closeUserModal.addEventListener('click', function () {
-            userModal.style.display = 'none';
-        });
-    }
-
-    // Cerrar modal al hacer clic fuera del contenido
-    window.addEventListener('click', function (event) {
-        if (event.target === userModal) {
-            userModal.style.display = 'none';
-        }
-    });
 });

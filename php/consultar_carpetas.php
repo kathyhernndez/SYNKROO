@@ -15,9 +15,7 @@ try {
             </div>
             <p class="file-date">' . htmlspecialchars($row['fecha_creacion']) . '</p>
             <div class="file-actions">
-                <button class="download-btn" onclick="descargarCarpeta(\'' . htmlspecialchars($row['ruta_carpeta']) . '\')">
-                    <i class="fas fa-download"></i>
-                </button>
+                
                 <button class="edit-btn" onclick="editarCarpeta(' . htmlspecialchars($row['id']) . ')">
                     <i class="fas fa-edit"></i>
                 </button>

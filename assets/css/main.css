@@ -221,7 +221,7 @@ body {
 
 .files-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Tamaño de los archivos en computadora */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Tamaño de los archivos en computadora */
     gap: 20px; /* Espacio entre archivos en computadora */
 }
 

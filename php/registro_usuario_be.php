@@ -3,88 +3,152 @@ include 'conexion_be.php';
 include 'registrar_accion.php';
 session_start();
 
-header('Content-Type: application/json'); // Indicar que la respuesta es JSON
+header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 try {
-    // Sanitizar entradas del usuario para evitar inyecciones SQL
-    $nombres = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $correo = $_POST['correo'];
-    $cedula = $_POST['cedula'];
-    $clave = $_POST['clave'];
-    $confirmar_clave = $_POST['confirmar_clave'];
-    $rol = $_POST['rol'];
+    // Verificar método POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido', 405);
+    }
+
+    // Obtener datos del cuerpo de la solicitud
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Error al decodificar JSON: ' . json_last_error_msg(), 400);
+    }
+
+    // Verificar datos requeridos
+    $requiredFields = ['nombre', 'apellido', 'correo', 'cedula', 'rol', 
+                      'pregunta_1', 'pregunta_2', 'pregunta_3',
+                      'respuesta_1', 'respuesta_2', 'respuesta_3'];
+    
+    foreach ($requiredFields as $field) {
+        if (empty($data[$field])) {
+            throw new Exception("El campo $field es requerido", 400);
+        }
+    }
+
+    // Sanitizar entradas
+    $nombres = filter_var($data['nombre'], FILTER_SANITIZE_STRING);
+    $apellido = filter_var($data['apellido'], FILTER_SANITIZE_STRING);
+    $correo = filter_var($data['correo'], FILTER_SANITIZE_EMAIL);
+    $cedula = filter_var($data['cedula'], FILTER_SANITIZE_STRING);
+    $clave = $data['clave'] ?? null;
+    $confirmar_clave = $data['confirmar_clave'] ?? null;
+    $rol = filter_var($data['rol'], FILTER_VALIDATE_INT);
+    
+    // Validar rol
+    if (!in_array($rol, [1, 2, 3])) {
+        throw new Exception('Rol de usuario no válido', 400);
+    }
 
     // Validar que la cédula tenga entre 6 y 12 dígitos y solo números
     if (!preg_match('/^\d{6,12}$/', $cedula)) {
-        echo json_encode(['success' => false, 'message' => 'La cédula debe tener entre 6 y 12 dígitos y solo puede contener números.']);
-        exit();
+        throw new Exception('La cédula debe tener entre 6 y 12 dígitos y solo puede contener números.', 400);
     }
 
     // Validar que la contraseña tenga al menos 16 caracteres
-    if (strlen($clave) < 16) {
-        echo json_encode(['success' => false, 'message' => 'La contraseña debe tener al menos 16 caracteres.']);
-        exit();
+    if ($clave && strlen($clave) < 16) {
+        throw new Exception('La contraseña debe tener al menos 16 caracteres.', 400);
     }
 
     // Verificar que las contraseñas coincidan
-    if ($clave !== $confirmar_clave) {
-        echo json_encode(['success' => false, 'message' => 'Las contraseñas no coinciden. Por favor, inténtelo de nuevo.']);
-        exit();
+    if ($clave && $clave !== $confirmar_clave) {
+        throw new Exception('Las contraseñas no coinciden. Por favor, inténtelo de nuevo.', 400);
     }
 
     // Verificar si el correo ya está en uso
-    $query_verificar_correo = "SELECT id FROM usuarios WHERE correo = :correo";
+    $query_verificar_correo = "SELECT id FROM usuarios WHERE correo = ?";
     $stmt_verificar_correo = $conexion->prepare($query_verificar_correo);
-    $stmt_verificar_correo->bindParam(':correo', $correo, PDO::PARAM_STR);
-    $stmt_verificar_correo->execute();
+    $stmt_verificar_correo->execute([$correo]);
 
     if ($stmt_verificar_correo->rowCount() > 0) {
-        echo json_encode(['success' => false, 'message' => 'El correo ya está registrado. Por favor, use otro correo.']);
-        exit();
+        throw new Exception('El correo ya está registrado. Por favor, use otro correo.', 400);
     }
 
     // Verificar si la cédula ya está en uso
-    $query_verificar_cedula = "SELECT id FROM usuarios WHERE cedula = :cedula";
+    $query_verificar_cedula = "SELECT id FROM usuarios WHERE cedula = ?";
     $stmt_verificar_cedula = $conexion->prepare($query_verificar_cedula);
-    $stmt_verificar_cedula->bindParam(':cedula', $cedula, PDO::PARAM_STR);
-    $stmt_verificar_cedula->execute();
+    $stmt_verificar_cedula->execute([$cedula]);
 
     if ($stmt_verificar_cedula->rowCount() > 0) {
-        echo json_encode(['success' => false, 'message' => 'La cédula ya está registrada. Por favor, use otra cédula.']);
-        exit();
+        throw new Exception('La cédula ya está registrada. Por favor, use otra cédula.', 400);
     }
 
     // Encriptar contraseña usando password_hash
-    $clave_encriptada = password_hash($clave, PASSWORD_DEFAULT);
+    $clave_encriptada = $clave ? password_hash($clave, PASSWORD_DEFAULT) : null;
 
-    // Insertar el nuevo usuario en la tabla usuarios
-    $query_usuario = "INSERT INTO usuarios (nombre, apellido, correo, cedula, clave, estado, id_roles) 
-                      VALUES (:nombres, :apellido, :correo, :cedula, :clave_encriptada, '1', :rol)";
-    $stmt_usuario = $conexion->prepare($query_usuario);
-    $stmt_usuario->bindParam(':nombres', $nombres, PDO::PARAM_STR);
-    $stmt_usuario->bindParam(':apellido', $apellido, PDO::PARAM_STR);
-    $stmt_usuario->bindParam(':correo', $correo, PDO::PARAM_STR);
-    $stmt_usuario->bindParam(':cedula', $cedula, PDO::PARAM_STR);
-    $stmt_usuario->bindParam(':clave_encriptada', $clave_encriptada, PDO::PARAM_STR);
-    $stmt_usuario->bindParam(':rol', $rol, PDO::PARAM_INT);
+    // Iniciar transacción
+    $conexion->beginTransaction();
 
-    if ($stmt_usuario->execute()) {
+    try {
+        // Insertar el nuevo usuario
+        $query_usuario = "INSERT INTO usuarios (nombre, apellido, correo, cedula, clave, estado, id_roles) 
+                          VALUES (?, ?, ?, ?, ?, 1, ?)";
+        $stmt_usuario = $conexion->prepare($query_usuario);
+        $stmt_usuario->execute([$nombres, $apellido, $correo, $cedula, $clave_encriptada, $rol]);
+
+        // Obtener ID del nuevo usuario
+        $usuario_id = $conexion->lastInsertId();
+
+        // Insertar preguntas y respuestas de seguridad
+        $query_preguntas = "INSERT INTO recuperar_contrasena 
+                            (pregunta_1, pregunta_2, pregunta_3, 
+                             respuesta_1, respuesta_2, respuesta_3, 
+                             id_usuario) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt_preguntas = $conexion->prepare($query_preguntas);
+        $stmt_preguntas->execute([
+            $data['pregunta_1'],  // Texto completo de la pregunta 1
+            $data['pregunta_2'],  // Texto completo de la pregunta 2
+            $data['pregunta_3'],  // Texto completo de la pregunta 3
+            $data['respuesta_1'],
+            $data['respuesta_2'],
+            $data['respuesta_3'],
+            $usuario_id
+        ]);
+
+        // Registrar en bitácora
         if (isset($_SESSION['usuario_id'])) {
-            $usuario_id = $_SESSION['usuario_id'];
-            registrarAccion($conexion, $usuario_id, 'registro de usuario', 'Un nuevo usuario ha sido registrado en el sistema.');
-            echo json_encode(['success' => true, 'message' => 'Usuario registrado exitosamente.']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Error al registrar el usuario: Sesión no válida.']);
+            registrarAccion($conexion, $_SESSION['usuario_id'], 'registro de usuario', 'Nuevo usuario registrado');
         }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al registrar el usuario en la base de datos.']);
-    }
-} catch (PDOException $e) {
-    // Manejo de errores
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
-}
 
-// Cerrar la conexión (no es necesario en PDO, pero puedes asignar null para liberar recursos)
-$conexion = null;
+        $conexion->commit();
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Usuario registrado exitosamente',
+            'userId' => $usuario_id
+        ]);
+        
+    } catch (PDOException $e) {
+        $conexion->rollBack();
+        throw new Exception("Error en la base de datos: " . $e->getMessage(), 500);
+    }
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error de base de datos: ' . $e->getMessage(),
+        'code' => $e->getCode()
+    ]);
+    
+} catch (Exception $e) {
+    http_response_code($e->getCode() ?: 400);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'code' => $e->getCode() ?: 400
+    ]);
+    
+} finally {
+    if (isset($conexion)) {
+        $conexion = null;
+    }
+}
 ?>
