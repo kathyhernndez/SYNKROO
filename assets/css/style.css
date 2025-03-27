@@ -429,3 +429,47 @@ body.dark-mode .theme-toggle {
 .close-modal:hover {
     color: var(--primary-color-dark);
 }
+
+
+/* Estilos para el proceso de recuperación */
+#recoveryForm {
+    transition: all 0.3s ease;
+}
+
+#recoveryForm h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.pregunta {
+    margin-bottom: 15px;
+}
+
+.pregunta label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.pregunta input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#successMessage h2 {
+    color: #4CAF50;
+    margin-bottom: 10px;
+}
+
+#successMessage p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+/* Estilos para botones deshabilitados */
+button:disabled {
+    background-color: #cccccc !important;
+    cursor: not-allowed;
+}

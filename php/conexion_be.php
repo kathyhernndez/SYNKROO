@@ -1,4 +1,6 @@
 <?php
+
+
 // Datos de conexión
 $host = "localhost";
 $dbname = "synkroo";

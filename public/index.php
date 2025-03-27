@@ -73,28 +73,64 @@ if (empty($_SESSION['csrf_token'])) {
                     <span class="help-text">Escribe el captcha de la imagen para verificar que no eres un robot.</span>
                     <button type="submit">Entrar</button>
                 </form>
+
+
                 <!-- Recuperación -->
-                <form action="#" method="POST" class="formulario__register" id="registro-form" onsubmit="return validarFormularioRecuperacion()">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                    <h2>Recuperar Contraseña</h2>
-                    <input type="email" id="recoverUser" name="recoverUser" placeholder="Ingresa un correo electrónico válido" required minlength="5" maxlength="64" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-                    <span class="help-text">Ingresa tu correo electrónico para verificar tu usuario.</span>
-                    <input type="number" id="recoverCedula" name="recoverCedula" placeholder="Ingresa tu cédula de identidad" required minlength="5" maxlength="12">
-                    <span class="help-text">Ingresa tu cédula de identidad para verificar tu usuario.</span>
-                    <!-- CAPTCHA -->
-                    <label for="recoverCaptcha">CAPTCHA:</label>
-                    <div>
-                        <img src="../php/captcha.php" style="margin: 10px 0;" alt="CAPTCHA" class="captcha-image" id="captchaImageRecover">
-                        <button style="padding: 5px 10px;" type="button" title="Este botón es para recargar el captcha" class="reload-button" onclick="reloadCaptchaRecover()">↻</button>
-                        <button style="padding: 5px 10px;" type="button" title="Este botón es para reproducir el captcha" class="audio-button" onclick="playCaptchaRecover()">▶</button>
-                    </div>
-                    <input type="text" id="recoverCaptcha" name="recoverCaptcha" placeholder="Ingresa lo que ves en la imagen" required>
-                    <span class="help-text">Escribe el captcha de la imagen para verificar que no eres un robot.</span>
-                    <button type="submit">Enviar Código</button>
-                </form>
+<form id="recoveryForm" class="formulario__register" style="display: none;">
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+    
+    <!-- Paso 1: Verificación inicial -->
+    <div id="step1">
+        <h2>Recuperar Contraseña</h2>
+        <input type="email" id="recoverUser" name="recoverUser" placeholder="Ingresa un correo electrónico válido" required minlength="5" maxlength="64" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+        <span class="help-text">Ingresa tu correo electrónico para verificar tu usuario.</span>
+        <input type="number" id="recoverCedula" name="recoverCedula" placeholder="Ingresa tu cédula de identidad" required minlength="5" maxlength="12">
+        <span class="help-text">Ingresa tu cédula de identidad para verificar tu usuario.</span>
+        <label for="recoverCaptcha">CAPTCHA:</label>
+        <div>
+            <img src="../php/captcha.php" style="margin: 10px 0;" alt="CAPTCHA" class="captcha-image" id="captchaImageRecover">
+            <button style="padding: 5px 10px;" type="button" title="Este botón es para recargar el captcha" class="reload-button" onclick="reloadCaptchaRecover()">↻</button>
+            <button style="padding: 5px 10px;" type="button" title="Este botón es para reproducir el captcha" class="audio-button" onclick="playCaptchaRecover()">▶</button>
+        </div>
+        <input type="text" id="recoverCaptcha" name="recoverCaptcha" placeholder="Ingresa lo que ves en la imagen" required>
+        <span class="help-text">Escribe el captcha de la imagen para verificar que no eres un robot.</span>
+        <button type="button" onclick="verifyUser()">Verificar Usuario</button>
+    </div>
+    
+    <!-- Paso 2: Preguntas de seguridad -->
+    <div id="step2" style="display: none;">
+        <h2>Preguntas de Seguridad</h2>
+        <div id="preguntasContainer">
+            <!-- Las preguntas se cargarán dinámicamente aquí -->
+        </div>
+        <button type="button" onclick="verifyAnswers()">Verificar Respuestas</button>
+    </div>
+    
+    <!-- Paso 3: Cambiar contraseña -->
+    <div id="step3" style="display: none;">
+        <h2>Cambiar Contraseña</h2>
+        <input type="password" id="nueva_contrasena" name="nueva_contrasena" placeholder="Nueva contraseña" required minlength="8" maxlength="64">
+        <span class="help-text">La contraseña debe tener al menos 8 caracteres.</span>
+        <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" placeholder="Confirmar nueva contraseña" required minlength="8" maxlength="64">
+        <span class="help-text">Vuelve a escribir la nueva contraseña.</span>
+        <button type="button" onclick="changePassword()">Cambiar Contraseña</button>
+    </div>
+    
+    <!-- Mensaje de éxito -->
+    <div id="successMessage" style="display: none; text-align: center;">
+        <h2 style="color: #4CAF50;">¡Contraseña cambiada con éxito!</h2>
+        <p>Tu contraseña ha sido actualizada correctamente.</p>
+        <button type="button" onclick="location.reload()">Volver al inicio</button>
+    </div>
+</form>
+
+
+
             </div>
         </div>
     </main>
+
+
 
 <!-- Modal para errores de CSRF -->
 <div id="csrfErrorModal" class="modal">
@@ -268,6 +304,195 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+
+// Función para verificar el usuario (Paso 1)
+function verifyUser() {
+    const email = document.getElementById('recoverUser').value;
+    const cedula = document.getElementById('recoverCedula').value;
+    const captcha = document.getElementById('recoverCaptcha').value;
+
+    if (!email || !cedula || !captcha) {
+        alert("Por favor, completa todos los campos.");
+        return;
+    }
+
+    // Validar formato de email
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+        alert("Por favor, ingresa un correo electrónico válido.");
+        return;
+    }
+
+    // Mostrar carga
+    const btn = document.querySelector('#step1 button');
+    btn.disabled = true;
+    btn.innerHTML = 'Verificando...';
+
+    // Enviar datos al servidor
+    const formData = new FormData();
+    formData.append('recoverUser', email);
+    formData.append('recoverCedula', cedula);
+    formData.append('recoverCaptcha', captcha);
+    formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+
+    fetch('../php/recuperar_contrasena_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Mostrar preguntas de seguridad
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            
+            // Cargar preguntas
+            const container = document.getElementById('preguntasContainer');
+            container.innerHTML = `
+                <div class="pregunta">
+                    <label>${data.pregunta_1}</label>
+                    <input type="text" name="respuesta_1" required>
+                </div>
+                <div class="pregunta">
+                    <label>${data.pregunta_2}</label>
+                    <input type="text" name="respuesta_2" required>
+                </div>
+                <div class="pregunta">
+                    <label>${data.pregunta_3}</label>
+                    <input type="text" name="respuesta_3" required>
+                </div>
+            `;
+        } else {
+            alert(data.message || 'Error al verificar el usuario');
+            reloadCaptchaRecover();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ocurrió un error al procesar la solicitud');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Verificar Usuario';
+    });
+}
+
+// Función para verificar respuestas (Paso 2)
+function verifyAnswers() {
+    // Obtener valores de los inputs
+    const respuesta1 = document.querySelector('input[name="respuesta_1"]').value.trim();
+    const respuesta2 = document.querySelector('input[name="respuesta_2"]').value.trim();
+    const respuesta3 = document.querySelector('input[name="respuesta_3"]').value.trim();
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+    // Validar que no estén vacíos
+    if (!respuesta1 || !respuesta2 || !respuesta3) {
+        alert("Por favor, responde todas las preguntas.");
+        return;
+    }
+
+    // Mostrar carga
+    const btn = document.querySelector('#step2 button');
+    btn.disabled = true;
+    btn.innerHTML = 'Verificando...';
+
+    // Crear objeto con los datos
+    const formData = new FormData();
+    formData.append('respuesta_1', respuesta1);
+    formData.append('respuesta_2', respuesta2);
+    formData.append('respuesta_3', respuesta3);
+    formData.append('csrf_token', csrfToken);
+
+    // Enviar respuestas al servidor como FormData
+    fetch('../php/verificar_respuestas_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+        } else {
+            alert(data.message || 'Respuestas incorrectas');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ocurrió un error al procesar las respuestas');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Verificar Respuestas';
+    });
+}
+
+// Función para cambiar contraseña (Paso 3)
+function changePassword() {
+    const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+    const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+    if (!nuevaContrasena || !confirmarContrasena) {
+        alert("Por favor, completa ambos campos.");
+        return;
+    }
+
+    if (nuevaContrasena !== confirmarContrasena) {
+        alert("Las contraseñas no coinciden.");
+        return;
+    }
+
+    if (nuevaContrasena.length < 8) {
+        alert("La contraseña debe tener al menos 8 caracteres.");
+        return;
+    }
+
+    // Mostrar carga
+    const btn = document.querySelector('#step3 button');
+    btn.disabled = true;
+    btn.innerHTML = 'Procesando...';
+
+    // Usar FormData en lugar de JSON
+    const formData = new FormData();
+    formData.append('nueva_contrasena', nuevaContrasena);
+    formData.append('confirmar_contrasena', confirmarContrasena);
+    formData.append('csrf_token', csrfToken);
+
+    fetch('../php/cambiar_contrasena_be.php', {
+        method: 'POST',
+        body: formData // Enviar como FormData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+        } else {
+            alert(data.message || 'Error al cambiar la contraseña');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ocurrió un error al cambiar la contraseña');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Cambiar Contraseña';
+    });
+}
+
     </script>
 </body>
 </html>
