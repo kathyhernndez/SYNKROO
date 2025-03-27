@@ -556,6 +556,7 @@ body.dark-mode .error-message.success {
     border-color: #336633;
 }
 
+
     </style>
     <div class="dashboard">
          <!-- Barra lateral izquierda (menú) -->
@@ -639,6 +640,23 @@ body.dark-mode .error-message.success {
         </div>
     </div>
 
+    <!-- Modal de confirmación para eliminar usuario -->
+<div class="modal" id="delete-modal">
+    <div class="modal-content">
+        <span class="close-modal" id="close-delete-modal">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p id="delete-modal-message">¿Estás seguro de que deseas eliminar este usuario?</p>
+        <div class="password-container">
+            <label for="delete-password">Contraseña:</label>
+            <input type="password" id="delete-password" placeholder="Ingrese su contraseña" required>
+            <button id="toggle-delete-password" class="toggle-password-btn">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div id="delete-error-message" class="error-message" style="display: none;"></div>
+        <button id="confirm-delete-btn" class='btn-eliminar'> <i class='fas fa-trash-alt'></i> Eliminar</button>
+    </div>
+</div>
 
     <!-- Modal de confirmación para bloquear/desbloquear usuario -->
 <div class="modal" id="confirm-modal">
@@ -713,7 +731,6 @@ body.dark-mode .error-message.success {
                     <label for="user-rol">Rol:</label>
                     <select id="user-rol" name="rol" required>
                         <option value="1">Admin</option>
-                        <option value="2">SuperAdmin</option>
                         <option value="3">Personal</option>
                     </select>
                 </div>
@@ -887,36 +904,121 @@ function cambiarEstadoUsuario(idUsuario, estadoActual) {
     });
 }
 
+// Variable global para almacenar el ID del usuario a eliminar
+let usuarioAEliminarId = null;
 
+// Función para mostrar el modal de eliminación
+function mostrarModalEliminar(idUsuario) {
+    usuarioAEliminarId = idUsuario;
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteMessage = document.getElementById('delete-modal-message');
+    const deletePasswordInput = document.getElementById('delete-password');
+    const toggleDeletePasswordBtn = document.getElementById('toggle-delete-password');
+    const deleteErrorMessage = document.getElementById('delete-error-message');
 
-function eliminarUsuario(idUsuario) {
-    // Solicitar confirmación antes de eliminar
-    if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-        // Enviar la solicitud al servidor
-        fetch('eliminar_usuario.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Asegúrate de enviar JSON
-            },
-            body: JSON.stringify({
-                id: idUsuario // Enviar el ID del usuario
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                window.location.reload(); // Recargar la página para reflejar el cambio
-            } else {
-                alert(data.message); // Mostrar mensaje de error
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Ocurrió un error al eliminar el usuario.");
-        });
-    }
+    // Resetear el modal
+    deletePasswordInput.value = '';
+    deleteErrorMessage.style.display = 'none';
+    
+    // Mostrar el modal
+    deleteModal.style.display = 'flex';
+
+    // Configurar el botón de mostrar/ocultar contraseña
+    toggleDeletePasswordBtn.onclick = function() {
+        const type = deletePasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        deletePasswordInput.setAttribute('type', type);
+        toggleDeletePasswordBtn.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    };
+
+    // Configurar el botón de confirmación
+    document.getElementById('confirm-delete-btn').onclick = function() {
+        const contrasena = deletePasswordInput.value.trim();
+
+        if (!contrasena) {
+            showDeleteErrorMessage('Debe ingresar su contraseña para continuar');
+            return;
+        }
+
+        eliminarUsuario(usuarioAEliminarId, contrasena);
+    };
+
+    // Cerrar el modal al hacer clic en la X
+    document.getElementById('close-delete-modal').onclick = function() {
+        deleteModal.style.display = 'none';
+        usuarioAEliminarId = null;
+    };
+
+    // Cerrar el modal al hacer clic fuera
+    window.onclick = function(event) {
+        if (event.target === deleteModal) {
+            deleteModal.style.display = 'none';
+            usuarioAEliminarId = null;
+        }
+    };
 }
+
+// Función para mostrar mensajes de error en el modal de eliminación
+function showDeleteErrorMessage(message) {
+    const errorMessage = document.getElementById('delete-error-message');
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    errorMessage.className = 'error-message'; // Estilo rojo
+}
+
+// Función para mostrar mensajes de éxito en el modal de eliminación
+function showDeleteSuccessMessage(message) {
+    const errorMessage = document.getElementById('delete-error-message');
+    errorMessage.textContent = message;
+    errorMessage.style.display = 'block';
+    errorMessage.className = 'error-message success'; // Estilo verde
+}
+
+// Función para eliminar usuario con validación de permisos
+function eliminarUsuario(idUsuario, contrasena) {
+    // Mostrar spinner de carga
+    const deleteModal = document.getElementById('delete-modal');
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Procesando...</div>
+    `;
+    deleteModal.querySelector('.modal-content').appendChild(loadingOverlay);
+
+    // Enviar la solicitud al servidor
+    fetch('eliminar_usuario.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idUsuario,
+            contrasena: contrasena
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showDeleteSuccessMessage(data.message);
+            setTimeout(() => {
+                deleteModal.style.display = 'none';
+                window.location.reload(); // Recargar la página para reflejar el cambio
+            }, 1500);
+        } else {
+            showDeleteErrorMessage(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showDeleteErrorMessage('Ocurrió un error al eliminar el usuario.');
+    })
+    .finally(() => {
+        loadingOverlay.remove();
+    });
+}
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const filterBtn = document.getElementById('filter-btn');
     const filterDropdown = document.getElementById('filter-dropdown');

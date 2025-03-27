@@ -1,7 +1,7 @@
 <?php
 // Solo para depuración - eliminar en producción
-error_log('Datos recibidos: ' . print_r($_POST, true));
-file_put_contents('debug_editar_usuario.log', print_r($_POST, true) . "\n", FILE_APPEND);
+//error_log('Datos recibidos: ' . print_r($_POST, true));
+//file_put_contents('debug_editar_usuario.log', print_r($_POST, true) . "\n", FILE_APPEND);
 
 include 'conexion_be.php';
 include 'registrar_accion.php';

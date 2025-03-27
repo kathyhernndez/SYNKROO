@@ -83,8 +83,8 @@ try {
             echo "<td>" . htmlspecialchars($row['rol']) . "</td>";
 
             echo "<td class='acciones'>";
-            // Botón Eliminar
-            echo "<button class='btn-eliminar' onclick='eliminarUsuario(" . $row['id'] . ")'>
+            // Botón Eliminar (modificado para usar el modal de confirmación)
+            echo "<button class='btn-eliminar' onclick='mostrarModalEliminar(" . $row['id'] . ")'>
                     <i class='fas fa-trash-alt'></i> Eliminar
                   </button>";
             
