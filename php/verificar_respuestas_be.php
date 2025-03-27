@@ -1,6 +1,5 @@
 <?php
 include 'conexion_be.php';
-include 'registrar_accion.php';
 session_start();
 
 // Verificar que la solicitud sea POST
@@ -56,11 +55,6 @@ try {
     // Marcar respuestas correctas
     $_SESSION['respuestas_correctas'] = true;
 
-    // Registrar en bitácora
-    if (isset($_SESSION['usuario_id'])) {
-        registrarAccion($conexion, $_SESSION['usuario_id'], 'respuestas correctas', 
-                      'Usuario ID: ' . $_SESSION['recovery_user_id'] . ' respondió correctamente');
-    }
 
     header('Content-Type: application/json');
     echo json_encode(['status' => 'success']);

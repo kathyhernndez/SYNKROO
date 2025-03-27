@@ -1,6 +1,5 @@
 <?php
 include 'conexion_be.php';
-include 'registrar_accion.php';
 session_start();
 
 // Verificar que la solicitud sea POST
@@ -51,11 +50,6 @@ try {
     // Guardar ID de usuario en sesión
     $_SESSION['recovery_user_id'] = $usuario['id'];
 
-    // Registrar en bitácora
-    if (isset($_SESSION['usuario_id'])) {
-        registrarAccion($conexion, $_SESSION['usuario_id'], 'recuperación de contraseña', 
-                      'Solicitud de recuperación para usuario ID: ' . $usuario['id']);
-    }
 
     // Devolver preguntas de seguridad
     header('Content-Type: application/json');

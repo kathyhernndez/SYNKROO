@@ -61,7 +61,7 @@ if (empty($_SESSION['csrf_token'])) {
                     <input type="email" placeholder="Correo Electrónico" name="correo" required minlength="5" maxlength="64" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
                     <span class="help-text">Ingresa tu correo electrónico registrado.</span>
                     <input type="password" placeholder="Contraseña" name="clave" required minlength="8" maxlength="64">
-                    <span class="help-text">La contraseña debe tener al menos 8 caracteres.</span>
+                    <span class="help-text">La contraseña debe tener al menos 16 caracteres.</span>
                     <!-- CAPTCHA -->
                     <label for="captcha">CAPTCHA:</label>
                     <div>
@@ -110,7 +110,7 @@ if (empty($_SESSION['csrf_token'])) {
     <div id="step3" style="display: none;">
         <h2>Cambiar Contraseña</h2>
         <input type="password" id="nueva_contrasena" name="nueva_contrasena" placeholder="Nueva contraseña" required minlength="8" maxlength="64">
-        <span class="help-text">La contraseña debe tener al menos 8 caracteres.</span>
+        <span class="help-text">La contraseña debe tener al menos 16 caracteres.</span>
         <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" placeholder="Confirmar nueva contraseña" required minlength="8" maxlength="64">
         <span class="help-text">Vuelve a escribir la nueva contraseña.</span>
         <button type="button" onclick="changePassword()">Cambiar Contraseña</button>
