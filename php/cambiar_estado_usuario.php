@@ -5,6 +5,18 @@ include 'registrar_accion.php'; // Incluir la función para registrar acciones
 
 header('Content-Type: application/json'); // Indicar que la respuesta es JSON
 
+// Verificar si el usuario tiene el rol adecuado (id_roles igual a 1 o 2)
+if (!isset($_SESSION['id_roles']) || ($_SESSION['id_roles'] != 1 && $_SESSION['id_roles'] != 2)) {
+    echo '
+    <script>
+    alert("No tienes permisos para acceder a esta vista");
+    window.location = "menu.php";
+    </script>
+    ';
+    die();
+}
+
+
 try {
     // Obtener los datos del cuerpo de la solicitud
     $data = json_decode(file_get_contents('php://input'), true);

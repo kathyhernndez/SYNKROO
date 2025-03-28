@@ -220,15 +220,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Variables para la gestión de usuarios
     const userTable = document.querySelector('.user-table tbody');
 
-    // Verificar el modo guardado en localStorage
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark-mode');
-        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
-    } else {
-        body.classList.remove('dark-mode');
-        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
-    }
+     // Verificar el modo guardado en localStorage
+ const savedTheme = localStorage.getItem('theme');
+ if (savedTheme === 'dark') {
+     body.classList.add('dark-mode');
+     themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+ } else {
+     body.classList.remove('dark-mode');
+     themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+ }
+
 
     // Abrir menú
     if (menuBtn) {

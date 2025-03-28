@@ -64,4 +64,4 @@ window.onload = function () {
     anchoPagina(); // Ajustar el diseño según el ancho de la página
 };
 
-
+ 

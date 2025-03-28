@@ -1,5 +1,18 @@
-/* styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500;600;700&display=swap');
+
+/* Variables y estilos base */
+:root {
+    --primary-color: rgb(255, 188, 105);
+    --primary-color-dark: #ff8c42;
+    --text-dark: #0c0a09;
+    --text-light: #717171;
+    --white: #ffffff;
+    --max-width: 1200px;
+    --background-light: #f0f0f0;
+    --background-dark: #333;
+    --text-light-mode: #333;
+    --text-dark-mode: #fff;
+}
 
 * {
     margin: 0;
@@ -16,101 +29,58 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-image: url('../image/log.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    
 }
 
 main {
     flex: 1;
     width: 100%;
     padding: 20px;
-    margin-top: 170px; /* Ajuste para el navbar */
+    margin-top: 170px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Variables de colores */
-:root {
-    --primary-color: rgb(255, 188, 105);
-    --primary-color-dark: #ff8c42;
-    --text-dark: #0c0a09;
-    --text-light: #717171;
-    --white: #ffffff;
-    --max-width: 1200px;
-    --background-light: #f0f0f0;
-    --background-dark: #333;
-    --text-light-mode: #333;
-    --text-dark-mode: #fff;
-}
-
 /* Modo oscuro */
 body.dark-mode {
-    background: linear-gradient(to right, #333, #000);
+    background: linear-gradient(to right, #161616, #161616);
     color: var(--text-dark-mode);
 }
 
-body.dark-mode .caja__trasera {
-    background-color: var(--primary-color-dark);
-}
-
-body.dark-mode .container__login__register form {
-    background-color: #555;
-    color: var(--text-dark-mode);
-}
-
-body.dark-mode .container__login__register form input {
-    background-color: #666;
-    color: var(--text-dark-mode);
-    border-color: #777;
-}
-
-body.dark-mode .container__login__register form input::placeholder {
-    color: #bbb;
-}
-
-body.dark-mode .container__login__register form button {
-    background-color: #ff8c42;
-    color: var(--text-dark-mode);
-}
-
-body.dark-mode .footer {
-    background-color: #444;
-    color: var(--text-dark-mode);
-}
-
-/* Barra superior */
-/* Estilos para la navbar */
-/* Estilos para la navbar */
+/* Navbar */
 .navbar {
     display: flex;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center;
+    align-items: center;
     padding: 10px 20px;
-    background-color: transparent; /* Fondo transparente */
+    background-color: transparent;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: background-color 0.3s ease; /* Transición suave para el modo oscuro */
+    transition: background-color 0.3s ease;
 }
 
-
-/* Contenedor del contenido del navbar */
 .navbar-content {
     display: flex;
     align-items: center;
-    gap: 20px; /* Espacio entre el botón y el logo/nombre */
+    gap: 20px;
     max-width: var(--max-width);
     width: 100%;
-    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+    justify-content: space-between;
 }
 
-/* Logo y nombre del sistema */
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 10px; /* Espacio entre el logo y el nombre */
-    margin: 0 auto; /* Centra el logo y el nombre */
+    gap: 10px;
+    margin: 0 auto;
 }
 
 .logo {
@@ -120,35 +90,24 @@ body.dark-mode .footer {
 .app-name {
     margin: 0;
     font-size: 24px;
-    color: var(--text-dark); /* Color del texto en modo claro */
-    transition: color 0.3s ease; /* Transición suave para el modo oscuro */
+    color: var(--text-dark);
+    transition: color 0.3s ease;
 }
 
-/* Estilos para el modo oscuro */
-body.dark-mode .app-name {
-    color: var(--text-dark-mode); /* Color del texto en modo oscuro */
-}
-
-/* Botón de cambio de tema */
 .theme-toggle {
     background: none;
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: var(--primary-color-dark); /* Color del ícono en modo claro */
-    transition: transform 0.3s ease, color 0.3s ease; /* Transición suave */
+    color: var(--primary-color-dark);
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .theme-toggle:hover {
-    transform: scale(1.1); /* Efecto de escala al pasar el mouse */
+    transform: scale(1.1);
 }
 
-/* Estilos para el modo oscuro */
-body.dark-mode .theme-toggle {
-    color: var(--primary-color); /* Color del ícono en modo oscuro */
-}
-
-/* Contenedor principal */
+/* Contenedores principales */
 .container__all {
     width: 100%;
     max-width: 800px;
@@ -158,7 +117,6 @@ body.dark-mode .theme-toggle {
     margin-bottom: 20px;
 }
 
-/* Cajas traseras */
 .caja__trasera {
     width: 100%;
     padding: 10px 20px;
@@ -212,7 +170,7 @@ body.dark-mode .theme-toggle {
 
 .container__login__register form {
     width: 100%;
-    padding: 25px 10px;
+    padding: 10px 10px;
     background: rgb(248, 226, 196);
     position: absolute;
     border-radius: 20px;
@@ -222,7 +180,8 @@ body.dark-mode .theme-toggle {
 .container__login__register form h2 {
     font-size: 30px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    margin-top: 5px;
     color: var(--primary-color-dark);
 }
 
@@ -269,112 +228,167 @@ body.dark-mode .theme-toggle {
     box-shadow: 0 2px 8px rgba(247, 194, 130, 0.3);
 }
 
+/* Elementos comunes */
 .help-text {
     display: block;
     margin-bottom: 15px;
     font-size: 12px;
-    color: var(--text-light);
+    color: var(--text-dark);
     font-style: italic;
     padding-left: 5px;
 }
 
-/* Estilos para el footer */
-.footer {
+.password-container {
     position: relative;
-    background: linear-gradient(to right, #ff8c42, #ffe3b2); /* Fondo en gradiente */
-    color: rgb(0, 0, 0); /* Color del texto */
-    padding: 30px 0 20px; /* Más padding arriba para la onda */
-    text-align: center;
-    font-family: 'Poppins', sans-serif;
-    width: 100%;
-    z-index: 1000;
-    margin-top: 60px;
-    overflow: hidden; /* Para ocultar el exceso de la onda */
 }
 
-/* Efecto ondulado */
-.footer::before {
-    content: '';
+.toggle-password {
     position: absolute;
-    top: -30px; /* Ajusta la posición de la onda */
-    left: 0;
-    width: 100%;
-    height: 60px; /* Altura de la onda */
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ff8c42' fill-opacity='1' d='M0,160L48,149.3C96,139,192,117,288,128C384,139,480,181,576,176C672,171,768,117,864,101.3C960,85,1056,107,1152,133.3C1248,160,1344,192,1392,208L1440,224L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat center top;
-    background-size: cover;
+    right: 10px;
+    top: 25%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
 }
 
-/* Contenedor del contenido del footer */
+/* Footer */
+.slim-footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 12px 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 25px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+}
+
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    gap: 15px;
 }
 
-/* Estilos para el texto del footer */
-.footer-content p {
-    margin: 0;
+.footer-social {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+.social-icon {
+    color: #bdc3c7;
     font-size: 14px;
-    color: black;
+    transition: all 0.3s ease;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 850px) {
-    main {
-        margin-top: 50px;
-    }
-
-    .caja__trasera {
-        max-width: 350px;
-        height: 300px;
-        flex-direction: column;
-        margin: auto;
-    }
-
-    .caja__trasera div {
-        margin: 0px;
-        position: absolute;
-    }
-
-    .container__login__register {
-        top: -10px;
-        left: -5px;
-        margin: auto;
-    }
-
-    .container__login__register form {
-        position: relative;
-    }
+.social-icon:hover {
+    color: var(--primary-color);
+    transform: translateY(-1px);
 }
 
-@media screen and (max-width: 768px) {
-    .navbar-content {
-        flex-direction: column;
-        gap: 10px;
-    }
+.footer-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #bdc3c7;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-grow: 1;
+    max-width: 50%;
+}
 
-    .app-name {
-        font-size: 20px;
-    }
+.footer-separator {
+    opacity: 0.5;
+}
 
+.footer-developers {
+    font-size: 12px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.footer-logo {
+    height: 18px;
+    width: auto;
+}
+
+.footer-brand span {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Modo oscuro */
+body.dark-mode .slim-footer {
+    background-color: var(--primary-color-dark);
+}
+
+body.dark-mode .footer-brand span {
+    color: var(--text-dark);
+}
+body.dark-mode .social-icon{
+    color: var(--text-dark);
+}
+
+body.dark-mode .footer-info{
+    color: var(--text-dark);
+}
+
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
     .footer-content {
-        padding: 0 10px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    .footer-info {
+        order: 2;
+        max-width: 100%;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .footer-separator {
+        display: none;
+    }
+    
+    .footer-social {
+        order: 3;
+        margin-top: 5px;
+    }
+    
+    .footer-brand {
+        order: 1;
+        margin-bottom: 5px;
+    }
+    
+    .footer-logo {
+        height: 16px;
     }
 }
 
-/* Estilos para el modal */
+/* Modal */
 .modal {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
 }
@@ -430,15 +444,14 @@ body.dark-mode .theme-toggle {
     color: var(--primary-color-dark);
 }
 
-
-/* Estilos para el proceso de recuperación */
+/* Formulario de recuperación */
 #recoveryForm {
     transition: all 0.3s ease;
 }
 
 #recoveryForm h2 {
     margin-bottom: 20px;
-    color: #333;
+    color: var(--primary-color-dark);
 }
 
 .pregunta {
@@ -468,8 +481,265 @@ body.dark-mode .theme-toggle {
     color: #555;
 }
 
-/* Estilos para botones deshabilitados */
+/* CAPTCHA */
+.captcha-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.captcha-image {
+    height: 40px;
+    width: auto;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.reload-button, .audio-button {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: #495057;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reload-button:hover, .audio-button:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.reload-button:active, .audio-button:active {
+    transform: scale(0.95);
+}
+
+/* Botones */
+.btn, 
+#loginSubmit, 
+#verifyUserBtn, 
+#verifyAnswersBtn, 
+#changePasswordBtn {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:not(.btn-success),
+#loginSubmit, 
+#verifyUserBtn, 
+#verifyAnswersBtn, 
+#changePasswordBtn {
+    background-color: #000000;
+    color: white;
+}
+
+.btn:not(.btn-success):hover,
+#loginSubmit:hover, 
+#verifyUserBtn:hover, 
+#verifyAnswersBtn:hover, 
+#changePasswordBtn:hover {
+    background-color: #a8a8a8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:not(.btn-success):active,
+#loginSubmit:active, 
+#verifyUserBtn:active, 
+#verifyAnswersBtn:active, 
+#changePasswordBtn:active {
+    transform: translateY(1px);
+    background-color: #CC4A20;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
 button:disabled {
     background-color: #cccccc !important;
     cursor: not-allowed;
+}
+
+/* Spinner */
+.loading-spinner {
+    display: inline-block;
+    margin: 0;
+    border: 3px solid rgba(255, 107, 53, 0.3);
+    border-top: 3px solid #FF6B35;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    vertical-align: middle;
+}
+
+.loading-spinner.visible {
+    opacity: 1;
+}
+
+.btn-loading {
+    color: transparent !important;
+}
+
+.btn-loading .loading-spinner {
+    opacity: 1;
+}
+
+.btn-loading #loginText {
+    opacity: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mensajes */
+.success-message {
+    color: #4CAF50;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.error-message {
+    color: #f44336;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Modo oscuro específico */
+body.dark-mode .caja__trasera {
+    background-color: var(--primary-color-dark);
+}
+
+body.dark-mode .container__login__register form {
+    background-color: #555;
+    color: var(--text-dark-mode);
+}
+
+body.dark-mode .container__login__register form input {
+    background-color: #666;
+    color: var(--text-dark-mode);
+    border-color: #777;
+}
+
+body.dark-mode .container__login__register form input::placeholder {
+    color: #bbb;
+}
+
+body.dark-mode .container__login__register form button,
+
+
+body.dark-mode .app-name,
+body.dark-mode .theme-toggle {
+    color: var(--text-dark-mode);
+}
+
+body.dark-mode .theme-toggle {
+    color: var(--primary-color);
+}
+
+body.dark-mode .captcha-image {
+    border-color: #555;
+}
+
+body.dark-mode .reload-button, 
+body.dark-mode .audio-button {
+    color: #adb5bd;
+}
+
+body.dark-mode .reload-button:hover, 
+body.dark-mode .audio-button:hover {
+    background-color: #3d3d3d;
+    color: #f8f9fa;
+}
+
+body.dark-mode .btn:not(.btn-success),
+body.dark-mode #loginSubmit, 
+body.dark-mode #verifyUserBtn, 
+body.dark-mode #verifyAnswersBtn, 
+body.dark-mode #changePasswordBtn {
+    background-color: #FF7B4D;
+}
+
+body.dark-mode .btn:not(.btn-success):hover,
+body.dark-mode #loginSubmit:hover, 
+body.dark-mode #verifyUserBtn:hover, 
+body.dark-mode #verifyAnswersBtn:hover, 
+body.dark-mode #changePasswordBtn:hover {
+    background-color: #FF6B35;
+}
+
+/* Responsive */
+@media screen and (max-width: 850px) {
+    main {
+        margin-top: 50px;
+    }
+
+    .caja__trasera {
+        max-width: 350px;
+        height: 300px;
+        flex-direction: column;
+        margin: auto;
+    }
+
+    .caja__trasera div {
+        margin: 0px;
+        position: absolute;
+    }
+
+    .container__login__register {
+        top: -10px;
+        left: -5px;
+        margin: auto;
+    }
+
+    .container__login__register form {
+        position: relative;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .navbar-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .app-name {
+        font-size: 20px;
+    }
+
+    .footer-content {
+        padding: 0 10px;
+    }
 }

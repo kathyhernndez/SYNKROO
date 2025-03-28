@@ -7,6 +7,10 @@ $dbname = "synkroo";
 $username = "root";
 $password = "";
 
+
+
+
+
 try {
     // Crear una instancia de PDO
     $conexion = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
