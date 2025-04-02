@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>UPTAG | Gestión Comunicacional</title>
+    <title>Synkroo | UPTAG</title>
     <style>
         /* Estilos adicionales para los nuevos elementos */
         .password-container {
@@ -204,8 +204,9 @@
         
         <!-- Logo y nombre a la derecha -->
         <div class="footer-brand">
-            <img src="../assets/image/logo.png" alt="UPTAG Logo" class="footer-logo">
-            <span>UPTAG</span>
+            <img src="../assets/image/synkroo.png" alt="Synkroo Logo" class="footer-logo">
+            <img src="../assets/image/UPTAG.png" alt="UPTAG Logo" class="footer-logo">
+            <img src="../assets/image/logo.png" alt="Comunicacional Logo" class="footer-logo">
         </div>
         
         <!-- Copyright y desarrolladores en el centro en una línea -->
