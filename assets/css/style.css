@@ -2,7 +2,7 @@
 
 /* Variables y estilos base */
 :root {
-    --primary-color: rgb(255, 188, 105);
+    --primary-color: rgba(255, 185, 105, 0.925);
     --primary-color-dark: #ff8c42;
     --text-dark: #0c0a09;
     --text-light: #717171;
@@ -742,4 +742,24 @@ body.dark-mode #changePasswordBtn:hover {
     .footer-content {
         padding: 0 10px;
     }
+}
+
+
+
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 25%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+body.dark-mode .toggle-password{
+    color: var(--primary-color-dark);
 }

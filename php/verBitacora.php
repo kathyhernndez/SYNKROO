@@ -230,6 +230,13 @@ if (isset($message)) {
             </div>
         </div>
     </div>
+
+<!-- Modal para backup -->
+<?php include 'modal_backup.php'; ?>
+
+<!-- Modal para cierre_sesion -->
+<?php include 'confirmar_cierre.php'; ?>
+
     <script>
 // Modifica el script para incluir el filtrado por fecha
 document.addEventListener('DOMContentLoaded', function () {

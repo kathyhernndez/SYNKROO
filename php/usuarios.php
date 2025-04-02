@@ -865,6 +865,11 @@ body.dark-mode .error-message.success {
     </div>
 </div>
 
+<!-- Modal para backup -->
+<?php include 'modal_backup.php'; ?>
+
+<!-- Modal para cierre_sesion -->
+<?php include 'confirmar_cierre.php'; ?>
 
 <script>
 

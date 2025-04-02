@@ -9,22 +9,6 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Synkroo | UPTAG</title>
-    <style>
-        /* Estilos adicionales para los nuevos elementos */
-        .password-container {
-            position: relative;
-        }
-        
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 25%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #666;
-        }
-        
-    </style>
 </head>
 <body>
     <!-- Barra superior -->

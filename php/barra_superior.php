@@ -78,26 +78,61 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         }
     }
 
-    // Función para confirmar el cierre de sesión
-    function confirmLogout() {
-        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-            window.location.href = 'logout.php'; // Redirigir al script de cierre de sesión
-        }
+   // Función para confirmar el cierre de sesión con modal
+function confirmLogout() {
+    const modal = document.getElementById('logoutModal');
+    if (!modal) {
+        console.error('Modal de logout no encontrado');
+        return;
     }
-
-    // Llamar a la función cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function () {
-        actualizarDatosUsuario(); // Actualizar datos del usuario
-
-        // Configurar el botón de cierre de sesión
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function (e) {
-                e.preventDefault(); // Evitar que el enlace redirija
-                confirmLogout(); // Llamar a la función de confirmación
-            });
+    
+    // Mostrar modal
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    // Configurar eventos de cierre
+    const closeModal = function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    
+    // Cerrar al hacer clic en la X
+    document.querySelector('.close-modal-logout').onclick = closeModal;
+    
+    // Cerrar al hacer clic en Cancelar
+    document.getElementById('cancelLogoutBtn').onclick = closeModal;
+    
+    // Confirmar cierre de sesión
+    document.getElementById('confirmLogoutBtn').onclick = function() {
+        closeModal();
+        // Redirigir al script de cierre de sesión
+        window.location.href = 'logout.php';
+    };
+    
+    // Cerrar al hacer clic fuera del modal
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
         }
-    });
+    };
+}
+
+// Llamar a la función cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarDatosUsuario(); // Actualizar datos del usuario
+
+    // Configurar el botón de cierre de sesión
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            confirmLogout();
+        });
+    }
+    
+    // Configurar otros eventos (tema, menú, etc.)
+    // ... (mantén el resto de tu código existente)
+});
 </script>
 </body>
 </html>
