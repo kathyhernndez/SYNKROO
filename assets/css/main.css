@@ -93,6 +93,36 @@ body {
     
 }
 
+/* Elimina o modifica estas reglas */
+.btn-backup {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white; /* Color del texto */
+    font-size: 17px;
+}
+
+.btn-backup :hover {
+    color: #ff8c42; /* Cambia el color del texto al pasar el mouse */
+}
+
+/* Añade estas nuevas reglas */
+.backup-link {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.backup-link:hover {
+    color: #ff8c42;
+}
+
+.dark-mode .backup-link:hover {
+    color: #ff8c42;
+}
+
 .sidebar-links li {
     padding: 15px 20px;
     transition: background-color 0.3s, color 0.3s; /* Transición suave para el fondo y el color */
@@ -114,6 +144,7 @@ body {
 .sidebar-links li:hover a {
     color: #ff8c42; /* Cambia el color del texto al pasar el mouse */
 }
+
 
 /* Efecto hover para los enlaces en modo oscuro */
 .dark-mode .sidebar-links li:hover {
@@ -175,9 +206,7 @@ body {
     display: none; /* Oculta texto y botón en estado colapsado */
 }
 
-.backup_btn{
-    background-color: none;
-}
+
 
 /* Contenido principal */
 .main-content {

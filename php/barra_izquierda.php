@@ -23,15 +23,21 @@
                 <li><a href="menu.php"><i class="fas fa-home"></i><span>Principal</span></a></li>
                 <li><a href="usuarios.php"><i class="fas fa-users"></i><span>Gestionar Usuarios</span></a></li>
                 <li><a href="verBitacora.php"><i class="fas fa-file"></i><span>Ver Bitácora</span></a></li>
-                <li><a class="backup-btn" id="backup-btn"><i class="fas fa-save"></i><span>Hacer Backup</span></a></li>
-';
+                <li>
+    <a href="#" onclick="confirmBackup()" class="backup-link">
+        <i class="fas fa-save"></i>
+        <span>Hacer respaldo</span>
+    </a>
+</li>
+                ';              
+                
         }
         else if ( $_SESSION['id_roles'] == 2 ){
           echo '
                 <li><a href="menu.php"><i class="fas fa-home"></i>Principal</a></li>
                 <li><a href="usuarios.php"><i class="fas fa-users"></i>Gestionar Usuarios</a></li>
                 <li><a href="verBitacora.php"><i class="fas fa-file"></i>Ver Bitácora</a></li>
-                <li><button class="backup-btn" id="backup-btn"><i class="fas fa-save"></i> Hacer Backup</button></li>
+                <li><a class="backup-btn" id="backup-btn"><i class="fas fa-save"></i><span><button onclick="confirmBackup()" class=""btn-backup">Hacer respaldo</button></span></a></li>
           ';
         }
 

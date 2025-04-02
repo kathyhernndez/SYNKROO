@@ -85,12 +85,12 @@ try {
             echo "<td class='acciones'>";
             // Botón Eliminar (modificado para usar el modal de confirmación)
             echo "<button class='btn-eliminar' onclick='mostrarModalEliminar(" . $row['id'] . ")'>
-                    <i class='fas fa-trash-alt'></i> Eliminar
+                    <i class='fas fa-trash-alt'></i> 
                   </button>";
             
             // Botón Editar (nuevo estilo)
             echo "<button onclick='abrirModalEdicion(" . $row['id'] . ")' class='btn-editar'>
-                    <i class='fas fa-edit'></i> Editar
+                    <i class='fas fa-edit'></i> 
                   </button>";
             echo "</td>";
             echo "</tr>";

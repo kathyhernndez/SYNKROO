@@ -192,7 +192,7 @@ body.dark-mode .apply-filter-btn {
 #confirm-modal .toggle-password-btn {
     position: absolute;
     right: 10px;
-    top: 50%;
+    top: 70%;
     transform: translateY(-50%);
     background: none;
     border: none;
