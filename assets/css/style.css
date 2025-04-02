@@ -3,7 +3,7 @@
 /* Variables y estilos base */
 :root {
     --primary-color: rgba(255, 185, 105, 0.925);
-    --primary-color-dark: #ff8c42;
+    --primary-color-dark: #ff9742e0;
     --text-dark: #0c0a09;
     --text-light: #717171;
     --white: #ffffff;
@@ -255,13 +255,15 @@ body.dark-mode {
 .slim-footer {
     background-color: #000000;
     color: #ffffff;
-    padding: 12px 0;
+    padding: 10px 0;
     font-family: 'Poppins', sans-serif;
     font-size: 13px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 25px;
-    border-top-left-radius: 50px;
-    border-top-right-radius: 50px;
+    margin-top: 20px;
+    margin-left: 80px;
+    margin-right: 80px;
+    margin-bottom: 8px;
+    border-radius: 80px;
 }
 
 .footer-content {
@@ -319,7 +321,7 @@ body.dark-mode {
 }
 
 .footer-logo {
-    height: 18px;
+    height: 20px;
     width: auto;
 }
 
@@ -375,7 +377,7 @@ body.dark-mode .footer-info{
     }
     
     .footer-logo {
-        height: 16px;
+        height: 20px;
     }
 }
 
@@ -529,7 +531,7 @@ body.dark-mode .footer-info{
 #verifyUserBtn, 
 #verifyAnswersBtn, 
 #changePasswordBtn {
-    width: 100%;
+    width: 90%;
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
@@ -659,7 +661,6 @@ body.dark-mode .container__login__register form input::placeholder {
 
 body.dark-mode .container__login__register form button,
 
-
 body.dark-mode .app-name,
 body.dark-mode .theme-toggle {
     color: var(--text-dark-mode);
@@ -684,13 +685,7 @@ body.dark-mode .audio-button:hover {
     color: #f8f9fa;
 }
 
-body.dark-mode .btn:not(.btn-success),
-body.dark-mode #loginSubmit, 
-body.dark-mode #verifyUserBtn, 
-body.dark-mode #verifyAnswersBtn, 
-body.dark-mode #changePasswordBtn {
-    background-color: #FF7B4D;
-}
+
 
 body.dark-mode .btn:not(.btn-success):hover,
 body.dark-mode #loginSubmit:hover, 
