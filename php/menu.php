@@ -92,6 +92,8 @@ if ($message) { echo '
         </div>
     </div>
 
+
+    
     <div class="modal" id="upload-modal">
     <div class="modal-content">
         <span class="close-modal" id="close-modal">&times;</span>
@@ -115,6 +117,11 @@ if ($message) { echo '
         </form>
     </div>
 </div>
+
+
+  <!-- Modal para backup -->
+  <?php include 'modal_backup.php'; ?>
+
     <script>
 // Función para mostrar/ocultar el menú desplegable de filtrado
 document.addEventListener('DOMContentLoaded', function () {

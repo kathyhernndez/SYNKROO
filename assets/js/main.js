@@ -1,13 +1,8 @@
-// Función para confirmar el respaldo
-function confirmBackup() {
-    console.log('confirmBackup ejecutado');
-    if (confirm('¿Estás seguro de que deseas hacer un respaldo?')) {
-        console.log('Redirigiendo a backup.php');
-        window.location.href = 'backup.php';
-    }
-}
 
-// Función para configurar los botones de archivos
+// ==============================================
+// FUNCIONES PARA ARCHIVOS
+// ==============================================
+
 function setupFileButtons() {
     const deleteButtons = document.querySelectorAll('.delete-btn');
     const editButtons = document.querySelectorAll('.edit-btn');
@@ -15,39 +10,38 @@ function setupFileButtons() {
 
     // Limpiar listeners anteriores
     deleteButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true)); // Clonar el botón para eliminar listeners
+        button.replaceWith(button.cloneNode(true));
     });
     editButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true)); // Clonar el botón para eliminar listeners
+        button.replaceWith(button.cloneNode(true));
     });
     downloadButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true)); // Clonar el botón para eliminar listeners
+        button.replaceWith(button.cloneNode(true));
     });
 
     // Agregar nuevos listeners
     deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const fileId = this.dataset.fileId;
             eliminarArchivo(fileId);
         });
     });
 
     editButtons.forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const fileId = this.dataset.fileId;
             editarArchivo(fileId);
         });
     });
 
     downloadButtons.forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const fileName = this.dataset.fileName;
             descargarArchivo(fileName);
         });
     });
 }
 
-// Función para eliminar un archivo
 function eliminarArchivo(id) {
     if (confirm('¿Estás seguro de que deseas eliminar este archivo?')) {
         fetch('eliminar_archivo.php', {
@@ -59,8 +53,8 @@ function eliminarArchivo(id) {
         })
         .then(response => response.text())
         .then(data => {
-            alert(data); // Mostrar la respuesta del servidor
-            location.reload(); // Recargar la página para actualizar la lista de archivos
+            alert(data);
+            location.reload();
         })
         .catch(error => {
             console.error('Error al eliminar el archivo:', error);
@@ -69,7 +63,6 @@ function eliminarArchivo(id) {
     }
 }
 
-// Función para editar un archivo
 function editarArchivo(id) {
     const nuevoNombre = prompt('Introduce el nuevo nombre del archivo:');
     if (nuevoNombre) {
@@ -82,8 +75,8 @@ function editarArchivo(id) {
         })
         .then(response => response.text())
         .then(data => {
-            alert(data); // Mostrar la respuesta del servidor
-            location.reload(); // Recargar la página para actualizar la lista de archivos
+            alert(data);
+            location.reload();
         })
         .catch(error => {
             console.error('Error al editar el archivo:', error);
@@ -92,7 +85,6 @@ function editarArchivo(id) {
     }
 }
 
-// Función para descargar un archivo
 function descargarArchivo(nombreArchivo) {
     if (confirm("¿Estás seguro de que deseas descargar este archivo?")) {
         fetch('verificar_archivo.php', {
@@ -102,16 +94,15 @@ function descargarArchivo(nombreArchivo) {
             },
             body: 'nombre_archivo=' + encodeURIComponent(nombreArchivo),
         })
-        .then(response => response.json()) // Esperar una respuesta JSON
+        .then(response => response.json())
         .then(data => {
             if (data.existe) {
-                // Crear un enlace temporal para forzar la descarga
                 const link = document.createElement("a");
-                link.href = data.ruta; // Ruta del archivo
-                link.download = nombreArchivo; // Nombre del archivo
-                document.body.appendChild(link); // Agregar el enlace al DOM
-                link.click(); // Simular clic en el enlace
-                document.body.removeChild(link); // Eliminar el enlace del DOM
+                link.href = data.ruta;
+                link.download = nombreArchivo;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             } else {
                 alert("El archivo no existe.");
             }
@@ -125,7 +116,10 @@ function descargarArchivo(nombreArchivo) {
     }
 }
 
-// Función para eliminar una carpeta
+// ==============================================
+// FUNCIONES PARA CARPETAS
+// ==============================================
+
 function eliminarCarpeta(id) {
     if (confirm('¿Estás seguro de que deseas eliminar esta carpeta?')) {
         fetch('eliminar_carpeta.php', {
@@ -137,8 +131,8 @@ function eliminarCarpeta(id) {
         })
         .then(response => response.text())
         .then(data => {
-            alert(data); // Mostrar la respuesta del servidor
-            location.reload(); // Recargar la página para actualizar la lista de carpetas
+            alert(data);
+            location.reload();
         })
         .catch(error => {
             console.error('Error al eliminar la carpeta:', error);
@@ -147,7 +141,6 @@ function eliminarCarpeta(id) {
     }
 }
 
-// Función para editar una carpeta
 function editarCarpeta(id) {
     const nuevoNombre = prompt('Introduce el nuevo nombre de la carpeta:');
     if (nuevoNombre) {
@@ -160,8 +153,8 @@ function editarCarpeta(id) {
         })
         .then(response => response.text())
         .then(data => {
-            alert(data); // Mostrar la respuesta del servidor
-            location.reload(); // Recargar la página para actualizar la lista de carpetas
+            alert(data);
+            location.reload();
         })
         .catch(error => {
             console.error('Error al editar la carpeta:', error);
@@ -170,11 +163,8 @@ function editarCarpeta(id) {
     }
 }
 
-
-
-// Función para cargar las carpetas desde la base de datos
 function cargarCarpetas() {
-    fetch('obtener_carpetas.php') // Endpoint para obtener las carpetas
+    fetch('obtener_carpetas.php')
         .then(response => response.json())
         .then(data => {
             const folderSelect = document.getElementById('folder-select');
@@ -187,8 +177,8 @@ function cargarCarpetas() {
             // Agregar las carpetas obtenidas al <select>
             data.forEach(carpeta => {
                 const option = document.createElement('option');
-                option.value = carpeta.id; // Usar el ID de la carpeta como valor
-                option.textContent = carpeta.nombre_carpeta; // Mostrar el nombre de la carpeta
+                option.value = carpeta.id;
+                option.textContent = carpeta.nombre_carpeta;
                 folderSelect.appendChild(option);
             });
         })
@@ -197,8 +187,11 @@ function cargarCarpetas() {
         });
 }
 
-// Resto del código JavaScript (sidebar, modales, etc.)
-document.addEventListener('DOMContentLoaded', function () {
+// ==============================================
+// EVENT LISTENERS Y CONFIGURACIÓN INICIAL
+// ==============================================
+
+document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menu-btn');
     const closeBtn = document.getElementById('close-btn');
@@ -210,52 +203,49 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadBtn = document.getElementById('upload-btn');
     const uploadModal = document.getElementById('upload-modal');
     const closeModal = document.getElementById('close-modal');
-    const uploadForm = document.getElementById('upload-form'); // Definir uploadForm aquí
+    const uploadForm = document.getElementById('upload-form');
     const viewToggleBtn = document.getElementById('view-toggle-btn');
     const filesGrid = document.getElementById('files-grid');
     const folderSelect = document.getElementById('folder-select');
     const newFolderInput = document.getElementById('new-folder-input');
     const errorMessage = document.getElementById('error-message');
-
-    // Variables para la gestión de usuarios
     const userTable = document.querySelector('.user-table tbody');
 
-     // Verificar el modo guardado en localStorage
- const savedTheme = localStorage.getItem('theme');
- if (savedTheme === 'dark') {
-     body.classList.add('dark-mode');
-     themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
- } else {
-     body.classList.remove('dark-mode');
-     themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
- }
+    // Configurar tema inicial
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        body.classList.remove('dark-mode');
+        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+    }
 
-
-    // Abrir menú
+    // Evento para abrir menú
     if (menuBtn) {
-        menuBtn.addEventListener('click', function () {
+        menuBtn.addEventListener('click', function() {
             sidebar.style.left = '0px';
         });
     }
 
-    // Cerrar menú
+    // Evento para cerrar menú
     if (closeBtn) {
-        closeBtn.addEventListener('click', function () {
+        closeBtn.addEventListener('click', function() {
             sidebar.style.left = '-250px';
         });
     }
 
-    // Mostrar/ocultar dropdown del usuario
+    // Evento para mostrar/ocultar dropdown del usuario
     if (userBtn) {
-        userBtn.addEventListener('click', function (event) {
+        userBtn.addEventListener('click', function(event) {
             event.stopPropagation();
             userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
         });
     }
 
-    // Cambiar entre modo oscuro y claro
+    // Evento para cambiar tema
     if (themeBtn) {
-        themeBtn.addEventListener('click', function () {
+        themeBtn.addEventListener('click', function() {
             body.classList.toggle('dark-mode');
             if (body.classList.contains('dark-mode')) {
                 localStorage.setItem('theme', 'dark');
@@ -267,8 +257,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Cerrar dropdown del usuario al hacer clic fuera
-    document.addEventListener('click', function () {
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function() {
         if (userDropdown) {
             userDropdown.style.display = 'none';
         }
@@ -276,8 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Abrir modal de carga de archivos
     if (uploadBtn && uploadModal) {
-        uploadBtn.addEventListener('click', function () {
-            // Cargar las carpetas solo cuando se abra el modal
+        uploadBtn.addEventListener('click', function() {
             cargarCarpetas();
             uploadModal.style.display = 'flex';
         });
@@ -285,32 +274,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Cerrar modal de carga de archivos
     if (closeModal) {
-        closeModal.addEventListener('click', function () {
+        closeModal.addEventListener('click', function() {
             uploadModal.style.display = 'none';
         });
     }
 
-    // Cerrar modal al hacer clic fuera del contenido
-    window.addEventListener('click', function (event) {
+    // Cerrar modal al hacer clic fuera
+    window.addEventListener('click', function(event) {
         if (event.target === uploadModal) {
             uploadModal.style.display = 'none';
         }
     });
 
-    // Mostrar u ocultar el input para el nombre de la carpeta
+    // Mostrar u ocultar input para nueva carpeta
     if (folderSelect) {
-        folderSelect.addEventListener('change', function () {
+        folderSelect.addEventListener('change', function() {
             if (folderSelect.value === 'new') {
-                newFolderInput.style.display = 'block'; // Mostrar el input
+                newFolderInput.style.display = 'block';
             } else {
-                newFolderInput.style.display = 'none'; // Ocultar el input
+                newFolderInput.style.display = 'none';
             }
         });
     }
 
-    // Manejar el envío del formulario de carga de archivos
+    // Manejar envío del formulario de carga
     if (uploadForm) {
-        uploadForm.addEventListener('submit', function (event) {
+        uploadForm.addEventListener('submit', function(event) {
             event.preventDefault();
 
             const folderSelect = document.getElementById('folder-select');
@@ -323,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
             errorMessage.textContent = '';
             errorMessage.classList.remove('error', 'success');
 
-            // Validar si se seleccionó "Crear nueva carpeta" y no se ingresó un nombre
+            // Validaciones
             if (folderSelect.value === 'new' && !folderNameInput.value.trim()) {
                 errorMessage.textContent = 'Por favor, ingrese un nombre para la nueva carpeta.';
                 errorMessage.classList.add('error');
@@ -331,7 +320,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Validar si no se seleccionó ningún archivo
             if (files.length === 0) {
                 errorMessage.textContent = 'Por favor, seleccione al menos un archivo.';
                 errorMessage.classList.add('error');
@@ -339,7 +327,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Validar el tamaño de los archivos (ejemplo: máximo 10 MB por archivo)
             const maxFileSize = 10 * 1024 * 1024; // 10 MB
             for (let i = 0; i < files.length; i++) {
                 if (files[i].size > maxFileSize) {
@@ -350,29 +337,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // Crear un FormData para enviar los archivos y datos del formulario
+            // Crear FormData y enviar
             const formData = new FormData();
             formData.append('folder-select', folderSelect.value);
             formData.append('folder-name', folderNameInput.value.trim());
 
-            // Agregar cada archivo al FormData
             for (let i = 0; i < files.length; i++) {
                 formData.append('archivo[]', files[i]);
             }
 
-            // Enviar los datos al servidor usando fetch
             fetch('subir_archivo.php', {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.text())
             .then(data => {
-                // Mostrar el mensaje de éxito o error
                 errorMessage.textContent = data;
                 errorMessage.classList.add('success');
                 errorMessage.style.display = 'block';
 
-                // Recargar la página para actualizar la lista de archivos
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
@@ -388,36 +371,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Cambiar entre vista de archivos y carpetas
     if (viewToggleBtn) {
-        viewToggleBtn.addEventListener('click', function () {
+        viewToggleBtn.addEventListener('click', function() {
             const isFolderView = filesGrid.classList.toggle('folder-view');
             viewToggleBtn.innerHTML = isFolderView ? '<i class="fas fa-file"></i> Ver por Archivos' : '<i class="fas fa-folder"></i> Ver por Carpetas';
 
             if (isFolderView) {
-                // Cargar carpetas dinámicamente desde PHP
-                fetch('consultar_carpetas.php') // Ruta al archivo PHP que genera el HTML
-                    .then(response => response.text()) // Obtener el contenido como texto
+                fetch('consultar_carpetas.php')
+                    .then(response => response.text())
                     .then(data => {
-                        filesGrid.innerHTML = data; // Insertar el HTML en el contenedor
-                        setupFileButtons(); // Configurar los botones de carpetas
+                        filesGrid.innerHTML = data;
+                        setupFileButtons();
                     })
                     .catch(error => {
                         console.error('Error al cargar las carpetas:', error);
                     });
             } else {
-                // Cargar archivos dinámicamente desde PHP
-                fetch('consultar_archivos.php') // Ruta al archivo PHP que genera el HTML
-                    .then(response => response.text()) // Obtener el contenido como texto
+                fetch('consultar_archivos.php')
+                    .then(response => response.text())
                     .then(data => {
-                        filesGrid.innerHTML = data; // Insertar el HTML en el contenedor
-                        setupFileButtons(); // Configurar los botones de archivos
+                        filesGrid.innerHTML = data;
+                        setupFileButtons();
                     })
                     .catch(error => {
                         console.error('Error al cargar los archivos:', error);
                     });
             }
 
-            // Configurar los botones de archivos después de cambiar la vista
             setupFileButtons();
         });
     }
+
+    // Configurar botones iniciales
+    setupFileButtons();
 });
