@@ -405,181 +405,168 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     });
 });
 
+///MODULO FUNCIONES CAMBIO DE CLAVE
 
-        // Función para verificar el usuario (Paso 1) con retraso
-        function verifyUser() {
-            const email = document.getElementById('recoverUser').value;
-            const cedula = document.getElementById('recoverCedula').value;
-            const captcha = document.getElementById('recoverCaptcha').value;
+// Función para verificar el usuario (Paso 1) con nuevos mensajes
+function verifyUser() {
+    const email = document.getElementById('recoverUser').value;
+    const cedula = document.getElementById('recoverCedula').value;
+    const captcha = document.getElementById('recoverCaptcha').value;
 
-            if (!email || !cedula || !captcha) {
-                showMessage('step1Messages', 'Por favor, completa todos los campos', true);
-                return;
-            }
+    if (!email || !cedula || !captcha) {
+        showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
+        return;
+    }
 
-            if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
-                showMessage('step1Messages', 'Por favor, ingresa un correo electrónico válido', true);
-                return;
-            }
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+        showSystemMessage('error', 'Correo inválido', 'Por favor ingresa un correo electrónico válido');
+        return;
+    }
 
-            showLoading('verifyUserBtn', true);
+    showLoading('verifyUserBtn', true);
 
-            // Simular retraso de 2 segundos
+    const formData = new FormData();
+    formData.append('recoverUser', email);
+    formData.append('recoverCedula', cedula);
+    formData.append('recoverCaptcha', captcha);
+
+    fetch('../php/recuperar_contrasena_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLoading('verifyUserBtn', false);
+        if (data.status === 'success') {
+            showSystemMessage('success', 'Verificación exitosa', 'Usuario verificado correctamente', 1500);
             setTimeout(() => {
-                const formData = new FormData();
-                formData.append('recoverUser', email);
-                formData.append('recoverCedula', cedula);
-                formData.append('recoverCaptcha', captcha);
-
-                fetch('../php/recuperar_contrasena_be.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Mostrar preguntas de seguridad después de otro breve retraso
-                        setTimeout(() => {
-                            document.getElementById('step1').style.display = 'none';
-                            document.getElementById('step2').style.display = 'block';
-                            
-                            const container = document.getElementById('preguntasContainer');
-                            container.innerHTML = `
-                                <div class="pregunta">
-                                    <label>${data.pregunta_1}</label>
-                                    <input type="text" name="respuesta_1" required>
-                                    <span class="help-text">Responde la pregunta de seguridad</span>
-                                </div>
-                                <div class="pregunta">
-                                    <label>${data.pregunta_2}</label>
-                                    <input type="text" name="respuesta_2" required>
-                                    <span class="help-text">Responde la pregunta de seguridad</span>
-                                </div>
-                                <div class="pregunta">
-                                    <label>${data.pregunta_3}</label>
-                                    <input type="text" name="respuesta_3" required>
-                                    <span class="help-text">Responde la pregunta de seguridad</span>
-                                </div>
-                            `;
-                            showLoading('verifyUserBtn', false);
-                        }, 500);
-                    } else {
-                        showMessage('step1Messages', data.message || 'Error al verificar el usuario', true);
-                        reloadCaptchaRecover();
-                        showLoading('verifyUserBtn', false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showMessage('step1Messages', 'Ocurrió un error al procesar la solicitud', true);
-                    showLoading('verifyUserBtn', false);
-                });
-            }, 2000); // Retraso de 2 segundos
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                
+                const container = document.getElementById('preguntasContainer');
+                container.innerHTML = `
+                    <div class="pregunta">
+                        <label>${data.pregunta_1}</label>
+                        <input type="text" name="respuesta_1" required>
+                        <span class="help-text">Responde la pregunta de seguridad</span>
+                    </div>
+                    <div class="pregunta">
+                        <label>${data.pregunta_2}</label>
+                        <input type="text" name="respuesta_2" required>
+                        <span class="help-text">Responde la pregunta de seguridad</span>
+                    </div>
+                    <div class="pregunta">
+                        <label>${data.pregunta_3}</label>
+                        <input type="text" name="respuesta_3" required>
+                        <span class="help-text">Responde la pregunta de seguridad</span>
+                    </div>
+                `;
+            }, 1500);
+        } else {
+            showSystemMessage('error', 'Error de verificación', data.message || 'Usuario no encontrado o datos incorrectos');
+            reloadCaptchaRecover();
         }
+    })
+    .catch(error => {
+        showLoading('verifyUserBtn', false);
+        showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al procesar la solicitud');
+        console.error('Error:', error);
+    });
+}
 
-        // Función para verificar respuestas (Paso 2) con retraso
-        function verifyAnswers() {
-            const respuesta1 = document.querySelector('input[name="respuesta_1"]').value.trim();
-            const respuesta2 = document.querySelector('input[name="respuesta_2"]').value.trim();
-            const respuesta3 = document.querySelector('input[name="respuesta_3"]').value.trim();
-            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+// Función para verificar respuestas (Paso 2)
+function verifyAnswers() {
+    const respuesta1 = document.querySelector('input[name="respuesta_1"]').value.trim();
+    const respuesta2 = document.querySelector('input[name="respuesta_2"]').value.trim();
+    const respuesta3 = document.querySelector('input[name="respuesta_3"]').value.trim();
 
-            if (!respuesta1 || !respuesta2 || !respuesta3) {
-                showMessage('step2Messages', 'Por favor, responde todas las preguntas', true);
-                return;
-            }
+    if (!respuesta1 || !respuesta2 || !respuesta3) {
+        showSystemMessage('error', 'Campos incompletos', 'Por favor responde todas las preguntas');
+        return;
+    }
 
-            showLoading('verifyAnswersBtn', true);
+    showLoading('verifyAnswersBtn', true);
 
-            // Simular retraso de 2 segundos
+    const formData = new FormData();
+    formData.append('respuesta_1', respuesta1);
+    formData.append('respuesta_2', respuesta2);
+    formData.append('respuesta_3', respuesta3);
+
+    fetch('../php/verificar_respuestas_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLoading('verifyAnswersBtn', false);
+        if (data.status === 'success') {
+            showSystemMessage('success', 'Respuestas correctas', 'Ahora puedes cambiar tu contraseña', 1500);
             setTimeout(() => {
-                const formData = new FormData();
-                formData.append('respuesta_1', respuesta1);
-                formData.append('respuesta_2', respuesta2);
-                formData.append('respuesta_3', respuesta3);
-                formData.append('csrf_token', csrfToken);
-
-                fetch('../php/verificar_respuestas_be.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Mostrar formulario de cambio de contraseña después de otro breve retraso
-                        setTimeout(() => {
-                            document.getElementById('step2').style.display = 'none';
-                            document.getElementById('step3').style.display = 'block';
-                            showLoading('verifyAnswersBtn', false);
-                        }, 500);
-                    } else {
-                        showMessage('step2Messages', data.message || 'Respuestas incorrectas', true);
-                        showLoading('verifyAnswersBtn', false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showMessage('step2Messages', 'Ocurrió un error al procesar las respuestas', true);
-                    showLoading('verifyAnswersBtn', false);
-                });
-            }, 2000); // Retraso de 2 segundos
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+            }, 1500);
+        } else {
+            showSystemMessage('error', 'Respuestas incorrectas', data.message || 'Las respuestas no coinciden con nuestros registros');
         }
+    })
+    .catch(error => {
+        showLoading('verifyAnswersBtn', false);
+        showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al verificar las respuestas');
+        console.error('Error:', error);
+    });
+}
 
-        // Función para cambiar contraseña (Paso 3) con retraso
-        function changePassword() {
-            const nuevaContrasena = document.getElementById('nueva_contrasena').value;
-            const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
-            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+// Función para cambiar contraseña (Paso 3)
+function changePassword() {
+    const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+    const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
 
-            if (!nuevaContrasena || !confirmarContrasena) {
-                showMessage('step3Messages', 'Por favor, completa ambos campos', true);
-                return;
-            }
+    if (!nuevaContrasena || !confirmarContrasena) {
+        showSystemMessage('error', 'Campos incompletos', 'Por favor completa ambos campos');
+        return;
+    }
 
-            if (nuevaContrasena !== confirmarContrasena) {
-                showMessage('step3Messages', 'Las contraseñas no coinciden', true);
-                return;
-            }
+    if (nuevaContrasena !== confirmarContrasena) {
+        showSystemMessage('error', 'Contraseñas no coinciden', 'Las contraseñas ingresadas no son iguales');
+        return;
+    }
 
-            if (nuevaContrasena.length < 8) {
-                showMessage('step3Messages', 'La contraseña debe tener al menos 16 caracteres', true);
-                return;
-            }
+    if (nuevaContrasena.length < 16) {
+        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe tener al menos 16 caracteres');
+        return;
+    }
 
-            showLoading('changePasswordBtn', true);
+    showLoading('changePasswordBtn', true);
 
-            // Simular retraso de 2 segundos
+    const formData = new FormData();
+    formData.append('nueva_contrasena', nuevaContrasena);
+    formData.append('confirmar_contrasena', confirmarContrasena);
+
+    fetch('../php/cambiar_contrasena_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLoading('changePasswordBtn', false);
+        if (data.status === 'success') {
+            showSystemMessage('success', '¡Contraseña cambiada!', 'Tu contraseña ha sido actualizada correctamente', 3000);
             setTimeout(() => {
-                const formData = new FormData();
-                formData.append('nueva_contrasena', nuevaContrasena);
-                formData.append('confirmar_contrasena', confirmarContrasena);
-                formData.append('csrf_token', csrfToken);
-
-                fetch('../php/cambiar_contrasena_be.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Mostrar mensaje de éxito después de otro breve retraso
-                        setTimeout(() => {
-                            document.getElementById('step3').style.display = 'none';
-                            document.getElementById('successMessage').style.display = 'block';
-                            showLoading('changePasswordBtn', false);
-                        }, 500);
-                    } else {
-                        showMessage('step3Messages', data.message || 'Error al cambiar la contraseña', true);
-                        showLoading('changePasswordBtn', false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showMessage('step3Messages', 'Ocurrió un error al cambiar la contraseña', true);
-                    showLoading('changePasswordBtn', false);
-                });
-            }, 2000); // Retraso de 2 segundos
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            }, 3000);
+        } else {
+            showSystemMessage('error', 'Error al cambiar', data.message || 'No se pudo cambiar la contraseña');
         }
+    })
+    .catch(error => {
+        showLoading('changePasswordBtn', false);
+        showSystemMessage('error', 'Error del sistema', 'No se pudo completar el cambio de contraseña');
+        console.error('Error:', error);
+    });
+}
+
+
 
         // Funciones para el CAPTCHA
         function reloadCaptcha() {
