@@ -11,18 +11,21 @@
     <title>Synkroo | UPTAG</title>
 </head>
 <body>
-    <!-- Barra superior -->
-    <header class="navbar">
-        <div class="navbar-content">
-            <button id="theme-toggle" class="theme-toggle">
-                <i id="theme-icon" class="fas fa-moon"></i>
-            </button>
-            <div class="navbar-brand">
-                <img src="../assets/image/logo.png" alt="Logo UPTAG" class="logo">
-                <h1 class="app-name">UPTAG</h1>
-            </div>
+  <!-- Barra superior -->
+<header class="navbar">
+    <div class="navbar-content">
+        <!-- Botón de tema a la izquierda -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">
+            <i id="theme-icon" class="fas fa-moon"></i>
+        </button>
+        
+        <!-- Logo y nombre a la derecha -->
+        <div class="navbar-brand">
+            <img src="../assets/image/logo.png" alt="Logo UPTAG" class="logo">
+            <h1 class="app-name">UPTAG</h1>
         </div>
-    </header>
+    </div>
+</header>
 
     <main>
         <div class="container__all">

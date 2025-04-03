@@ -9,8 +9,8 @@
     --white: #ffffff;
     --max-width: 1200px;
     --background-light: #f0f0f0;
-    --background-dark: #333;
-    --text-light-mode: #333;
+    --background-dark: #505050;
+    --text-light-mode: #505050;
     --text-dark-mode: #fff;
 }
 
@@ -40,7 +40,7 @@ main {
     flex: 1;
     width: 100%;
     padding: 20px;
-    margin-top: 170px;
+    margin-top: 105px; /* Ajustado para la altura de la navbar */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,63 +48,105 @@ main {
 
 /* Modo oscuro */
 body.dark-mode {
-    background: linear-gradient(to right, #161616, #161616);
+    background: black;
     color: var(--text-dark-mode);
 }
 
 /* Navbar */
 .navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: transparent;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: background-color 0.3s ease;
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    height: 50px; /* Altura fija */
+    transition: all 0.3s ease;
+    margin-left: 80px;
+    margin-right: 80px;
 }
 
 .navbar-content {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    max-width: var(--max-width);
     width: 100%;
-    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between; /* Separa los elementos a los extremos */
+    align-items: center;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+.theme-toggle:hover {
+    color: var(--primary-color-dark);
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 0 auto;
+    margin-left: auto; /* Empuja el logo a la derecha */
 }
 
 .logo {
-    height: 40px;
+    height: 30px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
 }
 
 .app-name {
     margin: 0;
-    font-size: 24px;
+    font-size: 25px;
+    font-weight: 600;
     color: var(--text-dark);
     transition: color 0.3s ease;
 }
 
-.theme-toggle {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--primary-color-dark);
-    transition: transform 0.3s ease, color 0.3s ease;
+/* Modo oscuro */
+
+body.dark-mode .theme-toggle {
+    color: var(--primary-color);
 }
 
-.theme-toggle:hover {
-    transform: scale(1.1);
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 15px;
+        height: 60px;
+    }
+    
+    .logo {
+        height: 35px;
+    }
+    
+    .app-name {
+        font-size: 20px;
+    }
+    
+    .theme-toggle {
+        font-size: 20px;
+    }
+    
+    main {
+        margin-top: 60px;
+    }
 }
 
 /* Contenedores principales */
@@ -114,7 +156,7 @@ body.dark-mode {
     margin: auto;
     position: relative;
     flex: 1;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .caja__trasera {
@@ -349,6 +391,12 @@ body.dark-mode .footer-info{
 
 /* Responsive - Mobile */
 @media (max-width: 768px) {
+    .slim-footer{
+        margin:0px;
+        border-radius: 0px;
+        margin-bottom: 0px;
+    }
+
     .footer-content {
         flex-direction: column;
         gap: 8px;
@@ -563,7 +611,7 @@ body.dark-mode .footer-info{
 #verifyUserBtn:hover, 
 #verifyAnswersBtn:hover, 
 #changePasswordBtn:hover {
-    background-color: #a8a8a8;
+    background-color: var(--text-light-mode);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -698,7 +746,7 @@ body.dark-mode #changePasswordBtn:hover {
 /* Responsive */
 @media screen and (max-width: 850px) {
     main {
-        margin-top: 50px;
+        margin-top: 80px; /* Ajuste consistente para móviles */
     }
 
     .caja__trasera {
@@ -726,7 +774,6 @@ body.dark-mode #changePasswordBtn:hover {
 
 @media screen and (max-width: 768px) {
     .navbar-content {
-        flex-direction: column;
         gap: 10px;
     }
 
