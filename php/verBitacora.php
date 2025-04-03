@@ -237,6 +237,10 @@ if (isset($message)) {
 <!-- Modal para cierre_sesion -->
 <?php include 'confirmar_cierre.php'; ?>
 
+<!--- footer -->
+<?php include 'footer.php'; ?>
+
+
     <script>
 // Modifica el script para incluir el filtrado por fecha
 document.addEventListener('DOMContentLoaded', function () {

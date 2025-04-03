@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #f0f0f0, #d3d3d3);
+    background: linear-gradient(to right, #ece5e5, #c2c0c0);
     color: #333;
 }
 
@@ -469,7 +469,7 @@ body {
 
 /* Modo oscuro */
 .dark-mode {
-    background: linear-gradient(to right, #333, #000);
+    background: black;
     color: white;
 }
 

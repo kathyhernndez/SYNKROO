@@ -805,3 +805,180 @@ body.dark-mode #changePasswordBtn:hover {
 body.dark-mode .toggle-password{
     color: var(--primary-color-dark);
 }
+
+
+/* Estilos para mensajes del sistema - CENTRADOS Y CON COLORES */
+.system-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+    background-color: #ffffff;
+    border-top: 5px solid;
+}
+
+.system-message.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Colores específicos para cada tipo */
+.system-message.error {
+    border-top-color: #f44336;
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.system-message.warning {
+    border-top-color: #ff9800;
+    background-color: #fff8e1;
+    color: #e65100;
+}
+
+.system-message.success {
+    border-top-color: #4caf50;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.system-message-icon {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.system-message-content {
+    width: 100%;
+}
+
+.system-message-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.system-message-text {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.system-message-close {
+    cursor: pointer;
+    padding: 8px 20px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.system-message-close:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+/* Fondo oscuro */
+.system-message-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.system-message-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Barra de progreso */
+.system-message-progress {
+    height: 4px;
+    background: rgba(0,0,0,0.1);
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.system-message-progress-bar {
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    transform: scaleX(1);
+    transition: transform linear;
+}
+
+.system-message.error .system-message-progress-bar {
+    background-color: #f44336;
+}
+
+.system-message.warning .system-message-progress-bar {
+    background-color: #ff9800;
+}
+
+.system-message.success .system-message-progress-bar {
+    background-color: #4caf50;
+}
+
+/* Modo oscuro */
+body.dark-mode .system-message {
+    background-color: #2d2d2d;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .system-message.error {
+    background-color: #331111;
+    color: #ffcdd2;
+    border-top-color: #f44336;
+}
+
+body.dark-mode .system-message.warning {
+    background-color: #332900;
+    color: #ffe082;
+    border-top-color: #ff9800;
+}
+
+body.dark-mode .system-message.success {
+    background-color: #113311;
+    color: #a5d6a7;
+    border-top-color: #4caf50;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .system-message {
+        width: 95%;
+        padding: 20px 15px;
+    }
+    
+    .system-message-icon {
+        font-size: 36px;
+    }
+    
+    .system-message-title {
+        font-size: 18px;
+    }
+    
+    .system-message-text {
+        font-size: 15px;
+    }
+}

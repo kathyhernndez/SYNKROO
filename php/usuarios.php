@@ -871,8 +871,11 @@ body.dark-mode .error-message.success {
 <!-- Modal para cierre_sesion -->
 <?php include 'confirmar_cierre.php'; ?>
 
-<script>
+<!--- footer -->
+<?php include 'footer.php'; ?>
 
+<!---JavaScript -->
+<script>
 function cambiarEstadoUsuario(idUsuario, estadoActual) {
     // Solicitar la contraseña del administrador para confirmar la acción
     const contrasena = prompt("Por favor, ingrese su contraseña para confirmar el cambio de estado:");

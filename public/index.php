@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="es">
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,7 +22,7 @@
         <!-- Logo y nombre a la derecha -->
         <div class="navbar-brand">
             <img src="../assets/image/logo.png" alt="Logo UPTAG" class="logo">
-            <h1 class="app-name">UPTAG</h1>
+            <h1 class="app-name">SGDA</h1>
         </div>
     </div>
 </header>
@@ -45,7 +45,6 @@
             <div class="container__login__register">
                 <!-- Formulario de Login -->
 <form action="../php/login_user_be.php" method="POST" class="formulario__login" id="loginForm">
-    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
     <h2>Iniciar Sesión</h2>
                     
                     <div class="form-group">
@@ -83,7 +82,6 @@
 
                 <!-- Formulario de Recuperación -->
                 <form id="recoveryForm" class="formulario__register" style="display: none;">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                     
                     <!-- Paso 1: Verificación inicial -->
                     <div id="step1">
@@ -169,15 +167,6 @@
         </div>
     </main>
 
-    <!-- Modal para errores de CSRF -->
-    <div id="csrfErrorModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Error de verificación</h2>
-            <p>Debes recargar la página. El token de verificación ha expirado o no es válido.</p>
-            <button id="reloadPageButton" class="modal-button">Recargar página</button>
-        </div>
-    </div>
 
     <footer class="slim-footer">
     <div class="footer-content">
@@ -251,7 +240,105 @@
     }
 }
 
-// Manejo del formulario de login
+// Función mejorada para mostrar mensajes del sistema
+function showSystemMessage(type, title, message, duration = 5000) {
+    // Validar tipo de mensaje
+    const validTypes = ['error', 'warning', 'success'];
+    if (!validTypes.includes(type)) {
+        type = 'error'; // Default a error si el tipo no es válido
+    }
+
+    // Iconos según tipo
+    const icons = {
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        success: 'fas fa-check-circle'
+    };
+    
+    // Crear contenedor principal si no existe
+    let messageContainer = document.getElementById('system-messages-container');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.id = 'system-messages-container';
+        messageContainer.style.position = 'fixed';
+        messageContainer.style.top = '0';
+        messageContainer.style.left = '0';
+        messageContainer.style.width = '100%';
+        messageContainer.style.height = '100%';
+        messageContainer.style.zIndex = '9999';
+        messageContainer.style.pointerEvents = 'none';
+        document.body.appendChild(messageContainer);
+    }
+    
+    // Crear backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'system-message-backdrop';
+    
+    // Crear elemento de mensaje
+    const messageElement = document.createElement('div');
+    messageElement.className = `system-message ${type}`;
+    messageElement.innerHTML = `
+        <i class="system-message-icon ${icons[type]}"></i>
+        <div class="system-message-content">
+            <div class="system-message-title">${title}</div>
+            <div class="system-message-text">${message}</div>
+        </div>
+        <div class="system-message-progress">
+            <div class="system-message-progress-bar" style="transition-duration: ${duration}ms"></div>
+        </div>
+        <div class="system-message-close">Cerrar</div>
+    `;
+    
+    // Agregar elementos al DOM
+    messageContainer.appendChild(backdrop);
+    messageContainer.appendChild(messageElement);
+    
+    // Mostrar con animación
+    setTimeout(() => {
+        backdrop.classList.add('visible');
+        messageElement.classList.add('visible');
+        
+        // Iniciar animación de progreso
+        const progressBar = messageElement.querySelector('.system-message-progress-bar');
+        if (progressBar) {
+            setTimeout(() => {
+                progressBar.style.transform = 'scaleX(0)';
+            }, 10);
+        }
+    }, 10);
+    
+    // Función para ocultar
+    const hideMessage = () => {
+        messageElement.classList.remove('visible');
+        backdrop.classList.remove('visible');
+        setTimeout(() => {
+            messageElement.remove();
+            backdrop.remove();
+            if (messageContainer.children.length === 0) {
+                messageContainer.remove();
+            }
+        }, 300);
+    };
+    
+    // Cerrar al hacer click en el botón
+    const closeBtn = messageElement.querySelector('.system-message-close');
+    closeBtn.addEventListener('click', hideMessage);
+    
+    // Cerrar al hacer click en el backdrop
+    backdrop.addEventListener('click', hideMessage);
+    
+    // Ocultar automáticamente después de la duración
+    if (duration > 0) {
+        setTimeout(hideMessage, duration);
+    }
+    
+    // Devolver función para cerrar manualmente
+    return {
+        close: hideMessage
+    };
+}
+
+// Manejo del formulario de login con mensajes mejorados
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const form = this;
@@ -262,57 +349,61 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     const captcha = form.querySelector('input[name="captcha"]').value;
     
     if (!email || !password || !captcha) {
-        alert('Por favor complete todos los campos');
+        showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
         return false;
     }
     
     // Mostrar spinner
     showLoading('loginSubmit', true);
     
-    // Crear FormData
-    const formData = new FormData(form);
-    
-    // Enviar con fetch
+    // Enviar formulario
     fetch(form.action, {
         method: 'POST',
-        body: formData
+        body: new FormData(form)
     })
     .then(response => {
         if (response.redirected) {
-            // Si hay redirección, seguirla
-            window.location.href = response.url;
+            // Mostrar éxito antes de redirigir
+            const successMsg = showSystemMessage('success', '¡Bienvenido!', 'Credenciales verificadas correctamente. Redirigiendo...', 2500);
+            setTimeout(() => {
+                window.location.href = response.url;
+            }, 2500);
             return;
         }
-        return response.text();
+        return response.json();
     })
     .then(data => {
         showLoading('loginSubmit', false);
         if (data) {
-            // Manejar respuestas que no son redirección
-            try {
-                const jsonData = JSON.parse(data);
-                if (jsonData.success) {
-                    window.location.href = jsonData.redirect || '../php/menu.php';
+            if (data.success) {
+                const successMsg = showSystemMessage('success', '¡Bienvenido!', 'Inicio de sesión exitoso. Redirigiendo...', 2500);
+                setTimeout(() => {
+                    window.location.href = data.redirect || '../php/menu.php';
+                }, 2500);
+            } else {
+                // Mostrar error específico
+                if (data.message.includes('CAPTCHA incorrecto')) {
+                    showSystemMessage('error', 'Error de seguridad', data.message);
+                    reloadCaptcha();
+                } else if (data.message.includes('Contraseña incorrecta')) {
+                    showSystemMessage('warning', 'Acceso denegado', data.message);
+                    reloadCaptcha();
+                } else if (data.message.includes('bloqueada')) {
+                    showSystemMessage('error', 'Cuenta bloqueada', data.message, 8000);
+                    reloadCaptcha();
                 } else {
-                    alert(jsonData.message || 'Error al iniciar sesión');
+                    showSystemMessage('error', 'Error', data.message || 'Error al iniciar sesión');
                     reloadCaptcha();
                 }
-            } catch (e) {
-                // Si no es JSON, mostrar el mensaje tal cual
-                console.error(data);
-                alert('Error en el servidor');
-                reloadCaptcha();
             }
         }
     })
     .catch(error => {
         showLoading('loginSubmit', false);
-        console.error('Error:', error);
-        alert('Ocurrió un error al procesar la solicitud');
+        showSystemMessage('error', 'Error del sistema', 'No se pudo conectar con el servidor');
         reloadCaptcha();
     });
 });
-
 
 
         // Función para verificar el usuario (Paso 1) con retraso
@@ -339,7 +430,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
                 formData.append('recoverUser', email);
                 formData.append('recoverCedula', cedula);
                 formData.append('recoverCaptcha', captcha);
-                formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
 
                 fetch('../php/recuperar_contrasena_be.php', {
                     method: 'POST',
@@ -577,31 +667,11 @@ document.addEventListener('DOMContentLoaded', loadTheme);
 // Configurar el evento click
 themeToggle.addEventListener('click', toggleTheme);
 
-        
-        // Configuración del modal de error CSRF 
-        function showCSRFErrorModal() {
-            document.getElementById('csrfErrorModal').style.display = 'flex';
-        }
-
-        function closeCSRFErrorModal() {
-            document.getElementById('csrfErrorModal').style.display = 'none';
-            window.location.reload();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('csrfErrorModal');
-            const closeButton = document.querySelector('.close-modal');
-
-            closeButton.addEventListener('click', closeCSRFErrorModal);
-            window.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    closeCSRFErrorModal();
-                }
-            });
-        });
 
 /* Actualizar año automáticamente */
         document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+
     </script>
 </body>
 </html>

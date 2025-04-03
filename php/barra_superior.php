@@ -11,8 +11,8 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     // Mapear el ID del rol a un nombre de rol
     $roles = [
         1 => 'Admin',
-        2 => 'Editor',
-        3 => 'Usuario',
+        2 => 'SuperAdmin',
+        3 => 'Personal',
     ];
 
     $rolUsuario = $roles[$idRol] ?? 'Rol no disponible';
@@ -45,8 +45,8 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
     <!-- Nombre del programa y logo centrados -->
     <div class="program-info">
-        <h1>SGDA</h1>
         <img src="../assets/image/logo.png" alt="Logo del programa" class="logo">
+        <h1>SGDA</h1>
     </div>
 </div>
 

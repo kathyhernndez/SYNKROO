@@ -125,6 +125,10 @@ if ($message) { echo '
   <!-- Modal para cierre_sesion -->
   <?php include 'confirmar_cierre.php'; ?>
 
+
+  <!--- footer -->
+<?php include 'footer.php'; ?>
+
     <script>
 // Función para mostrar/ocultar el menú desplegable de filtrado
 document.addEventListener('DOMContentLoaded', function () {
