@@ -651,9 +651,9 @@ body {
 
 .modal-content {
     background-color: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px;
-    width: 300px;
+    width: 500px;
     text-align: center;
 }
 
@@ -806,8 +806,8 @@ body {
 /* Estilos para móviles (responsive) */
 @media (max-width: 768px) {
     .modal-content {
-        width: 90%; /* Ajustar el ancho del modal en móviles */
-        padding: 15px;
+        width: 100%; /* Ajustar el ancho del modal en móviles */
+        padding: 30px;
     }
 
     .upload-btn, .view-toggle-btn {

@@ -17,17 +17,17 @@
 
 /* Footer */
 .slim-footer {
-    background-color: #000000;
+    background-color: none;
     color: #ffffff;
     padding: 10px 0;
     font-family: 'Poppins', sans-serif;
     font-size: 13px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid var(--primary-color-dark);
     margin-top: 20px;
     margin-left: 80px;
     margin-right: 80px;
     margin-bottom: 8px;
-    border-radius: 80px;
+    
 }
 
 .footer-content {
@@ -62,7 +62,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #bdc3c7;
+    color:rgb(0, 0, 0);
     flex-wrap: wrap;
     justify-content: center;
     flex-grow: 1;
@@ -95,9 +95,7 @@
 }
 
 /* Modo oscuro */
-body.dark-mode .slim-footer {
-    background-color: var(--primary-color-dark);
-}
+
 
 body.dark-mode .footer-brand span {
     color: var(--text-dark);
@@ -107,7 +105,7 @@ body.dark-mode .social-icon{
 }
 
 body.dark-mode .footer-info{
-    color: var(--text-dark);
+    color: var(--primary-color-dark);
 }
 
 
@@ -129,7 +127,12 @@ body.dark-mode .footer-info{
         order: 2;
         max-width: 100%;
         flex-direction: column;
-        gap: 4px;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    #current-datetime {
+    white-space: nowrap;
     }
     
     .footer-separator {
@@ -155,31 +158,54 @@ body.dark-mode .footer-info{
 
 <footer class="slim-footer">
     <div class="footer-content">
-        <!-- Redes sociales a la izquierda -->
-        <div class="footer-social">
-            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-        </div>
         
-        <!-- Logo y nombre a la derecha -->
+        
+        <!-- Logo y nombre  -->
         <div class="footer-brand">
             <img src="../assets/image/synkroo.png" alt="Synkroo Logo" class="footer-logo">
             <img src="../assets/image/UPTAG.png" alt="UPTAG Logo" class="footer-logo">
             <img src="../assets/image/logo.png" alt="Comunicacional Logo" class="footer-logo">
         </div>
         
-        <!-- Copyright y desarrolladores en el centro en una línea -->
-        <div class="footer-info">
-            <span class="footer-copyright">&copy; <span id="current-year">2023</span> UPTAG</span>
-            <span class="footer-separator">|</span>
-            <span class="footer-developers">Desarrollado por: Hernandez, Pachano, Perez, Bracho</span>
-        </div>
-    </div>
+        
+       <!-- Copyright y desarrolladores  -->
+<div class="footer-info">
+    <span class="footer-copyright">&copy; <span id="current-year">2023</span> UPTAG</span>
+    <span class="footer-separator">|</span>
+    <span class="footer-developers">Desarrollado por: Hernandez, Pachano, Perez, Bracho</span>
+</div>
+
+<div  class="footer-info">
+<span id="current-datetime"></span>
+</div>
+
 </footer>
 
 <script>
-    /* Actualizar año automáticamente */
-    document.getElementById('current-year').textContent = new Date().getFullYear();
+    function formatTwoDigits(num) {
+        return num < 10 ? `0${num}` : num;
+    }
+
+    function updateDateTime() {
+    const now = new Date();
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    
+    const day = now.getDate().toString().padStart(2, '0');
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const year = now.getFullYear();
+    
+    let hours = now.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // La hora '0' debe ser '12'
+    
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    document.getElementById('current-datetime').textContent = 
+        `${days[now.getDay()]}, ${day}/${month}/${year} - ${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 </script>
