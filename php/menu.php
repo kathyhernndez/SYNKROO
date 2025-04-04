@@ -118,6 +118,23 @@ if ($message) { echo '
     </div>
 </div>
 
+<!-- Modal de confirmación -->
+<div id="confirmationModal" class="confirmation-modal">
+    <div class="confirmation-content">
+        <div class="confirmation-header">
+            <h3 id="confirmationTitle">Confirmar acción</h3>
+            <button class="close-confirmation">&times;</button>
+        </div>
+        <div class="confirmation-body">
+            <p id="confirmationMessage" class="confirmation-message">¿Estás seguro de que deseas realizar esta acción?</p>
+        </div>
+        <div class="confirmation-footer">
+            <button id="cancelAction" class="cancel-btn">Cancelar</button>
+            <button id="confirmAction" class="confirm-btn">Confirmar</button>
+        </div>
+    </div>
+</div>
+
 
   <!-- Modal para backup -->
   <?php include 'modal_backup.php'; ?>
@@ -231,72 +248,111 @@ if (searchBar) {
 }
 
 function abrirCarpeta(idCarpeta) {
+    // Mostrar indicador de carga
+    const filesGrid = document.getElementById('files-grid');
+    filesGrid.innerHTML = '<div class="loading-indicator">Cargando contenido de la carpeta...</div>';
+    
     // Hacer una solicitud AJAX para obtener los archivos de la carpeta
     fetch('obtener_archivos.php?id_carpeta=' + idCarpeta)
         .then(response => response.json())
         .then(data => {
             // Limpiar el contenedor de archivos
-            const filesGrid = document.getElementById('files-grid');
             filesGrid.innerHTML = '';
 
-            // Mostrar los archivos en el contenedor
-            data.forEach(archivo => {
-                // Determinar el tipo de archivo
-                const tipoArchivo = archivo.tipo_archivo;
-                let icono = 'fa-file-alt'; // Ícono por defecto (documento)
-                let tipo = 'document'; // Tipo por defecto (documento)
-
-                // Asignar ícono y tipo según el tipo de archivo
-                if (tipoArchivo.includes('image')) {
-                    icono = 'fa-file-image';
-                    tipo = 'image';
-                } else if (tipoArchivo.includes('audio')) {
-                    icono = 'fa-file-audio';
-                    tipo = 'audio';
-                } else if (tipoArchivo.includes('video')) {
-                    icono = 'fa-file-video';
-                    tipo = 'video';
-                } else if (tipoArchivo.includes('pdf')) {
-                    icono = 'fa-file-pdf';
-                    tipo = 'document';
-                } else if (tipoArchivo.includes('word') || tipoArchivo.includes('msword')) {
-                    icono = 'fa-file-word';
-                    tipo = 'document';
-                } else if (tipoArchivo.includes('excel') || tipoArchivo.includes('spreadsheet')) {
-                    icono = 'fa-file-excel';
-                    tipo = 'document';
-                } else if (tipoArchivo.includes('powerpoint') || tipoArchivo.includes('presentation')) {
-                    icono = 'fa-file-powerpoint';
-                    tipo = 'document';
-                }
-
-                // Generar el HTML para cada archivo
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-item';
-                fileItem.setAttribute('data-tipo', tipo);
-                fileItem.innerHTML = `
-                    <div class="file-header">
-                        <i class="fas ${icono} file-icon"></i>
-                        <h4 class="file-name">${archivo.nombre_archivo}</h4>
-                    </div>
-                    <p class="file-date">${archivo.fecha_subida}</p>
-                    <div class="file-actions">
-                        <button class="download-btn" onclick="descargarArchivo('${archivo.nombre_archivo}')">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button class="edit-btn" onclick="editarArchivo(${archivo.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete-btn" onclick="eliminarArchivo(${archivo.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                filesGrid.appendChild(fileItem);
+            // Agregar botón para volver atrás
+            const backButton = document.createElement('div');
+            backButton.className = 'file-item back-button';
+            backButton.innerHTML = `
+                <div class="file-header">
+                    <i class="fas fa-arrow-left file-icon"></i>
+                    <h4 class="file-name">Volver atrás</h4>
+                </div>
+            `;
+            backButton.addEventListener('click', function() {
+                // Recargar la vista original
+                location.reload();
             });
+            filesGrid.appendChild(backButton);
+
+            // Mostrar los archivos en el contenedor
+            if (data.length === 0) {
+                filesGrid.innerHTML += '<div class="empty-folder">Esta carpeta está vacía</div>';
+            } else {
+                data.forEach(archivo => {
+                    // Determinar el tipo de archivo
+                    const tipoArchivo = archivo.tipo_archivo;
+                    let icono = 'fa-file-alt'; // Ícono por defecto (documento)
+                    let tipo = 'document'; // Tipo por defecto (documento)
+
+                    // Asignar ícono y tipo según el tipo de archivo
+                    if (tipoArchivo.includes('image')) {
+                        icono = 'fa-file-image';
+                        tipo = 'image';
+                    } else if (tipoArchivo.includes('audio')) {
+                        icono = 'fa-file-audio';
+                        tipo = 'audio';
+                    } else if (tipoArchivo.includes('video')) {
+                        icono = 'fa-file-video';
+                        tipo = 'video';
+                    } else if (tipoArchivo.includes('pdf')) {
+                        icono = 'fa-file-pdf';
+                        tipo = 'document';
+                    } else if (tipoArchivo.includes('word') || tipoArchivo.includes('msword')) {
+                        icono = 'fa-file-word';
+                        tipo = 'document';
+                    } else if (tipoArchivo.includes('excel') || tipoArchivo.includes('spreadsheet')) {
+                        icono = 'fa-file-excel';
+                        tipo = 'document';
+                    } else if (tipoArchivo.includes('powerpoint') || tipoArchivo.includes('presentation')) {
+                        icono = 'fa-file-powerpoint';
+                        tipo = 'document';
+                    }
+
+                    // Generar el HTML para cada archivo
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.setAttribute('data-tipo', tipo);
+                    fileItem.innerHTML = `
+                        <div class="file-header">
+                            <i class="fas ${icono} file-icon"></i>
+                            <h4 class="file-name">${archivo.nombre_archivo}</h4>
+                        </div>
+                        <p class="file-date">${archivo.fecha_subida}</p>
+                        <div class="file-actions">
+                            <button class="download-btn" onclick="descargarArchivo('${archivo.nombre_archivo}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="edit-btn" onclick="editarArchivo(${archivo.id}, '${archivo.nombre_archivo.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" onclick="eliminarArchivo(${archivo.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    filesGrid.appendChild(fileItem);
+                });
+            }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            filesGrid.innerHTML = '<div class="error-message">Error al cargar el contenido de la carpeta</div>';
+        });
 }
+
+// Agrega este evento al cargar la página para manejar los clicks en los nombres de carpeta
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        // Verificar si el click fue en un nombre de carpeta
+        if (e.target.classList.contains('folder-name')) {
+            const folderItem = e.target.closest('.folder-item');
+            if (folderItem) {
+                const folderId = folderItem.dataset.id;
+                abrirCarpeta(folderId);
+            }
+        }
+    });
+});
 
 </script>
     <script src="../assets/js/main.js"></script>

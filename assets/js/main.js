@@ -1,49 +1,109 @@
+// Sistema de confirmación de acciones
+let currentAction = null;
+let currentActionParams = null;
+
+// Mostrar modal de confirmación
+function showConfirmation(title, message, action, params = {}) {
+    const modal = document.getElementById('confirmationModal');
+    const titleElement = document.getElementById('confirmationTitle');
+    const messageElement = document.getElementById('confirmationMessage');
+    
+    currentAction = action;
+    currentActionParams = params;
+    
+    titleElement.textContent = title;
+    messageElement.textContent = message;
+    modal.style.display = 'flex';
+}
+
+// Configurar eventos del modal de confirmación
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('confirmationModal');
+    const closeBtn = document.querySelector('.close-confirmation');
+    const cancelBtn = document.getElementById('cancelAction');
+    const confirmBtn = document.getElementById('confirmAction');
+    
+    // Cerrar modal al hacer clic en la X o en Cancelar
+    [closeBtn, cancelBtn].forEach(btn => {
+        btn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            currentAction = null;
+            currentActionParams = null;
+        });
+    });
+    
+    // Confirmar acción
+    confirmBtn.addEventListener('click', function() {
+        if (currentAction) {
+            currentAction(currentActionParams);
+        }
+        modal.style.display = 'none';
+        currentAction = null;
+        currentActionParams = null;
+    });
+    
+    // Cerrar modal al hacer clic fuera del contenido
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            currentAction = null;
+            currentActionParams = null;
+        }
+    });
+});
 
 // ==============================================
-// FUNCIONES PARA ARCHIVOS
+// FUNCIONES MEJORADAS PARA ARCHIVOS
 // ==============================================
 
-function setupFileButtons() {
-    const deleteButtons = document.querySelectorAll('.delete-btn');
-    const editButtons = document.querySelectorAll('.edit-btn');
-    const downloadButtons = document.querySelectorAll('.download-btn');
-
-    // Limpiar listeners anteriores
-    deleteButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true));
+function showConfirmationModal(type, message, callback, options = {}) {
+    const modal = document.createElement('div');
+    modal.className = `confirmation-modal ${type}-confirmation`;
+    modal.innerHTML = `
+        <div class="confirmation-modal-content">
+            <div class="confirmation-modal-header">
+                <h3>${options.title || 'Confirmación'}</h3>
+                <button class="close-confirmation-modal">&times;</button>
+            </div>
+            <div class="confirmation-modal-body">
+                ${message}
+                ${options.input ? `<input type="text" class="confirmation-input" placeholder="${options.placeholder || ''}" value="${options.value || ''}">` : ''}
+            </div>
+            <div class="confirmation-modal-footer">
+                <button class="confirmation-btn confirmation-btn-cancel">Cancelar</button>
+                <button class="confirmation-btn confirmation-btn-confirm">${options.confirmText || 'Confirmar'}</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+    
+    // Event listeners
+    modal.querySelector('.close-confirmation-modal').addEventListener('click', () => {
+        modal.remove();
     });
-    editButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true));
+    
+    modal.querySelector('.confirmation-btn-cancel').addEventListener('click', () => {
+        modal.remove();
     });
-    downloadButtons.forEach(button => {
-        button.replaceWith(button.cloneNode(true));
+    
+    modal.querySelector('.confirmation-btn-confirm').addEventListener('click', () => {
+        const inputValue = options.input ? modal.querySelector('.confirmation-input').value : null;
+        callback(inputValue);
+        modal.remove();
     });
-
-    // Agregar nuevos listeners
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const fileId = this.dataset.fileId;
-            eliminarArchivo(fileId);
-        });
-    });
-
-    editButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const fileId = this.dataset.fileId;
-            editarArchivo(fileId);
-        });
-    });
-
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const fileName = this.dataset.fileName;
-            descargarArchivo(fileName);
-        });
+    
+    // Cerrar al hacer clic fuera del modal
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
     });
 }
 
 function eliminarArchivo(id) {
-    if (confirm('¿Estás seguro de que deseas eliminar este archivo?')) {
+    showConfirmationModal('delete', '¿Estás seguro de que deseas eliminar este archivo? Esta acción no se puede deshacer.', () => {
         fetch('eliminar_archivo.php', {
             method: 'POST',
             headers: {
@@ -53,40 +113,52 @@ function eliminarArchivo(id) {
         })
         .then(response => response.text())
         .then(data => {
-            alert(data);
-            location.reload();
+            showAlert('success', data);
+            setTimeout(() => location.reload(), 1500);
         })
         .catch(error => {
             console.error('Error al eliminar el archivo:', error);
-            alert('Error al eliminar el archivo.');
+            showAlert('error', 'Error al eliminar el archivo.');
         });
-    }
+    }, {
+        title: 'Eliminar Archivo',
+        confirmText: 'Eliminar'
+    });
 }
 
-function editarArchivo(id) {
-    const nuevoNombre = prompt('Introduce el nuevo nombre del archivo:');
-    if (nuevoNombre) {
-        fetch('editar_archivo.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'id=' + encodeURIComponent(id) + '&nombre_archivo=' + encodeURIComponent(nuevoNombre),
-        })
-        .then(response => response.text())
-        .then(data => {
-            alert(data);
-            location.reload();
-        })
-        .catch(error => {
-            console.error('Error al editar el archivo:', error);
-            alert('Error al editar el archivo.');
-        });
-    }
+function editarArchivo(id, currentName = '') {
+    showConfirmationModal('edit', 'Introduce el nuevo nombre del archivo:', (newName) => {
+        if (newName && newName.trim() !== '') {
+            fetch('editar_archivo.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + encodeURIComponent(id) + '&nombre_archivo=' + encodeURIComponent(newName),
+            })
+            .then(response => response.text())
+            .then(data => {
+                showAlert('success', data);
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(error => {
+                console.error('Error al editar el archivo:', error);
+                showAlert('error', 'Error al editar el archivo.');
+            });
+        } else {
+            showAlert('error', 'Debes ingresar un nombre válido.');
+        }
+    }, {
+        title: 'Renombrar Archivo',
+        input: true,
+        placeholder: 'Nuevo nombre del archivo',
+        value: currentName,
+        confirmText: 'Guardar'
+    });
 }
 
 function descargarArchivo(nombreArchivo) {
-    if (confirm("¿Estás seguro de que deseas descargar este archivo?")) {
+    showConfirmationModal('download', `¿Estás seguro de que deseas descargar el archivo "${nombreArchivo}"?`, () => {
         fetch('verificar_archivo.php', {
             method: 'POST',
             headers: {
@@ -103,25 +175,27 @@ function descargarArchivo(nombreArchivo) {
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                showAlert('success', 'Descarga iniciada');
             } else {
-                alert("El archivo no existe.");
+                showAlert('error', "El archivo no existe.");
             }
         })
         .catch(error => {
             console.error("Error al verificar el archivo:", error);
-            alert("Error al intentar descargar el archivo.");
+            showAlert('error', "Error al intentar descargar el archivo.");
         });
-    } else {
-        console.log("Descarga cancelada.");
-    }
+    }, {
+        title: 'Descargar Archivo',
+        confirmText: 'Descargar'
+    });
 }
 
 // ==============================================
-// FUNCIONES PARA CARPETAS
+// FUNCIONES PARA CARPETAS (actualizadas)
 // ==============================================
 
 function eliminarCarpeta(id) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta carpeta?')) {
+    showConfirmationModal('delete', '¿Estás seguro de que deseas eliminar esta carpeta y todo su contenido? Esta acción no se puede deshacer.', () => {
         fetch('eliminar_carpeta.php', {
             method: 'POST',
             headers: {
@@ -131,37 +205,78 @@ function eliminarCarpeta(id) {
         })
         .then(response => response.text())
         .then(data => {
-            alert(data);
-            location.reload();
+            showAlert('success', data);
+            setTimeout(() => location.reload(), 1500);
         })
         .catch(error => {
             console.error('Error al eliminar la carpeta:', error);
-            alert('Error al eliminar la carpeta.');
+            showAlert('error', 'Error al eliminar la carpeta.');
         });
-    }
+    }, {
+        title: 'Eliminar Carpeta',
+        confirmText: 'Eliminar'
+    });
 }
 
-function editarCarpeta(id) {
-    const nuevoNombre = prompt('Introduce el nuevo nombre de la carpeta:');
-    if (nuevoNombre) {
-        fetch('editar_carpeta.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'id=' + encodeURIComponent(id) + '&nombre_carpeta=' + encodeURIComponent(nuevoNombre),
-        })
-        .then(response => response.text())
-        .then(data => {
-            alert(data);
-            location.reload();
-        })
-        .catch(error => {
-            console.error('Error al editar la carpeta:', error);
-            alert('Error al editar la carpeta.');
-        });
-    }
+function editarCarpeta(id, currentName = '') {
+    showConfirmationModal('edit', 'Introduce el nuevo nombre de la carpeta:', (newName) => {
+        if (newName && newName.trim() !== '') {
+            fetch('editar_carpeta.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + encodeURIComponent(id) + '&nombre_carpeta=' + encodeURIComponent(newName),
+            })
+            .then(response => response.text())
+            .then(data => {
+                showAlert('success', data);
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(error => {
+                console.error('Error al editar la carpeta:', error);
+                showAlert('error', 'Error al editar la carpeta.');
+            });
+        } else {
+            showAlert('error', 'Debes ingresar un nombre válido.');
+        }
+    }, {
+        title: 'Renombrar Carpeta',
+        input: true,
+        placeholder: 'Nuevo nombre de la carpeta',
+        value: currentName,
+        confirmText: 'Guardar'
+    });
 }
+
+// Función para mostrar alertas bonitas
+function showAlert(type, message) {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.innerHTML = `
+        <div class="alert-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="alert-close">&times;</button>
+    `;
+    
+    document.body.appendChild(alert);
+    
+    // Cerrar alerta después de 5 segundos
+    setTimeout(() => {
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 300);
+    }, 5000);
+    
+    // Cerrar al hacer clic en el botón
+    alert.querySelector('.alert-close').addEventListener('click', () => {
+        alert.remove();
+    });
+}
+
+
+
 
 function cargarCarpetas() {
     fetch('obtener_carpetas.php')
