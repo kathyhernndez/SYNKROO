@@ -46,10 +46,13 @@ main {
     align-items: center;
 }
 
-/* Modo oscuro */
+/* Modo oscuro body*/
 body.dark-mode {
-    background: black;
-    color: var(--text-dark-mode);
+    background-image: url('../image/negro.png') ;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    /* color: var(--text-dark-mode); */
 }
 
 /* Navbar */

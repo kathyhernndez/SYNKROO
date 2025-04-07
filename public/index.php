@@ -173,9 +173,7 @@
         <!-- Redes sociales a la izquierda -->
         <div class="footer-social">
             <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
             <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
         </div>
         
         <!-- Logo y nombre a la derecha -->
@@ -600,7 +598,7 @@ function changePassword() {
         }
 
         function playCaptchaRecover() {
-            fetch('get_captcha_text.php')
+            fetch('../php/get_captcha_text.php')
                 .then(response => response.text())
                 .then(text => {
                     const characters = text.split('');
