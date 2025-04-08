@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +20,9 @@
         
         <!-- Logo y nombre a la derecha -->
         <div class="navbar-brand">
+            <a href="index.php">
             <img src="../assets/image/logo.png" alt="Logo UPTAG" class="logo">
+            </a>
             <h1 class="app-name">SGDA</h1>
         </div>
     </div>
@@ -64,9 +65,9 @@
 <div class="captcha-container">
     <img src="../php/captcha.php" alt="CAPTCHA" class="captcha-image" id="captchaImage">
     <button type="button" title="Recargar CAPTCHA" class="reload-button" onclick="reloadCaptcha()">
-        <i class="fas fa-sync-alt"></i>
-    </button>
-    <button type="button" title="Reproducir CAPTCHA" class="audio-button" onclick="playCaptcha()">
+    <i class="fas fa-sync-alt"></i>
+</button>
+    <button type="button" title="Reproducir CAPTCHA" class="audio-button" onclick="playCaptcha(event)">
         <i class="fas fa-volume-up"></i>
     </button>
 </div>
@@ -106,7 +107,7 @@
                             <button type="button" title="Recargar CAPTCHA" class="reload-button" onclick="reloadCaptchaRecover()">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
-                            <button type="button" title="Reproducir CAPTCHA" class="audio-button" onclick="playCaptchaRecover()">
+                            <button type="button" title="Reproducir CAPTCHA" class="audio-button" onclick="playCaptcha(event)">
                                 <i class="fas fa-volume-up"></i>
                             </button>
                         </div>
@@ -167,7 +168,6 @@
         </div>
     </main>
 
-
     <footer class="slim-footer">
     <div class="footer-content">
         <!-- Redes sociales a la izquierda -->
@@ -191,8 +191,6 @@
         </div>
     </div>
 </footer>
-
-    
 
     <script src="../assets/js/script.js"></script>
     <script>
@@ -221,442 +219,477 @@
 
         // Función mejorada para mostrar carga
         function showLoading(buttonId, show) {
-    const button = document.getElementById(buttonId);
-    if (!button) return;
+            const button = document.getElementById(buttonId);
+            if (!button) return;
 
-    const spinner = button.querySelector('.loading-spinner');
-    const buttonText = button.querySelector('span:not(.loading-spinner)');
+            const spinner = button.querySelector('.loading-spinner');
+            const buttonText = button.querySelector('span:not(.loading-spinner)');
 
-    if (show) {
-        button.disabled = true;
-        if (spinner) spinner.classList.add('visible');
-        if (buttonText) buttonText.style.opacity = '0';
-    } else {
-        button.disabled = false;
-        if (spinner) spinner.classList.remove('visible');
-        if (buttonText) buttonText.style.opacity = '1';
-    }
-}
-
-// Función mejorada para mostrar mensajes del sistema
-function showSystemMessage(type, title, message, duration = 5000) {
-    // Validar tipo de mensaje
-    const validTypes = ['error', 'warning', 'success'];
-    if (!validTypes.includes(type)) {
-        type = 'error'; // Default a error si el tipo no es válido
-    }
-
-    // Iconos según tipo
-    const icons = {
-        error: 'fas fa-exclamation-circle',
-        warning: 'fas fa-exclamation-triangle',
-        success: 'fas fa-check-circle'
-    };
-    
-    // Crear contenedor principal si no existe
-    let messageContainer = document.getElementById('system-messages-container');
-    if (!messageContainer) {
-        messageContainer = document.createElement('div');
-        messageContainer.id = 'system-messages-container';
-        messageContainer.style.position = 'fixed';
-        messageContainer.style.top = '0';
-        messageContainer.style.left = '0';
-        messageContainer.style.width = '100%';
-        messageContainer.style.height = '100%';
-        messageContainer.style.zIndex = '9999';
-        messageContainer.style.pointerEvents = 'none';
-        document.body.appendChild(messageContainer);
-    }
-    
-    // Crear backdrop
-    const backdrop = document.createElement('div');
-    backdrop.className = 'system-message-backdrop';
-    
-    // Crear elemento de mensaje
-    const messageElement = document.createElement('div');
-    messageElement.className = `system-message ${type}`;
-    messageElement.innerHTML = `
-        <i class="system-message-icon ${icons[type]}"></i>
-        <div class="system-message-content">
-            <div class="system-message-title">${title}</div>
-            <div class="system-message-text">${message}</div>
-        </div>
-        <div class="system-message-progress">
-            <div class="system-message-progress-bar" style="transition-duration: ${duration}ms"></div>
-        </div>
-        <div class="system-message-close">Cerrar</div>
-    `;
-    
-    // Agregar elementos al DOM
-    messageContainer.appendChild(backdrop);
-    messageContainer.appendChild(messageElement);
-    
-    // Mostrar con animación
-    setTimeout(() => {
-        backdrop.classList.add('visible');
-        messageElement.classList.add('visible');
-        
-        // Iniciar animación de progreso
-        const progressBar = messageElement.querySelector('.system-message-progress-bar');
-        if (progressBar) {
-            setTimeout(() => {
-                progressBar.style.transform = 'scaleX(0)';
-            }, 10);
-        }
-    }, 10);
-    
-    // Función para ocultar
-    const hideMessage = () => {
-        messageElement.classList.remove('visible');
-        backdrop.classList.remove('visible');
-        setTimeout(() => {
-            messageElement.remove();
-            backdrop.remove();
-            if (messageContainer.children.length === 0) {
-                messageContainer.remove();
-            }
-        }, 300);
-    };
-    
-    // Cerrar al hacer click en el botón
-    const closeBtn = messageElement.querySelector('.system-message-close');
-    closeBtn.addEventListener('click', hideMessage);
-    
-    // Cerrar al hacer click en el backdrop
-    backdrop.addEventListener('click', hideMessage);
-    
-    // Ocultar automáticamente después de la duración
-    if (duration > 0) {
-        setTimeout(hideMessage, duration);
-    }
-    
-    // Devolver función para cerrar manualmente
-    return {
-        close: hideMessage
-    };
-}
-
-// Manejo del formulario de login con mensajes mejorados
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const form = this;
-    
-    // Validación básica
-    const email = form.querySelector('input[name="correo"]').value;
-    const password = form.querySelector('input[name="clave"]').value;
-    const captcha = form.querySelector('input[name="captcha"]').value;
-    
-    if (!email || !password || !captcha) {
-        showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
-        return false;
-    }
-    
-    // Mostrar spinner
-    showLoading('loginSubmit', true);
-    
-    // Enviar formulario
-    fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form)
-    })
-    .then(response => {
-        if (response.redirected) {
-            // Mostrar éxito antes de redirigir
-            const successMsg = showSystemMessage('success', '¡Bienvenido!', 'Credenciales verificadas correctamente. Redirigiendo...', 2500);
-            setTimeout(() => {
-                window.location.href = response.url;
-            }, 2500);
-            return;
-        }
-        return response.json();
-    })
-    .then(data => {
-        showLoading('loginSubmit', false);
-        if (data) {
-            if (data.success) {
-                const successMsg = showSystemMessage('success', '¡Bienvenido!', 'Inicio de sesión exitoso. Redirigiendo...', 2500);
-                setTimeout(() => {
-                    window.location.href = data.redirect || '../php/menu.php';
-                }, 2500);
+            if (show) {
+                button.disabled = true;
+                if (spinner) spinner.classList.add('visible');
+                if (buttonText) buttonText.style.opacity = '0';
             } else {
-                // Mostrar error específico
-                if (data.message.includes('CAPTCHA incorrecto')) {
-                    showSystemMessage('error', 'Error de seguridad', data.message);
-                    reloadCaptcha();
-                } else if (data.message.includes('Contraseña incorrecta')) {
-                    showSystemMessage('warning', 'Acceso denegado', data.message);
-                    reloadCaptcha();
-                } else if (data.message.includes('bloqueada')) {
-                    showSystemMessage('error', 'Cuenta bloqueada', data.message, 8000);
-                    reloadCaptcha();
-                } else {
-                    showSystemMessage('error', 'Error', data.message || 'Error al iniciar sesión');
-                    reloadCaptcha();
-                }
+                button.disabled = false;
+                if (spinner) spinner.classList.remove('visible');
+                if (buttonText) buttonText.style.opacity = '1';
             }
         }
-    })
-    .catch(error => {
-        showLoading('loginSubmit', false);
-        showSystemMessage('error', 'Error del sistema', 'No se pudo conectar con el servidor');
-        reloadCaptcha();
-    });
-});
 
-///MODULO FUNCIONES CAMBIO DE CLAVE
+        // Función mejorada para mostrar mensajes del sistema
+        function showSystemMessage(type, title, message, duration = 5000) {
+            const validTypes = ['error', 'warning', 'success'];
+            if (!validTypes.includes(type)) {
+                type = 'error';
+            }
 
-// Función para verificar el usuario (Paso 1) con nuevos mensajes
-function verifyUser() {
-    const email = document.getElementById('recoverUser').value;
-    const cedula = document.getElementById('recoverCedula').value;
-    const captcha = document.getElementById('recoverCaptcha').value;
-
-    if (!email || !cedula || !captcha) {
-        showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
-        return;
-    }
-
-    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
-        showSystemMessage('error', 'Correo inválido', 'Por favor ingresa un correo electrónico válido');
-        return;
-    }
-
-    showLoading('verifyUserBtn', true);
-
-    const formData = new FormData();
-    formData.append('recoverUser', email);
-    formData.append('recoverCedula', cedula);
-    formData.append('recoverCaptcha', captcha);
-
-    fetch('../php/recuperar_contrasena_be.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        showLoading('verifyUserBtn', false);
-        if (data.status === 'success') {
-            showSystemMessage('success', 'Verificación exitosa', 'Usuario verificado correctamente', 1500);
+            const icons = {
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                success: 'fas fa-check-circle'
+            };
+            
+            let messageContainer = document.getElementById('system-messages-container');
+            if (!messageContainer) {
+                messageContainer = document.createElement('div');
+                messageContainer.id = 'system-messages-container';
+                messageContainer.style.position = 'fixed';
+                messageContainer.style.top = '0';
+                messageContainer.style.left = '0';
+                messageContainer.style.width = '100%';
+                messageContainer.style.height = '100%';
+                messageContainer.style.zIndex = '9999';
+                messageContainer.style.pointerEvents = 'none';
+                document.body.appendChild(messageContainer);
+            }
+            
+            const backdrop = document.createElement('div');
+            backdrop.className = 'system-message-backdrop';
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = `system-message ${type}`;
+            messageElement.innerHTML = `
+                <i class="system-message-icon ${icons[type]}"></i>
+                <div class="system-message-content">
+                    <div class="system-message-title">${title}</div>
+                    <div class="system-message-text">${message}</div>
+                </div>
+                <div class="system-message-progress">
+                    <div class="system-message-progress-bar" style="transition-duration: ${duration}ms"></div>
+                </div>
+                <div class="system-message-close">Cerrar</div>
+            `;
+            
+            messageContainer.appendChild(backdrop);
+            messageContainer.appendChild(messageElement);
+            
             setTimeout(() => {
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
+                backdrop.classList.add('visible');
+                messageElement.classList.add('visible');
                 
-                const container = document.getElementById('preguntasContainer');
-                container.innerHTML = `
-                    <div class="pregunta">
-                        <label>${data.pregunta_1}</label>
-                        <input type="text" name="respuesta_1" required>
-                        <span class="help-text">Responde la pregunta de seguridad</span>
-                    </div>
-                    <div class="pregunta">
-                        <label>${data.pregunta_2}</label>
-                        <input type="text" name="respuesta_2" required>
-                        <span class="help-text">Responde la pregunta de seguridad</span>
-                    </div>
-                    <div class="pregunta">
-                        <label>${data.pregunta_3}</label>
-                        <input type="text" name="respuesta_3" required>
-                        <span class="help-text">Responde la pregunta de seguridad</span>
-                    </div>
-                `;
-            }, 1500);
-        } else {
-            showSystemMessage('error', 'Error de verificación', data.message || 'Usuario no encontrado o datos incorrectos');
-            reloadCaptchaRecover();
+                const progressBar = messageElement.querySelector('.system-message-progress-bar');
+                if (progressBar) {
+                    setTimeout(() => {
+                        progressBar.style.transform = 'scaleX(0)';
+                    }, 10);
+                }
+            }, 10);
+            
+            const hideMessage = () => {
+                messageElement.classList.remove('visible');
+                backdrop.classList.remove('visible');
+                setTimeout(() => {
+                    messageElement.remove();
+                    backdrop.remove();
+                    if (messageContainer.children.length === 0) {
+                        messageContainer.remove();
+                    }
+                }, 300);
+            };
+            
+            const closeBtn = messageElement.querySelector('.system-message-close');
+            closeBtn.addEventListener('click', hideMessage);
+            
+            backdrop.addEventListener('click', hideMessage);
+            
+            if (duration > 0) {
+                setTimeout(hideMessage, duration);
+            }
+            
+            return {
+                close: hideMessage
+            };
         }
-    })
-    .catch(error => {
-        showLoading('verifyUserBtn', false);
-        showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al procesar la solicitud');
-        console.error('Error:', error);
-    });
-}
 
-// Función para verificar respuestas (Paso 2)
-function verifyAnswers() {
-    const respuesta1 = document.querySelector('input[name="respuesta_1"]').value.trim();
-    const respuesta2 = document.querySelector('input[name="respuesta_2"]').value.trim();
-    const respuesta3 = document.querySelector('input[name="respuesta_3"]').value.trim();
+        // Manejo del formulario de login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            const email = form.querySelector('input[name="correo"]').value;
+            const password = form.querySelector('input[name="clave"]').value;
+            const captcha = form.querySelector('input[name="captcha"]').value;
+            
+            if (!email || !password || !captcha) {
+                showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
+                return false;
+            }
+            
+            showLoading('loginSubmit', true);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    const successMsg = showSystemMessage('success', '¡Bienvenido!', 'Credenciales verificadas correctamente. Redirigiendo...', 2500);
+                    setTimeout(() => {
+                        window.location.href = response.url;
+                    }, 2500);
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                showLoading('loginSubmit', false);
+                if (data) {
+                    if (data.success) {
+                        const successMsg = showSystemMessage('success', '¡Bienvenido!', 'Inicio de sesión exitoso. Redirigiendo...', 2500);
+                        setTimeout(() => {
+                            window.location.href = data.redirect || '../php/menu.php';
+                        }, 2500);
+                    } else {
+                        if (data.message.includes('CAPTCHA incorrecto')) {
+                            showSystemMessage('error', 'Error de seguridad', data.message);
+                            reloadCaptcha();
+                        } else if (data.message.includes('Contraseña incorrecta')) {
+                            showSystemMessage('warning', 'Acceso denegado', data.message);
+                            reloadCaptcha();
+                        } else if (data.message.includes('bloqueada')) {
+                            showSystemMessage('error', 'Cuenta bloqueada', data.message, 8000);
+                            reloadCaptcha();
+                        } else {
+                            showSystemMessage('error', 'Error', data.message || 'Error al iniciar sesión');
+                            reloadCaptcha();
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                showLoading('loginSubmit', false);
+                showSystemMessage('error', 'Error del sistema', 'No se pudo conectar con el servidor');
+                reloadCaptcha();
+            });
+        });
 
-    if (!respuesta1 || !respuesta2 || !respuesta3) {
-        showSystemMessage('error', 'Campos incompletos', 'Por favor responde todas las preguntas');
-        return;
-    }
+        // Función para verificar el usuario (Paso 1)
+        function verifyUser() {
+            const email = document.getElementById('recoverUser').value;
+            const cedula = document.getElementById('recoverCedula').value;
+            const captcha = document.getElementById('recoverCaptcha').value;
 
-    showLoading('verifyAnswersBtn', true);
+            if (!email || !cedula || !captcha) {
+                showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
+                return;
+            }
 
-    const formData = new FormData();
-    formData.append('respuesta_1', respuesta1);
-    formData.append('respuesta_2', respuesta2);
-    formData.append('respuesta_3', respuesta3);
+            if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+                showSystemMessage('error', 'Correo inválido', 'Por favor ingresa un correo electrónico válido');
+                return;
+            }
 
-    fetch('../php/verificar_respuestas_be.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        showLoading('verifyAnswersBtn', false);
-        if (data.status === 'success') {
-            showSystemMessage('success', 'Respuestas correctas', 'Ahora puedes cambiar tu contraseña', 1500);
-            setTimeout(() => {
-                document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = 'block';
-            }, 1500);
-        } else {
-            showSystemMessage('error', 'Respuestas incorrectas', data.message || 'Las respuestas no coinciden con nuestros registros');
+            showLoading('verifyUserBtn', true);
+
+            const formData = new FormData();
+            formData.append('recoverUser', email);
+            formData.append('recoverCedula', cedula);
+            formData.append('recoverCaptcha', captcha);
+
+            fetch('../php/recuperar_contrasena_be.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading('verifyUserBtn', false);
+                if (data.status === 'success') {
+                    showSystemMessage('success', 'Verificación exitosa', 'Usuario verificado correctamente', 1500);
+                    setTimeout(() => {
+                        document.getElementById('step1').style.display = 'none';
+                        document.getElementById('step2').style.display = 'block';
+                        
+                        const container = document.getElementById('preguntasContainer');
+                        container.innerHTML = `
+                            <div class="pregunta">
+                                <label>${data.pregunta_1}</label>
+                                <input type="text" name="respuesta_1" required>
+                                <span class="help-text">Responde la pregunta de seguridad</span>
+                            </div>
+                            <div class="pregunta">
+                                <label>${data.pregunta_2}</label>
+                                <input type="text" name="respuesta_2" required>
+                                <span class="help-text">Responde la pregunta de seguridad</span>
+                            </div>
+                            <div class="pregunta">
+                                <label>${data.pregunta_3}</label>
+                                <input type="text" name="respuesta_3" required>
+                                <span class="help-text">Responde la pregunta de seguridad</span>
+                            </div>
+                        `;
+                    }, 1500);
+                } else {
+                    showSystemMessage('error', 'Error de verificación', data.message || 'Usuario no encontrado o datos incorrectos');
+                    reloadCaptchaRecover();
+                }
+            })
+            .catch(error => {
+                showLoading('verifyUserBtn', false);
+                showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al procesar la solicitud');
+                console.error('Error:', error);
+            });
         }
-    })
-    .catch(error => {
-        showLoading('verifyAnswersBtn', false);
-        showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al verificar las respuestas');
-        console.error('Error:', error);
-    });
-}
 
-// Función para cambiar contraseña (Paso 3)
-function changePassword() {
-    const nuevaContrasena = document.getElementById('nueva_contrasena').value;
-    const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+        // Función para verificar respuestas (Paso 2)
+        function verifyAnswers() {
+            const respuesta1 = document.querySelector('input[name="respuesta_1"]').value.trim();
+            const respuesta2 = document.querySelector('input[name="respuesta_2"]').value.trim();
+            const respuesta3 = document.querySelector('input[name="respuesta_3"]').value.trim();
 
-    if (!nuevaContrasena || !confirmarContrasena) {
-        showSystemMessage('error', 'Campos incompletos', 'Por favor completa ambos campos');
-        return;
-    }
+            if (!respuesta1 || !respuesta2 || !respuesta3) {
+                showSystemMessage('error', 'Campos incompletos', 'Por favor responde todas las preguntas');
+                return;
+            }
 
-    if (nuevaContrasena !== confirmarContrasena) {
-        showSystemMessage('error', 'Contraseñas no coinciden', 'Las contraseñas ingresadas no son iguales');
-        return;
-    }
+            showLoading('verifyAnswersBtn', true);
 
-    if (nuevaContrasena.length < 16) {
-        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe tener al menos 16 caracteres');
-        return;
-    }
+            const formData = new FormData();
+            formData.append('respuesta_1', respuesta1);
+            formData.append('respuesta_2', respuesta2);
+            formData.append('respuesta_3', respuesta3);
 
-    showLoading('changePasswordBtn', true);
-
-    const formData = new FormData();
-    formData.append('nueva_contrasena', nuevaContrasena);
-    formData.append('confirmar_contrasena', confirmarContrasena);
-
-    fetch('../php/cambiar_contrasena_be.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        showLoading('changePasswordBtn', false);
-        if (data.status === 'success') {
-            showSystemMessage('success', '¡Contraseña cambiada!', 'Tu contraseña ha sido actualizada correctamente', 3000);
-            setTimeout(() => {
-                document.getElementById('step3').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-            }, 3000);
-        } else {
-            showSystemMessage('error', 'Error al cambiar', data.message || 'No se pudo cambiar la contraseña');
+            fetch('../php/verificar_respuestas_be.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading('verifyAnswersBtn', false);
+                if (data.status === 'success') {
+                    showSystemMessage('success', 'Respuestas correctas', 'Ahora puedes cambiar tu contraseña', 1500);
+                    setTimeout(() => {
+                        document.getElementById('step2').style.display = 'none';
+                        document.getElementById('step3').style.display = 'block';
+                    }, 1500);
+                } else {
+                    showSystemMessage('error', 'Respuestas incorrectas', data.message || 'Las respuestas no coinciden con nuestros registros');
+                }
+            })
+            .catch(error => {
+                showLoading('verifyAnswersBtn', false);
+                showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al verificar las respuestas');
+                console.error('Error:', error);
+            });
         }
-    })
-    .catch(error => {
-        showLoading('changePasswordBtn', false);
-        showSystemMessage('error', 'Error del sistema', 'No se pudo completar el cambio de contraseña');
-        console.error('Error:', error);
-    });
-}
 
+        // Función para cambiar contraseña (Paso 3)
+        function changePassword() {
+            const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+            const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
 
+            if (!nuevaContrasena || !confirmarContrasena) {
+                showSystemMessage('error', 'Campos incompletos', 'Por favor completa ambos campos');
+                return;
+            }
 
-        // Funciones para el CAPTCHA
+            if (nuevaContrasena !== confirmarContrasena) {
+                showSystemMessage('error', 'Contraseñas no coinciden', 'Las contraseñas ingresadas no son iguales');
+                return;
+            }
+
+            if (nuevaContrasena.length < 16) {
+                showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe tener al menos 16 caracteres');
+                return;
+            }
+
+            showLoading('changePasswordBtn', true);
+
+            const formData = new FormData();
+            formData.append('nueva_contrasena', nuevaContrasena);
+            formData.append('confirmar_contrasena', confirmarContrasena);
+
+            fetch('../php/cambiar_contrasena_be.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading('changePasswordBtn', false);
+                if (data.status === 'success') {
+                    showSystemMessage('success', '¡Contraseña cambiada!', 'Tu contraseña ha sido actualizada correctamente', 3000);
+                    setTimeout(() => {
+                        document.getElementById('step3').style.display = 'none';
+                        document.getElementById('successMessage').style.display = 'block';
+                    }, 3000);
+                } else {
+                    showSystemMessage('error', 'Error al cambiar', data.message || 'No se pudo cambiar la contraseña');
+                }
+            })
+            .catch(error => {
+                showLoading('changePasswordBtn', false);
+                showSystemMessage('error', 'Error del sistema', 'No se pudo completar el cambio de contraseña');
+                console.error('Error:', error);
+            });
+        }
+
+        // Variables globales para control del CAPTCHA
+        let lastCaptchaText = '';
+        let isPlaying = false;
+        let currentUtterance = null;
+
+        // Función para detener la reproducción actual
+        function stopPlayback() {
+            if (isPlaying && currentUtterance) {
+                speechSynthesis.cancel();
+                isPlaying = false;
+            }
+        }
+
+        // Función para reproducir texto con voz
+        function speakText(text, audioBtn) {
+            stopPlayback();
+            
+            if (!('speechSynthesis' in window)) {
+                showSystemMessage('warning', 'Audio no soportado', 'Tu navegador no soporta síntesis de voz');
+                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                return;
+            }
+
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = 'es-ES';
+            currentUtterance.rate = 0.7;
+            currentUtterance.pitch = 1;
+
+            audioBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            currentUtterance.onstart = () => {
+                isPlaying = true;
+                audioBtn.innerHTML = '<i class="fas fa-stop"></i>';
+                audioBtn.classList.add('active');
+            };
+            
+            currentUtterance.onend = currentUtterance.onerror = () => {
+                isPlaying = false;
+                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                audioBtn.classList.remove('active');
+            };
+
+            speechSynthesis.speak(currentUtterance);
+        }
+
+        // Función para reproducir CAPTCHA
+        function playCaptcha(event) {
+            event.preventDefault();
+            const audioBtn = event.currentTarget;
+            
+            if (isPlaying && audioBtn.querySelector('.fa-stop')) {
+                stopPlayback();
+                return;
+            }
+
+            audioBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            fetch('../php/get_captcha_text.php?t=' + Date.now(), {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la respuesta');
+                return response.text();
+            })
+            .then(text => {
+                if (!text.trim()) throw new Error('Texto CAPTCHA vacío');
+                lastCaptchaText = text.trim();
+                speakText(text.trim(), audioBtn);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                showSystemMessage('error', 'Error de audio', 'No se pudo reproducir el CAPTCHA. Intenta recargarlo.');
+            });
+        }
+
+        // Función para recargar el CAPTCHA
         function reloadCaptcha() {
-            const captchaImage = document.getElementById('captchaImage');
-            captchaImage.src = '../php/captcha.php?' + new Date().getTime();
+            const timestamp = Date.now();
+            const newSrc = `../php/captcha.php?reload=${timestamp}`;
+            
+            const captchaImg1 = document.getElementById('captchaImage');
+            const captchaImg2 = document.getElementById('captchaImageRecover');
+            
+            captchaImg1.src = newSrc;
+            captchaImg2.src = newSrc;
+            
+            fetch('../php/get_captcha_text.php?t=' + timestamp)
+                .then(response => response.text())
+                .then(text => {
+                    lastCaptchaText = text;
+                })
+                .catch(console.error);
         }
 
+        // Función alias para recarga desde el formulario de recuperación
         function reloadCaptchaRecover() {
-            const captchaImage = document.getElementById('captchaImageRecover');
-            captchaImage.src = '../php/captcha.php?' + new Date().getTime();
+            reloadCaptcha();
         }
 
-        function playCaptcha() {
-            fetch('../php/get_captcha_text.php')
-                .then(response => response.text())
-                .then(text => {
-                    const characters = text.split('');
-                    let index = 0;
-                    function speakNextCharacter() {
-                        if (index < characters.length) {
-                            const utterance = new SpeechSynthesisUtterance(characters[index]);
-                            utterance.lang = 'es-ES';
-                            utterance.onend = speakNextCharacter;
-                            speechSynthesis.speak(utterance);
-                            index++;
-                        }
-                    }
-                    speakNextCharacter();
-                })
-                .catch(error => console.error('Error al obtener el CAPTCHA:', error));
-        }
+        // Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            reloadCaptcha();
+            
+            document.querySelectorAll('.audio-button').forEach(btn => {
+                btn.addEventListener('click', playCaptcha);
+            });
 
-        function playCaptchaRecover() {
-            fetch('../php/get_captcha_text.php')
-                .then(response => response.text())
-                .then(text => {
-                    const characters = text.split('');
-                    let index = 0;
-                    function speakNextCharacter() {
-                        if (index < characters.length) {
-                            const utterance = new SpeechSynthesisUtterance(characters[index]);
-                            utterance.lang = 'es-ES';
-                            utterance.onend = speakNextCharacter;
-                            speechSynthesis.speak(utterance);
-                            index++;
-                        }
-                    }
-                    speakNextCharacter();
-                })
-                .catch(error => console.error('Error al obtener el CAPTCHA:', error));
-        }
+            document.querySelectorAll('.reload-button').forEach(btn => {
+                btn.addEventListener('click', reloadCaptcha);
+            });
+        });
 
         // Configuración del tema oscuro/claro persistente
-const themeToggle = document.getElementById('theme-toggle');
-const themeIcon = document.getElementById('theme-icon');
-const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
 
-// Función para cargar el tema guardado
-function loadTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark-mode');
-        themeIcon.classList.replace('fa-moon', 'fa-sun');
-    } else {
-        body.classList.remove('dark-mode');
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
-    }
-}
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                body.classList.remove('dark-mode');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
 
-// Función para cambiar el tema
-function toggleTheme() {
-    body.classList.toggle('dark-mode');
-    if (body.classList.contains('dark-mode')) {
-        themeIcon.classList.replace('fa-moon', 'fa-sun');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
-        localStorage.setItem('theme', 'light');
-    }
-}
+        function toggleTheme() {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
 
-// Cargar el tema al iniciar
-document.addEventListener('DOMContentLoaded', loadTheme);
+        document.addEventListener('DOMContentLoaded', loadTheme);
+        themeToggle.addEventListener('click', toggleTheme);
 
-// Configurar el evento click
-themeToggle.addEventListener('click', toggleTheme);
-
-
-/* Actualizar año automáticamente */
+        /* Actualizar año automáticamente */
         document.getElementById('current-year').textContent = new Date().getFullYear();
-    
-
     </script>
 </body>
 </html>
