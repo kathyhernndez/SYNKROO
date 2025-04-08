@@ -568,7 +568,7 @@
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.lang = 'es-ES';
             currentUtterance.rate = 0.7;
-            currentUtterance.pitch = 1;
+            currentUtterance.pitch = 0.9;
 
             audioBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
