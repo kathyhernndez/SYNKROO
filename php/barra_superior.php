@@ -60,18 +60,18 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
     // Función para actualizar los datos del usuario
     function actualizarDatosUsuario() {
-        console.log('actualizarDatosUsuario ejecutado');
+        //console.log('actualizarDatosUsuario ejecutado');
         const userNameElement = document.getElementById('user-name');
         const userEmailElement = document.getElementById('user-email');
         const userRolElement = document.getElementById('user-rol');
 
         if (usuario && usuario.nombre && usuario.email && usuario.rol) {
-            console.log('Datos del usuario encontrados:', usuario);
+            //console.log('Datos del usuario encontrados:', usuario);
             userNameElement.textContent = `Usuario: ${usuario.nombre}`;
             userEmailElement.textContent = `Correo: ${usuario.email}`;
             userRolElement.textContent = `Rol: ${usuario.rol}`;
         } else {
-            console.log('Datos del usuario no disponibles');
+            //console.log('Datos del usuario no disponibles');
             userNameElement.textContent = 'Usuario: No disponible';
             userEmailElement.textContent = 'Correo: No disponible';
             userRolElement.textContent = 'Rol: No disponible';
@@ -130,8 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Configurar otros eventos (tema, menú, etc.)
-    // ... (mantén el resto de tu código existente)
+   
 });
 </script>
 </body>

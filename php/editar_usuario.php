@@ -1,8 +1,4 @@
 <?php
-// Solo para depuración - eliminar en producción
-//error_log('Datos recibidos: ' . print_r($_POST, true));
-//file_put_contents('debug_editar_usuario.log', print_r($_POST, true) . "\n", FILE_APPEND);
-
 include 'conexion_be.php';
 include 'registrar_accion.php';
 session_start();
@@ -25,8 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id <= 0 || empty($nombre) || empty($apellido) || empty($correo) || empty($cedula)) {
         die(json_encode([
             'success' => false, 
-            'message' => 'Todos los campos son requeridos excepto la contraseña.',
-            'received_data' => $_POST // Solo para depuración
+            'message' => 'Todos los campos son requeridos excepto la contraseña.'
         ]));
     }
 
@@ -35,14 +30,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die(json_encode(['success' => false, 'message' => 'La cédula debe contener entre 6 y 12 dígitos numéricos.']));
     }
 
-    // Validar formato de correo
-    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        die(json_encode(['success' => false, 'message' => 'El correo electrónico no tiene un formato válido.']));
+    // Validar formato de correo con los nuevos requisitos
+    if (!preg_match('/^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{5,}\.[a-zA-Z]{2,}$/', $correo)) {
+        die(json_encode(['success' => false, 'message' => 'El correo electrónico no tiene un formato válido. Debe tener al menos 2 caracteres antes de la @, al menos 5 caracteres en el dominio y una extensión de dominio válida.']));
     }
 
     // Validar contraseña si se proporcionó
-    if ($clave && strlen($clave) < 16) {
-        die(json_encode(['success' => false, 'message' => 'La contraseña debe tener al menos 16 caracteres.']));
+    if ($clave) {
+        if (strlen($clave) < 16) {
+            die(json_encode(['success' => false, 'message' => 'La contraseña debe tener al menos 16 caracteres.']));
+        }
+        if (!preg_match('/[A-Z]/', $clave)) {
+            die(json_encode(['success' => false, 'message' => 'La contraseña debe contener al menos una letra mayúscula.']));
+        }
+        if (!preg_match('/[a-z]/', $clave)) {
+            die(json_encode(['success' => false, 'message' => 'La contraseña debe contener al menos una letra minúscula.']));
+        }
+        if (!preg_match('/[0-9]/', $clave)) {
+            die(json_encode(['success' => false, 'message' => 'La contraseña debe contener al menos un número.']));
+        }
     }
 
     try {
@@ -55,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtCheck->execute();
 
         if ($stmtCheck->rowCount() > 0) {
-            $conflict = $stmtCheck->fetch(PDO::FETCH_ASSOC);
             die(json_encode(['success' => false, 'message' => 'El correo o cédula ya están en uso por otro usuario.']));
         }
 
@@ -98,8 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('Error al editar usuario: ' . $e->getMessage());
         echo json_encode([
             'success' => false, 
-            'message' => 'Error en la base de datos al actualizar el usuario.',
-            'error_details' => $e->getMessage() // Solo para desarrollo
+            'message' => 'Error en la base de datos al actualizar el usuario.'
         ]);
     }
 } else {

@@ -57,507 +57,7 @@ if (isset($message)) {
     <title>Gestión Usuarios</title>
     
 <body>
-    <style>
-        /* Estilos para el botón de filtrado */
-.filter-btn {
-    background-color: #ff8c42; /* Fondo naranja */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.filter-btn i {
-    font-size: 18px;
-}
-
-/* Estilos para el menú desplegable de filtrado */
-.filter-dropdown {
-    display: none; /* Oculto por defecto */
-    position: absolute;
-    background-color: #f5f5f5; /* Fondo blanco hueso */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    margin-top: 10px;
-}
-
-/* Estilos para los grupos de filtros */
-.filter-group {
-    margin-bottom: 10px;
-}
-
-.filter-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333; /* Letras negras en modo claro */
-}
-
-/* Estilos para los selects */
-.filter-select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px; /* Borde redondeado */
-    font-size: 14px;
-    background-color: white; /* Fondo blanco */
-    color: #333; /* Letras negras */
-    cursor: pointer;
-}
-
-/* Estilos para el botón de aplicar filtros */
-.apply-filter-btn {
-    background-color: #ff8c42; /* Fondo naranja */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.apply-filter-btn:hover {
-    background-color: #e67e22; /* Naranja más oscuro al pasar el mouse */
-}
-/* Estilos para el modo oscuro */
-body.dark-mode .filter-dropdown {
-    background-color: #333; /* Fondo negro en modo oscuro */
-    border-color: #555;
-}
-
-body.dark-mode .filter-group label {
-    color: #fff; /* Letras blancas en modo oscuro */
-}
-
-body.dark-mode .filter-select {
-    background-color: #444; /* Fondo oscuro para selects */
-    color: #fff; /* Letras blancas */
-    border-color: #555;
-}
-
-body.dark-mode .apply-filter-btn {
-    background-color: #e67e22; /* Naranja más oscuro en modo oscuro */
-}
-
-/* Estilos para el modal de confirmación */
-#confirm-modal {
-    display: none;
-    position: fixed;
-    z-index: 1001;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-}
-
-#confirm-modal .modal-content {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    text-align: center;
-}
-
-#confirm-modal .close-modal {
-    float: right;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-#confirm-modal .password-container {
-    position: relative;
-    margin-bottom: 15px;
-}
-
-#confirm-modal .password-container input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#confirm-modal .toggle-password-btn {
-    position: absolute;
-    right: 10px;
-    top: 70%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #ff8c42;
-}
-
-#confirm-modal .confirm-btn {
-    background-color: #ff8c42;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-#confirm-modal .confirm-btn:hover {
-    background-color: #e67e22;
-}
-
-/* Estilos para modo oscuro */
-body.dark-mode #confirm-modal .modal-content {
-    background-color: #333;
-    color: white;
-}
-
-body.dark-mode #confirm-modal .password-container input {
-    background-color: #444;
-    color: white;
-    border-color: #555;
-}
-
-body.dark-mode #confirm-modal .toggle-password-btn {
-    color: #e67e22;
-}
-
-
-/** estilos registro usuarios **/
-/* Estilos para el modal de usuario */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-    width: 500px;
-    max-width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.close-modal {
-    float: right;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-/* Estilos para el formulario */
-#user-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#user-form label {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-#user-form input,
-#user-form select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    width: 100%;
-}
-
-#user-form button[type="submit"] {
-    background-color: #ff8c42;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-#user-form button[type="submit"]:hover {
-    background-color: #e67e22;
-}
-
-.error-message {
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 10px;
-    display: none;
-}
-
-/* Estilos para modo oscuro */
-body.dark-mode .modal-content {
-    background-color: #333;
-    color: white;
-}
-
-body.dark-mode #user-form input,
-body.dark-mode #user-form select {
-    background-color: #444;
-    color: white;
-    border-color: #555;
-}
-
-body.dark-mode #user-form button[type="submit"] {
-    background-color: #e67e22;
-}
-
-body.dark-mode #user-form button[type="submit"]:hover {
-    background-color: #d35400;
-}
-
-/* Estilos para el indicador de fortaleza de contraseña */
-.password-strength-container {
-    margin-top: 5px;
-}
-
-.password-strength-bar {
-    width: 100%;
-    height: 5px;
-    background-color: #e0e0e0;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 3px;
-}
-
-.password-strength-progress {
-    height: 100%;
-    width: 0%;
-    transition: width 0.3s ease, background-color 0.3s ease;
-}
-
-/* Colores para diferentes niveles de fortaleza */
-.password-very-weak {
-    background-color: #ff3333;
-    width: 25%;
-}
-
-.password-weak {
-    background-color: #ff9933;
-    width: 50%;
-}
-
-.password-medium {
-    background-color: #ffcc33;
-    width: 75%;
-}
-
-.password-strong {
-    background-color: #33cc33;
-    width: 100%;
-}
-
-/* Estilos para modo oscuro */
-body.dark-mode .password-strength-bar {
-    background-color: #444;
-}
-
-/* Estilos para mensajes de error en campos */
-.field-error {
-    color: #ff3333;
-    font-size: 12px;
-    margin-top: 5px;
-    display: none;
-}
-
-/* Resaltar campos con error */
-input.error, select.error {
-    border-color: #ff3333 !important;
-}
-
-/* Estilos para modo oscuro */
-body.dark-mode .field-error {
-    color: #ff6666;
-}
-
-/* Nuevos estilos para el formulario reorganizado */
-.form-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group.full-width {
-    flex: 0 0 100%;
-}
-
-.form-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.form-group input,
-.form-group select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    width: 100%;
-}
-
-/* Ajustes para modo oscuro */
-body.dark-mode .form-group label {
-    color: #fff;
-}
-
-body.dark-mode .form-group input,
-body.dark-mode .form-group select {
-    background-color: #444;
-    color: white;
-    border-color: #555;
-}
-
-/* Ajustes para pantallas pequeñas */
-@media (max-width: 600px) {
-    .form-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .modal-content {
-        width: 90%;
-        padding: 15px;
-    }
-}
-
-/* Estilo para el botón de guardar */
-#user-form button[type="submit"] {
-    background-color: #ff8c42;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 15px;
-    width: 100%;
-    transition: background-color 0.3s;
-}
-
-#user-form button[type="submit"]:hover {
-    background-color: #e67e22;
-}
-
-/* Mensajes de error */
-.field-error {
-    color: #ff3333;
-    font-size: 12px;
-    margin-top: 5px;
-    display: none;
-}
-
-input.error, select.error {
-    border-color: #ff3333 !important;
-}
-
-body.dark-mode .field-error {
-    color: #ff6666;
-}
-
-/* Estilos para el botón de guardar en el formulario de edición */
-#edit-user-form button[type="submit"] {
-    background-color: #ff8c42;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 15px;
-    width: 100%;
-    transition: background-color 0.3s;
-}
-
-#edit-user-form button[type="submit"]:hover {
-    background-color: #e67e22;
-}
-
-/* Estilos para modo oscuro */
-body.dark-mode #edit-user-form button[type="submit"] {
-    background-color: #e67e22;
-}
-
-body.dark-mode #edit-user-form button[type="submit"]:hover {
-    background-color: #d35400;
-}
-
-/* Estilos para mensajes de éxito/error */
-.error-message {
-    padding: 12px;
-    border-radius: 5px;
-    margin-top: 15px;
-    display: none;
-    font-size: 14px;
-    text-align: center;
-}
-
-/* Mensajes de error */
-/* Para hacer los mensajes más modernos */
-.error-message {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-/* Efecto pulsante para acciones exitosas */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
-
-.error-message.success {
-    animation: pulse 1.5s infinite;
-}
-
-/* Mensajes de éxito */
-.error-message.success {
-    background-color: #eeffee;
-    color: #33cc33;
-    border: 1px solid #ccffcc;
-}
-
-/* Estilos para modo oscuro */
-body.dark-mode .error-message {
-    background-color: #442222;
-    color: #ff6666;
-    border-color: #663333;
-}
-
-body.dark-mode .error-message.success {
-    background-color: #224422;
-    color: #77dd77;
-    border-color: #336633;
-}
-
-
-    </style>
+  
     <div class="dashboard">
          <!-- Barra lateral izquierda (menú) -->
         
@@ -699,7 +199,7 @@ body.dark-mode .error-message.success {
             <div class="form-row">
                 <div class="form-group">
                     <label for="user-email">Correo:</label>
-                    <input type="email" id="user-email" name="correo" placeholder="Ingrese el correo" required>
+                    <input type="email" id="user-email" name="correo" title="Ingresa un correo válido, ejemplo: tucorreo@gmail.com" placeholder="Ingrese el correo" required>
                 </div>
                 <div class="form-group">
                     <label for="user-cedula">Cédula:</label>
@@ -711,7 +211,7 @@ body.dark-mode .error-message.success {
             <div class="form-row">
                 <div class="form-group">
                     <label for="user-password">Contraseña:</label>
-                    <input type="password" id="user-password" name="clave" placeholder="Ingrese la contraseña">
+                    <input type="password" id="user-password" name="clave" title="La contraseña debe contener carácteres especiales (#$*%...=), números, Mayúsculas y minúsculas, y al menos 16 carácteres." placeholder="Ingrese la contraseña">
                     <div class="password-strength-container">
                         <div class="password-strength-bar">
                             <div class="password-strength-progress" id="password-strength-progress"></div>
@@ -721,16 +221,18 @@ body.dark-mode .error-message.success {
                 </div>
                 <div class="form-group">
                     <label for="user-confirm-password">Confirmar Contraseña:</label>
-                    <input type="password" id="user-confirm-password" name="confirmar_clave" placeholder="Confirme la contraseña">
+                    <input type="password" id="user-confirm-password" name="confirmar_clave" title="Las contraseñas deben coincidir entre si." placeholder="Confirme la contraseña">
                 </div>
+               
             </div>
-            
+         
             <!-- Fila 4: Rol -->
             <div class="form-row">
                 <div class="form-group full-width">
                     <label for="user-rol">Rol:</label>
                     <select id="user-rol" name="rol" required>
                         <option value="1">Admin</option>
+                        <option value="2">SuperAdmin</option>
                         <option value="3">Personal</option>
                     </select>
                 </div>
@@ -833,7 +335,7 @@ body.dark-mode .error-message.success {
             <div class="form-row">
                 <div class="form-group">
                     <label for="edit-user-email">Correo:</label>
-                    <input type="email" id="edit-user-email" name="correo" placeholder="Ingrese el correo" required>
+                    <input type="email" id="edit-user-email" name="correo" title="Ingresa un correo válido, ejemplo: tucorreo@gmail.com" placeholder="Ingrese el correo" required>
                 </div>
                 <div class="form-group">
                     <label for="edit-user-cedula">Cédula:</label>
@@ -845,7 +347,7 @@ body.dark-mode .error-message.success {
             <div class="form-row">
                 <div class="form-group">
                     <label for="edit-user-password">Nueva Contraseña:</label>
-                    <input type="password" id="edit-user-password" name="clave" placeholder="Dejar vacío para no cambiar">
+                    <input type="password" id="edit-user-password" name="clave" title="La contraseña debe contener carácteres especiales (#$*%...=), números, Mayúsculas y minúsculas, y al menos 16 carácteres." placeholder="Dejar vacío para no cambiar">
                     <div class="password-strength-container">
                         <div class="password-strength-bar">
                             <div class="password-strength-progress" id="edit-password-strength-progress"></div>
@@ -855,10 +357,10 @@ body.dark-mode .error-message.success {
                 </div>
                 <div class="form-group">
                     <label for="edit-user-confirm-password">Confirmar Contraseña:</label>
-                    <input type="password" id="edit-user-confirm-password" name="confirmar_clave" placeholder="Confirme la nueva contraseña">
-                </div>
+                    <input type="password" id="edit-user-confirm-password" name="confirmar_clave" title="Las contraseñas deben coincidir entre si." placeholder="Confirme la nueva contraseña">
+                </div>      
             </div>
-            
+         
             <div id="edit-user-error-message" class="error-message" style="display: none;"></div>
             <button type="submit">Guardar Cambios</button>
         </form>
@@ -1637,6 +1139,110 @@ document.getElementById('edit-user-password').addEventListener('input', function
         strengthText.textContent = 'Seguridad: Fuerte';
     }
 });
+
+// Función para validar email en tiempo real
+document.getElementById('user-email').addEventListener('input', function(e) {
+    const email = e.target.value;
+    const errorElement = document.getElementById('email-error') || createErrorElement(e.target, 'email-error');
+    
+    if (email.length > 0 && !/^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{5,}\.[a-zA-Z]{2,}$/.test(email)) {
+        showFieldError(errorElement, 'Ingrese un correo válido (ej: usuario@dominio.com). Mínimo 2 caracteres antes de @, 5 en dominio.');
+    } else {
+        clearFieldError(errorElement);
+    }
+});
+
+// Y para el formulario de edición:
+document.getElementById('edit-user-email').addEventListener('input', function(e) {
+    const email = e.target.value;
+    const errorElement = document.getElementById('edit-email-error') || createErrorElement(e.target, 'edit-email-error');
+    
+    if (email.length > 0 && !/^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{5,}\.[a-zA-Z]{2,}$/.test(email)) {
+        showFieldError(errorElement, 'Ingrese un correo válido (ej: usuario@dominio.com). Mínimo 2 caracteres antes de @, 5 en dominio.');
+    } else {
+        clearFieldError(errorElement);
+    }
+});
+
+function validatePassword(password) {
+    const errors = [];
+    
+    if (password.length < 16) {
+        errors.push("Mínimo 16 caracteres");
+    }
+    if (!/[A-Z]/.test(password)) {
+        errors.push("Al menos una mayúscula");
+    }
+    if (!/[a-z]/.test(password)) {
+        errors.push("Al menos una minúscula");
+    }
+    if (!/[0-9]/.test(password)) {
+        errors.push("Al menos un número");
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors: errors
+    };
+}
+
+// Para el formulario de registro
+document.getElementById('user-password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const result = validatePassword(password);
+    const strengthText = document.getElementById('password-strength-text');
+    
+    if (password.length === 0) {
+        strengthText.textContent = 'Seguridad: -';
+        return;
+    }
+    
+    if (!result.valid) {
+        strengthText.textContent = `Requisitos faltantes: ${result.errors.join(', ')}`;
+        strengthText.style.color = '#ff3333';
+    } else {
+        strengthText.textContent = 'Contraseña cumple todos los requisitos';
+        strengthText.style.color = '#33cc33';
+    }
+});
+
+// Para el formulario de edición
+document.getElementById('edit-user-password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const result = validatePassword(password);
+    const strengthText = document.getElementById('edit-password-strength-text');
+    
+    if (password.length === 0) {
+        strengthText.textContent = 'Seguridad: -';
+        return;
+    }
+    
+    if (!result.valid) {
+        strengthText.textContent = `Requisitos faltantes: ${result.errors.join(', ')}`;
+        strengthText.style.color = '#ff3333';
+    } else {
+        strengthText.textContent = 'Contraseña cumple todos los requisitos';
+        strengthText.style.color = '#33cc33';
+    }
+});
+
+function updatePasswordRequirements(password) {
+    const requirements = {
+        length: password.length >= 16,
+        upper: /[A-Z]/.test(password),
+        lower: /[a-z]/.test(password),
+        number: /[0-9]/.test(password)
+    };
+    
+    document.getElementById('req-length').className = requirements.length ? 'valid' : 'invalid';
+    document.getElementById('req-upper').className = requirements.upper ? 'valid' : 'invalid';
+    document.getElementById('req-lower').className = requirements.lower ? 'valid' : 'invalid';
+    document.getElementById('req-number').className = requirements.number ? 'valid' : 'invalid';
+    
+    return Object.values(requirements).every(Boolean);
+}
+
+
 
 </script>
     <script src="../assets/js/main.js"></script>

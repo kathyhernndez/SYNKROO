@@ -51,9 +51,27 @@ try {
         throw new Exception('La cédula debe tener entre 6 y 12 dígitos y solo puede contener números.', 400);
     }
 
-    // Validar que la contraseña tenga al menos 16 caracteres
-    if ($clave && strlen($clave) < 16) {
+    // Validar formato de correo con los nuevos requisitos
+    if (!preg_match('/^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{5,}\.[a-zA-Z]{2,}$/', $correo)) {
+        throw new Exception('El correo electrónico no tiene un formato válido. Debe tener al menos 2 caracteres antes de la @, al menos 5 caracteres en el dominio y una extensión de dominio válida.', 400);
+    }
+
+     // Validar que la contraseña tenga al menos 16 caracteres
+     if ($clave && strlen($clave) < 16) {
         throw new Exception('La contraseña debe tener al menos 16 caracteres.', 400);
+    }
+
+    // Validar complejidad de la contraseña
+    if ($clave) {
+        if (!preg_match('/[A-Z]/', $clave)) {
+            throw new Exception('La contraseña debe contener al menos una letra mayúscula.', 400);
+        }
+        if (!preg_match('/[a-z]/', $clave)) {
+            throw new Exception('La contraseña debe contener al menos una letra minúscula.', 400);
+        }
+        if (!preg_match('/[0-9]/', $clave)) {
+            throw new Exception('La contraseña debe contener al menos un número.', 400);
+        }
     }
 
     // Verificar que las contraseñas coincidan
@@ -82,6 +100,11 @@ try {
     // Encriptar contraseña usando password_hash
     $clave_encriptada = $clave ? password_hash($clave, PASSWORD_DEFAULT) : null;
 
+    // Encriptar respuestas de seguridad
+    $respuesta_1_encriptada = password_hash($data['respuesta_1'], PASSWORD_DEFAULT);
+    $respuesta_2_encriptada = password_hash($data['respuesta_2'], PASSWORD_DEFAULT);
+    $respuesta_3_encriptada = password_hash($data['respuesta_3'], PASSWORD_DEFAULT);
+
     // Iniciar transacción
     $conexion->beginTransaction();
 
@@ -95,7 +118,7 @@ try {
         // Obtener ID del nuevo usuario
         $usuario_id = $conexion->lastInsertId();
 
-        // Insertar preguntas y respuestas de seguridad
+        // Insertar preguntas y respuestas de seguridad (con respuestas encriptadas)
         $query_preguntas = "INSERT INTO recuperar_contrasena 
                             (pregunta_1, pregunta_2, pregunta_3, 
                              respuesta_1, respuesta_2, respuesta_3, 
@@ -106,9 +129,9 @@ try {
             $data['pregunta_1'],  // Texto completo de la pregunta 1
             $data['pregunta_2'],  // Texto completo de la pregunta 2
             $data['pregunta_3'],  // Texto completo de la pregunta 3
-            $data['respuesta_1'],
-            $data['respuesta_2'],
-            $data['respuesta_3'],
+            $respuesta_1_encriptada,
+            $respuesta_2_encriptada,
+            $respuesta_3_encriptada,
             $usuario_id
         ]);
 
