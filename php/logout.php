@@ -1,18 +1,34 @@
 <?php
+// Configuración segura para la cookie de sesión
+session_set_cookie_params([
+    'lifetime' => 1200, // 20 minutos en segundos
+    'path' => '/',
+    'domain' => $_SERVER['HTTP_HOST'],
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
 session_start();
+
 include 'conexion_be.php';
 include 'registrar_accion.php';
 
 // Registrar la acción de cierre de sesión
 if (isset($_SESSION['usuario_id'])) {
     $usuario_id = $_SESSION['usuario_id'];
-    registrarAccion($conexion, $usuario_id, 'cierre de sesión', 'El usuario ha cerrado sesión en el sistema.');
+    $razon = isset($_SESSION['session_expired']) ? 'cierre por expiración de sesión' : 'cierre de sesión';
+    registrarAccion($conexion, $usuario_id, $razon, 'El usuario ha cerrado sesión en el sistema.');
 }
 
 // Destruir la sesión y las cookies
 session_unset();
 session_destroy();
 setcookie('PHPSESSID', '', time() - 3600, '/');
+
+// Redirigir si es una solicitud AJAX
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

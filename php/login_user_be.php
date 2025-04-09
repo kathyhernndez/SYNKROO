@@ -1,8 +1,20 @@
 <?php
+// Configuración segura de cookies
+session_set_cookie_params([
+    'lifetime' => 86400,
+    'path' => '/',
+    'domain' => $_SERVER['HTTP_HOST'],
+    'secure' => true,     // Forzado aunque no haya HTTPS
+    'httponly' => true,   // Siempre activo
+    'samesite' => 'Strict' // Opcional: Protección CSRF
+]);
+
 ob_start();
 session_start();
+
 include 'conexion_be.php';
 include 'registrar_accion.php';
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $correo = filter_input(INPUT_POST, 'correo', FILTER_SANITIZE_EMAIL);

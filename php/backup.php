@@ -1,4 +1,13 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 1200, // 20 minutos
+    'path' => '/',
+    'domain' => '', // Dejar vacío para que funcione en todos los subdominios
+    'secure' => false, // Cambiar a false si no usas HTTPS
+    'httponly' => true,
+    'samesite' => 'Lax' // Menos restrictivo que 'Strict'
+]);
+
 date_default_timezone_set('America/Caracas');
 session_start();
 include 'conexion_be.php';

@@ -1,4 +1,66 @@
-// Sistema de confirmación de acciones
+// ==============================================
+// SISTEMA DE VERIFICACIÓN DE SESIÓN
+// ==============================================
+
+// Verificación de sesión
+function checkSession() {
+    fetch('check_session.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'warning') {
+                // Mostrar modal de advertencia
+                const minutes = Math.floor(data.remaining_time / 60);
+                const seconds = data.remaining_time % 60;
+                
+                if (!document.getElementById('session-warning-modal')) {
+                    const modalHTML = `
+                        <div id="session-warning-modal" class="session-modal">
+                            <div class="session-modal-content">
+                                <h3>Tu sesión está por expirar</h3>
+                                <p>Tu sesión expirará en ${minutes}:${seconds.toString().padStart(2, '0')} minutos debido a inactividad.</p>
+                                <div class="session-modal-buttons">
+                                    <button id="extend-session-btn" class="btn-confirm">Extender sesión</button>
+                                    <button id="logout-now-btn" class="btn-cancel">Cerrar sesión ahora</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.insertAdjacentHTML('beforeend', modalHTML);
+                    
+                    document.getElementById('extend-session-btn').addEventListener('click', () => {
+                        extendSession();
+                        document.getElementById('session-warning-modal').remove();
+                    });
+                    
+                    document.getElementById('logout-now-btn').addEventListener('click', () => {
+                        window.location.href = '../php/logout.php';
+                    });
+                }
+            } else if (data.status === 'expired') {
+                // Redirigir a logout
+                window.location.href = '../php/logout.php';
+            }
+        });
+}
+
+// Extender sesión
+function extendSession() {
+    fetch('extend_session.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Sesión extendida');
+            }
+        });
+}
+
+// Verificar sesión cada minuto
+setInterval(checkSession, 60000); // 60 segundos
+
+// ==============================================
+// SISTEMA DE CONFIRMACIÓN DE ACCIONES
+// ==============================================
+
 let currentAction = null;
 let currentActionParams = null;
 
@@ -15,8 +77,6 @@ function showConfirmation(title, message, action, params = {}) {
     messageElement.textContent = message;
     modal.style.display = 'flex';
 }
-
-
 
 // ==============================================
 // FUNCIONES MEJORADAS PARA ARCHIVOS
@@ -65,6 +125,42 @@ function showConfirmationModal(type, message, callback, options = {}) {
         if (e.target === modal) {
             modal.remove();
         }
+    });
+}
+
+// Función para configurar los botones de archivos/carpetas
+function setupFileButtons() {
+    // Setup event listeners for file/folder actions
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.file-item, .folder-item').dataset.id;
+            const name = this.closest('.file-item, .folder-item').querySelector('.file-name, .folder-name').textContent;
+            editarArchivo(id, name);
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.file-item, .folder-item').dataset.id;
+            eliminarArchivo(id);
+        });
+    });
+
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const name = this.closest('.file-item').querySelector('.file-name').textContent;
+            descargarArchivo(name);
+        });
+    });
+
+    document.querySelectorAll('.folder-name').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const folderItem = this.closest('.folder-item');
+            if (folderItem) {
+                const folderId = folderItem.dataset.id;
+                abrirCarpeta(folderId);
+            }
+        });
     });
 }
 
@@ -241,9 +337,6 @@ function showAlert(type, message) {
     });
 }
 
-
-
-
 function cargarCarpetas() {
     fetch('obtener_carpetas.php')
         .then(response => response.json())
@@ -382,64 +475,82 @@ document.addEventListener('DOMContentLoaded', function() {
     if (uploadForm) {
         uploadForm.addEventListener('submit', function(event) {
             event.preventDefault();
-
+    
             const folderSelect = document.getElementById('folder-select');
             const folderNameInput = document.getElementById('folder-name');
             const fileInput = document.getElementById('file-input');
             const files = fileInput.files;
-
-            // Limpiar mensajes de error anteriores
+            const errorMessage = document.getElementById('error-message');
+    
+            // Limpiar mensajes anteriores
             errorMessage.style.display = 'none';
             errorMessage.textContent = '';
-            errorMessage.classList.remove('error', 'success');
-
-            // Validaciones
+            errorMessage.className = 'error-message'; // Resetear clases
+    
+            // Validación básica del frontend
+            if (folderSelect.value === '#' || folderSelect.value === '') {
+                errorMessage.textContent = 'No has seleccionado o creado una carpeta. Por favor, elige una carpeta existente o crea una nueva.';
+                errorMessage.classList.add('warning');
+                errorMessage.style.display = 'block';
+                return;
+            }
+    
             if (folderSelect.value === 'new' && !folderNameInput.value.trim()) {
                 errorMessage.textContent = 'Por favor, ingrese un nombre para la nueva carpeta.';
-                errorMessage.classList.add('error');
+                errorMessage.classList.add('warning');
                 errorMessage.style.display = 'block';
                 return;
             }
-
+    
             if (files.length === 0) {
                 errorMessage.textContent = 'Por favor, seleccione al menos un archivo.';
-                errorMessage.classList.add('error');
+                errorMessage.classList.add('warning');
                 errorMessage.style.display = 'block';
                 return;
             }
-
-            const maxFileSize = 10 * 1024 * 1024; // 10 MB
+    
+            const maxFileSize = 10 * 1024 * 1024;
             for (let i = 0; i < files.length; i++) {
                 if (files[i].size > maxFileSize) {
                     errorMessage.textContent = `El archivo ${files[i].name} excede el tamaño máximo permitido (10 MB).`;
-                    errorMessage.classList.add('error');
+                    errorMessage.classList.add('warning');
                     errorMessage.style.display = 'block';
                     return;
                 }
             }
-
-            // Crear FormData y enviar
+    
             const formData = new FormData();
             formData.append('folder-select', folderSelect.value);
             formData.append('folder-name', folderNameInput.value.trim());
-
+    
             for (let i = 0; i < files.length; i++) {
                 formData.append('archivo[]', files[i]);
             }
-
+    
             fetch('subir_archivo.php', {
                 method: 'POST',
                 body: formData,
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                errorMessage.textContent = data;
-                errorMessage.classList.add('success');
+                // Mostrar mensaje con el tipo adecuado
+                errorMessage.textContent = data.message;
+                
+                if (data.status === 'success') {
+                    errorMessage.classList.add('success');
+                } else if (data.status === 'warning') {
+                    errorMessage.classList.add('warning');
+                } else {
+                    errorMessage.classList.add('error');
+                }
+                
                 errorMessage.style.display = 'block';
-
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+    
+                if (data.status === 'success') {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
             })
             .catch(error => {
                 console.error('Error al subir el archivo:', error);
@@ -461,7 +572,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(response => response.text())
                     .then(data => {
                         filesGrid.innerHTML = data;
-                        setupFileButtons();
                     })
                     .catch(error => {
                         console.error('Error al cargar las carpetas:', error);
@@ -471,14 +581,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(response => response.text())
                     .then(data => {
                         filesGrid.innerHTML = data;
-                        setupFileButtons();
                     })
                     .catch(error => {
                         console.error('Error al cargar los archivos:', error);
                     });
             }
-
-            setupFileButtons();
         });
     }
+
+    // Configurar los botones de archivos/carpetas al cargar la página
+    setupFileButtons();
 });
