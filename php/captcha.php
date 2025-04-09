@@ -3,6 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 session_start();
 
+
 // Generar nuevo texto solo si no existe o se fuerza recarga
 if (!isset($_SESSION['captcha_text']) || isset($_GET['reload'])) {
     // Crear un texto más legible para el audio

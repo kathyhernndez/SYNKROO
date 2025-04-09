@@ -23,7 +23,9 @@
             <a href="index.php">
             <img src="../assets/image/logo.png" alt="Logo UPTAG" class="logo">
             </a>
-            <h1 class="app-name">SGDA</h1>
+            <a href="index.php">
+            <img src="../assets/image/synkroo.png" alt="Logo del programa" class="logo">
+            </a>
         </div>
     </div>
 </header>
@@ -172,8 +174,9 @@
     <div class="footer-content">
         <!-- Redes sociales a la izquierda -->
         <div class="footer-social">
-            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=100083648987371" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/uptagcomunica_/" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@uptagcomunica9474" class="social-icon"><i class="fab fa-youtube"></i></a>
         </div>
         
         <!-- Logo y nombre a la derecha -->

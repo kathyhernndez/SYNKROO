@@ -18,7 +18,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     $rolUsuario = $roles[$idRol] ?? 'Rol no disponible';
 } else {
     // Si no hay sesión, redirigir al login
-    header('Location: ../index.php');
+    header('Location: ../public/index.php');
     exit();
 }
 ?>
@@ -45,8 +45,8 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
     <!-- Nombre del programa y logo centrados -->
     <div class="program-info">
-        <img src="../assets/image/logo.png" alt="Logo del programa" class="logo">
-        <h1>SGDA</h1>
+        <img src="../assets/image/logo.png" alt="Logo de la comunidad" class="logo">
+        <img src="../assets/image/synkroo.png" alt="Logo del programa" class="logo">
     </div>
 </div>
 

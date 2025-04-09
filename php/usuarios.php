@@ -15,7 +15,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     echo '
     <script>
     alert("Por Favor debes Iniciar Sesion");
-    window.location = "../index.php";
+    window.location = "../public/index.php";
     </script>
     ';
     session_destroy();

@@ -34,7 +34,7 @@ try {
         $query .= " AND u.id_roles = :rol";
     }
 
-    if (!empty($estado)) {
+    if ($estado !== '') {
         $query .= " AND u.estado = :estado";
     }
 
@@ -52,16 +52,14 @@ try {
         $stmt->bindParam(':rol', $rol, PDO::PARAM_INT);
     }
 
-    if (!empty($estado)) {
+    if ($estado !== '') {
         $stmt->bindParam(':estado', $estado, PDO::PARAM_INT);
     }
 
-    // Ejecutar la consulta
+    // Resto del código permanece igual...
     $stmt->execute();
 
-    // Verificar si se obtuvieron resultados
     if ($stmt) {
-        // Recorrer los resultados
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
@@ -70,7 +68,6 @@ try {
             echo "<td>" . htmlspecialchars($row['cedula']) . "</td>";
             echo "<td>" . htmlspecialchars($row['correo']) . "</td>";
 
-            // Mostrar el estado como un botón con color dinámico
             $estado = $row['estado'];
             $color = ($estado == 1) ? 'green' : 'red';
             $texto = ($estado == 1) ? 'Activo' : 'Inactivo';
@@ -79,16 +76,12 @@ try {
                   onclick='mostrarModalConfirmacion(" . $row['id'] . ", " . $estado . ")'>$texto</button>";
             echo "</td>";
 
-            // Mostrar el nombre del rol en lugar del id_roles
             echo "<td>" . htmlspecialchars($row['rol']) . "</td>";
 
             echo "<td class='acciones'>";
-            // Botón Eliminar (modificado para usar el modal de confirmación)
             echo "<button class='btn-eliminar' onclick='mostrarModalEliminar(" . $row['id'] . ")'>
                     <i class='fas fa-trash-alt'></i> 
                   </button>";
-            
-            // Botón Editar (nuevo estilo)
             echo "<button onclick='abrirModalEdicion(" . $row['id'] . ")' class='btn-editar'>
                     <i class='fas fa-edit'></i> 
                   </button>";
@@ -99,10 +92,8 @@ try {
         echo "<tr><td colspan='8'>No se encontraron usuarios.</td></tr>";
     }
 } catch (PDOException $e) {
-    // Manejo de errores
     echo "<tr><td colspan='8'>Error al realizar la consulta: " . $e->getMessage() . "</td></tr>";
 }
 
-// Cerrar la conexión
 $conexion = null;
 ?>

@@ -4,6 +4,19 @@ session_start();
 include 'conexion_be.php';
 include 'registrar_accion.php';
 
+
+// Verificar si el usuario ha iniciado sesión
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    echo '
+    <script>
+    alert("Por Favor debes Iniciar Sesion");
+    window.location = "../public/index.php";
+    </script>
+    ';
+    session_destroy();
+    die();
+}
+
 // Verificar si el usuario tiene el rol adecuado (id_roles igual a 1 o 2)
 if (!isset($_SESSION['id_roles']) || ($_SESSION['id_roles'] != 1 && $_SESSION['id_roles'] != 2)) {
     echo '
@@ -94,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     // Mostrar el formulario de confirmación
     echo '
+    <title>Respaldo de Archivos</title>
+    <link rel="shortcut icon" href="../assets/image/favicon.png" />
     <link rel="stylesheet" href="../assets/css/main.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <div class="container mt-5">

@@ -16,41 +16,7 @@ function showConfirmation(title, message, action, params = {}) {
     modal.style.display = 'flex';
 }
 
-// Configurar eventos del modal de confirmación
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('confirmationModal');
-    const closeBtn = document.querySelector('.close-confirmation');
-    const cancelBtn = document.getElementById('cancelAction');
-    const confirmBtn = document.getElementById('confirmAction');
-    
-    // Cerrar modal al hacer clic en la X o en Cancelar
-    [closeBtn, cancelBtn].forEach(btn => {
-        btn.addEventListener('click', function() {
-            modal.style.display = 'none';
-            currentAction = null;
-            currentActionParams = null;
-        });
-    });
-    
-    // Confirmar acción
-    confirmBtn.addEventListener('click', function() {
-        if (currentAction) {
-            currentAction(currentActionParams);
-        }
-        modal.style.display = 'none';
-        currentAction = null;
-        currentActionParams = null;
-    });
-    
-    // Cerrar modal al hacer clic fuera del contenido
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            currentAction = null;
-            currentActionParams = null;
-        }
-    });
-});
+
 
 // ==============================================
 // FUNCIONES MEJORADAS PARA ARCHIVOS
@@ -515,7 +481,4 @@ document.addEventListener('DOMContentLoaded', function() {
             setupFileButtons();
         });
     }
-
-    // Configurar botones iniciales
-    setupFileButtons();
 });
