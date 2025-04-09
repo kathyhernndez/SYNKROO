@@ -1,5 +1,6 @@
 <?php
 include 'conexion_be.php';
+include 'registrar_accion.php';
 session_start();
 
 // Verificar que la solicitud sea POST
@@ -23,7 +24,7 @@ if (empty($_POST['respuesta_1']) || empty($_POST['respuesta_2']) || empty($_POST
 }
 
 try {
-    // Obtener respuestas correctas
+    // Obtener respuestas correctas (encriptadas)
     $query = "SELECT respuesta_1, respuesta_2, respuesta_3 FROM recuperar_contrasena 
               WHERE id_usuario = :id_usuario";
     $stmt = $conexion->prepare($query);
@@ -36,11 +37,16 @@ try {
         die(json_encode(['status' => 'error', 'message' => 'No se encontraron preguntas de seguridad']));
     }
 
-    // Verificar respuestas (case insensitive)
+    // Normalizar respuestas (trim y lowercase para hacer la comparación más flexible)
+    $respuesta1 = strtolower(trim($_POST['respuesta_1']));
+    $respuesta2 = strtolower(trim($_POST['respuesta_2']));
+    $respuesta3 = strtolower(trim($_POST['respuesta_3']));
+
+    // Verificar respuestas usando password_verify()
     $respuestas_correctas = (
-        strtolower(trim($_POST['respuesta_1'])) === strtolower(trim($result['respuesta_1'])) &&
-        strtolower(trim($_POST['respuesta_2'])) === strtolower(trim($result['respuesta_2'])) &&
-        strtolower(trim($_POST['respuesta_3'])) === strtolower(trim($result['respuesta_3']))
+        password_verify($respuesta1, $result['respuesta_1']) &&
+        password_verify($respuesta2, $result['respuesta_2']) &&
+        password_verify($respuesta3, $result['respuesta_3'])
     );
 
     if (!$respuestas_correctas) {
@@ -54,7 +60,6 @@ try {
 
     // Marcar respuestas correctas
     $_SESSION['respuestas_correctas'] = true;
-
 
     header('Content-Type: application/json');
     echo json_encode(['status' => 'success']);

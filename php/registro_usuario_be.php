@@ -100,10 +100,14 @@ try {
     // Encriptar contraseña usando password_hash
     $clave_encriptada = $clave ? password_hash($clave, PASSWORD_DEFAULT) : null;
 
-    // Encriptar respuestas de seguridad
-    $respuesta_1_encriptada = password_hash($data['respuesta_1'], PASSWORD_DEFAULT);
-    $respuesta_2_encriptada = password_hash($data['respuesta_2'], PASSWORD_DEFAULT);
-    $respuesta_3_encriptada = password_hash($data['respuesta_3'], PASSWORD_DEFAULT);
+    // Encriptar respuestas de seguridad (convertir a minúsculas y trim)
+    $respuesta_1 = strtolower(trim($data['respuesta_1']));
+    $respuesta_2 = strtolower(trim($data['respuesta_2']));
+    $respuesta_3 = strtolower(trim($data['respuesta_3']));
+
+    $respuesta_1_encriptada = password_hash($respuesta_1, PASSWORD_DEFAULT);
+    $respuesta_2_encriptada = password_hash($respuesta_2, PASSWORD_DEFAULT);
+    $respuesta_3_encriptada = password_hash($respuesta_3, PASSWORD_DEFAULT);
 
     // Iniciar transacción
     $conexion->beginTransaction();

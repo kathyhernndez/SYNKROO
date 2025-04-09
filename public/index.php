@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="es-ES">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -59,8 +59,8 @@
                     <div class="form-group password-container">
                         <input type="password" placeholder="Contraseña" name="clave" id="loginPassword" 
                                required minlength="" maxlength="64">
-                        <i class="toggle-password fas fa-eye" onclick="togglePassword('loginPassword', this)"></i>
-                        <span class="help-text">La contraseña debe tener al menos 16 caracteres, incluyendo mayúsculas, minúsculas y números</span>
+                               <i class="toggle-password fas fa-eye" onclick="togglePassword(this)"></i>
+                               <span class="help-text">La contraseña debe tener al menos 16 caracteres, incluyendo mayúsculas, minúsculas y números</span>
                     </div>
                     
                     <label for="captcha">CAPTCHA:</label>
@@ -127,6 +127,7 @@
                         <h2>Preguntas de Seguridad</h2>
                         <div id="step2Messages"></div>
                         <div id="preguntasContainer"></div>
+
                         
                         <button type="button" onclick="verifyAnswers()" id="verifyAnswersBtn">
                             <span id="verifyAnswersText">Verificar Respuestas</span>
@@ -142,14 +143,13 @@
                         <div class="form-group password-container">
                             <input type="password" id="nueva_contrasena" name="nueva_contrasena" 
                                    placeholder="Nueva contraseña" required minlength="16" maxlength="64">
-                            <i class="toggle-password fas fa-eye" onclick="togglePassword('nueva_contrasena', this)"></i>
-                            <span class="help-text">Crea una contraseña segura, debe tener al menos 16 caracteres, incluyendo mayúsculas, minúsculas y números</span>
+                                   <i class="toggle-password fas fa-eye" onclick="togglePassword(this)"></i>                            <span class="help-text">Crea una contraseña segura, debe tener al menos 16 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales</span>
                         </div>
                         
                         <div class="form-group password-container">
                             <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" 
                                    placeholder="Confirmar nueva contraseña" required minlength="16" maxlength="64">
-                            <i class="toggle-password fas fa-eye" onclick="togglePassword('confirmar_contrasena', this)"></i>
+                                   <i class="toggle-password fas fa-eye" onclick="togglePassword(this)"></i>                            <span class="help-text">Crea una contraseña segura, debe tener al menos 16 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales</span>
                             <span class="help-text">Vuelve a escribir tu nueva contraseña para confirmar</span>
                         </div>
                         
@@ -197,19 +197,25 @@
 
     <script src="../assets/js/script.js"></script>
     <script>
-        // Función para mostrar/ocultar contraseña
-        function togglePassword(inputId, icon) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
+     // Función mejorada para manejar el toggle de contraseña
+function togglePassword(icon) {
+    // Encuentra el contenedor más cercano y luego el input
+    const container = icon.closest('.password-container');
+    if (!container) return;
+    
+    const input = container.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+    
+    // Cambia el tipo de input y actualiza el icono
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
 
         // Función para mostrar mensajes de ayuda/error
         function showMessage(containerId, message, isError = false) {
@@ -388,70 +394,80 @@
 
         // Función para verificar el usuario (Paso 1)
         function verifyUser() {
-            const email = document.getElementById('recoverUser').value;
-            const cedula = document.getElementById('recoverCedula').value;
-            const captcha = document.getElementById('recoverCaptcha').value;
+    const email = document.getElementById('recoverUser').value;
+    const cedula = document.getElementById('recoverCedula').value;
+    const captcha = document.getElementById('recoverCaptcha').value;
 
-            if (!email || !cedula || !captcha) {
-                showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
-                return;
-            }
+    if (!email || !cedula || !captcha) {
+        showSystemMessage('error', 'Campos incompletos', 'Por favor complete todos los campos');
+        return;
+    }
 
-            if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
-                showSystemMessage('error', 'Correo inválido', 'Por favor ingresa un correo electrónico válido');
-                return;
-            }
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+        showSystemMessage('error', 'Correo inválido', 'Por favor ingresa un correo electrónico válido');
+        return;
+    }
 
-            showLoading('verifyUserBtn', true);
+    showLoading('verifyUserBtn', true);
 
-            const formData = new FormData();
-            formData.append('recoverUser', email);
-            formData.append('recoverCedula', cedula);
-            formData.append('recoverCaptcha', captcha);
+    const formData = new FormData();
+    formData.append('recoverUser', email);
+    formData.append('recoverCedula', cedula);
+    formData.append('recoverCaptcha', captcha);
 
-            fetch('../php/recuperar_contrasena_be.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                showLoading('verifyUserBtn', false);
-                if (data.status === 'success') {
-                    showSystemMessage('success', 'Verificación exitosa', 'Usuario verificado correctamente', 1500);
-                    setTimeout(() => {
-                        document.getElementById('step1').style.display = 'none';
-                        document.getElementById('step2').style.display = 'block';
-                        
-                        const container = document.getElementById('preguntasContainer');
-                        container.innerHTML = `
-                            <div class="pregunta">
-                                <label>${data.pregunta_1}</label>
-                                <input type="text" name="respuesta_1" required>
-                                <span class="help-text">Responde la pregunta de seguridad</span>
-                            </div>
-                            <div class="pregunta">
-                                <label>${data.pregunta_2}</label>
-                                <input type="text" name="respuesta_2" required>
-                                <span class="help-text">Responde la pregunta de seguridad</span>
-                            </div>
-                            <div class="pregunta">
-                                <label>${data.pregunta_3}</label>
-                                <input type="text" name="respuesta_3" required>
-                                <span class="help-text">Responde la pregunta de seguridad</span>
-                            </div>
-                        `;
-                    }, 1500);
-                } else {
-                    showSystemMessage('error', 'Error de verificación', data.message || 'Usuario no encontrado o datos incorrectos');
-                    reloadCaptchaRecover();
-                }
-            })
-            .catch(error => {
-                showLoading('verifyUserBtn', false);
-                showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al procesar la solicitud');
-                console.error('Error:', error);
-            });
+    fetch('../php/recuperar_contrasena_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLoading('verifyUserBtn', false);
+        if (data.status === 'success') {
+            showSystemMessage('success', 'Verificación exitosa', 'Usuario verificado correctamente', 1500);
+            setTimeout(() => {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                
+                const container = document.getElementById('preguntasContainer');
+                container.innerHTML = `
+                    <div class="pregunta">
+                        <label>${data.pregunta_1}</label>
+                        <div class="password-container">
+                            <input type="password" name="respuesta_1" required>
+                            <i class="toggle-password fas fa-eye" onclick="togglePassword(this)"></i>
+                        </div>
+                        <span class="help-text">Responde la pregunta de seguridad</span>
+                    </div>
+                    <div class="pregunta">
+                        <label>${data.pregunta_2}</label>
+                        <div class="password-container">
+                            <input type="password" name="respuesta_2" required>
+                            <i class="toggle-password fas fa-eye" onclick="togglePassword(this)"></i>
+                        </div>
+                        <span class="help-text">Responde la pregunta de seguridad</span>
+                    </div>
+                    <div class="pregunta">
+                        <label>${data.pregunta_3}</label>
+                        <div class="password-container">
+                            <input type="password" name="respuesta_3" required>
+                            <i class="toggle-password fas fa-eye" onclick="togglePassword(this)"></i>
+                        </div>
+                        <span class="help-text">Responde la pregunta de seguridad</span>
+                    </div>
+                `;
+            }, 1500);
+        } else {
+            showSystemMessage('error', 'Error de verificación', data.message || 'Usuario no encontrado o datos incorrectos');
+            reloadCaptchaRecover();
         }
+    })
+    .catch(error => {
+        showLoading('verifyUserBtn', false);
+        showSystemMessage('error', 'Error del sistema', 'Ocurrió un error al procesar la solicitud');
+        console.error('Error:', error);
+    });
+}
+
 
         // Función para verificar respuestas (Paso 2)
         function verifyAnswers() {
@@ -693,6 +709,77 @@
 
         /* Actualizar año automáticamente */
         document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+        function changePassword() {
+    const nuevaContrasena = document.getElementById('nueva_contrasena').value;
+    const confirmarContrasena = document.getElementById('confirmar_contrasena').value;
+
+    if (!nuevaContrasena || !confirmarContrasena) {
+        showSystemMessage('error', 'Campos incompletos', 'Por favor completa ambos campos');
+        return;
+    }
+
+    if (nuevaContrasena !== confirmarContrasena) {
+        showSystemMessage('error', 'Contraseñas no coinciden', 'Las contraseñas ingresadas no son iguales');
+        return;
+    }
+
+    // Validación de fortaleza de contraseña
+    if (nuevaContrasena.length < 16) {
+        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe tener al menos 16 caracteres');
+        return;
+    }
+
+    if (!/[A-Z]/.test(nuevaContrasena)) {
+        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe contener al menos una mayúscula');
+        return;
+    }
+
+    if (!/[a-z]/.test(nuevaContrasena)) {
+        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe contener al menos una minúscula');
+        return;
+    }
+
+    if (!/[0-9]/.test(nuevaContrasena)) {
+        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe contener al menos un número');
+        return;
+    }
+
+    if (!/[^a-zA-Z0-9]/.test(nuevaContrasena)) {
+        showSystemMessage('warning', 'Contraseña insegura', 'La contraseña debe contener al menos un carácter especial');
+        return;
+    }
+
+    showLoading('changePasswordBtn', true);
+
+    const formData = new FormData();
+    formData.append('nueva_contrasena', nuevaContrasena);
+    formData.append('confirmar_contrasena', confirmarContrasena);
+
+    fetch('../php/cambiar_contrasena_be.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLoading('changePasswordBtn', false);
+        if (data.status === 'success') {
+            showSystemMessage('success', '¡Contraseña cambiada!', 'Tu contraseña ha sido actualizada correctamente', 3000);
+            setTimeout(() => {
+                document.getElementById('step3').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            }, 3000);
+        } else {
+            showSystemMessage('error', 'Error al cambiar', data.message || 'No se pudo cambiar la contraseña');
+        }
+    })
+    .catch(error => {
+        showLoading('changePasswordBtn', false);
+        showSystemMessage('error', 'Error del sistema', 'No se pudo completar el cambio de contraseña');
+        console.error('Error:', error);
+    });
+}
+    
     </script>
 </body>
 </html>

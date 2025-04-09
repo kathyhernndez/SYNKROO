@@ -26,8 +26,25 @@ if ($_POST['nueva_contrasena'] !== $_POST['confirmar_contrasena']) {
     die(json_encode(['status' => 'error', 'message' => 'Las contraseñas no coinciden']));
 }
 
-if (strlen($_POST['nueva_contrasena']) < 8) {
-    die(json_encode(['status' => 'error', 'message' => 'La contraseña debe tener al menos 8 caracteres']));
+// Validar fortaleza de la nueva contraseña (16 caracteres, mayúscula, minúscula, número, caracter especial)
+if (strlen($_POST['nueva_contrasena']) < 16) {
+    die(json_encode(['status' => 'error', 'message' => 'La contraseña debe tener al menos 16 caracteres']));
+}
+
+if (!preg_match('/[A-Z]/', $_POST['nueva_contrasena'])) {
+    die(json_encode(['status' => 'error', 'message' => 'La contraseña debe contener al menos una mayúscula']));
+}
+
+if (!preg_match('/[a-z]/', $_POST['nueva_contrasena'])) {
+    die(json_encode(['status' => 'error', 'message' => 'La contraseña debe contener al menos una minúscula']));
+}
+
+if (!preg_match('/[0-9]/', $_POST['nueva_contrasena'])) {
+    die(json_encode(['status' => 'error', 'message' => 'La contraseña debe contener al menos un número']));
+}
+
+if (!preg_match('/[^a-zA-Z0-9]/', $_POST['nueva_contrasena'])) {
+    die(json_encode(['status' => 'error', 'message' => 'La contraseña debe contener al menos un carácter especial']));
 }
 
 // Hashear la nueva contraseña
